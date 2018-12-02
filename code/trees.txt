@@ -1,0 +1,13 @@
+name, time, seed, item, minItem, maxItem, minLifetime, maxLifetime
+
+apple, 60 , apple seeds, apple, 6, 8, 23, 25
+banana, 60, banana seeds, banana, 44, 52, 23, 25
+bananana, 60, bananana seeds, banana, 44, 52, 34, 38
+bana, 60, bana seeds, banana, 44, 52, 10, 14
+pear, 2.25, pear seeds, pear, 1, 1, 60, 60
+orange, 60, orange seeds, orange, 10, 16, 23, 25
+lemon,
+combustible lemon,
+rambutan,
+
+pizza,
