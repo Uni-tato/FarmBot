@@ -88,7 +88,7 @@ async def on_reaction_add(reaction, user):
                         await client.send_message(question.message.channel, user.mention + " this question isn't for you.")
                     break
 
-client.run("I'm not leaving this here on a public file.")
+client.run(input("Please input the Discord Token: "))
 
 
 '''
