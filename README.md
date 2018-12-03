@@ -1,4 +1,6 @@
 # FarmBot
-a discord bot that we're definitely never going to get finished.
+A Discord Game Bot developed by a couple of close friends
 
-"just leave it blank for now :P" 
+The basic concept is an Idle Farming game, where players can have *farms* from which they obtain resources they're then able to sell for money.
+
+Any further suggestions for as to what the game should include / how the bot should operate are welcome!
