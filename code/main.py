@@ -28,7 +28,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    message.num = 0
     #print(message.author,message.content)
     if message.author == client.user:
         if len(message.embeds) > 0:
