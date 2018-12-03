@@ -88,7 +88,21 @@ async def on_reaction_add(reaction, user):
                         await client.send_message(question.message.channel, user.mention + " this question isn't for you.")
                     break
 
-client.run(input("Please input the Discord Token: "))
+# Will try and get a token from code/token.txt
+# If this fails (file does not exist) then it asks for the token and creates the file
+try:
+    file = open("token.txt")
+except OSError:
+    token = input("Please input the Discord Token: ")
+    file = open("token.txt", "w+")
+    file.write(token)
+    file.close()
+    client.run(token)
+else:
+    token = file.read()
+    print(token)
+    file.close()
+    client.run(token)
 
 
 '''
