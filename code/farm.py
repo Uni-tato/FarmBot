@@ -1,35 +1,54 @@
 #literally does nothing yet.
+import datetime
+from random import randint
 
 class Farm:
     def __init__(self, plotCount = 1):
         self.plotCount = plotCount
-        plots = [Plot() for i in range(plotCount)] #creates an array of plots
+        plots = [Plot() for i in range(plotCount)]
 
 
 class Plot:
     def __init__(self):
-            self.crop = None #the crop thay is currently planted
-            self.completeTime = None #the time that the crop should finish growing.
+            self.crop = None
+            self.completeTime = None
+
+    def plant(crop): #currently only working for crops, not trees.
+        self.crop = crop
+        now = datetime.datetime.now()
+        timeTaken = datetime.timedelta(minutes = crop.time)
+        self.completeTime = now + timeTaken
+
+    def harvest():
+        now = datetime.datetime.now()
+        if now >= self.completeTime:
+            item = self.crop.item
+            minItem = self.crop.minItem
+            maxItem = self.crop.maxItem
+            itemCount = randint(minItem,maxItem)
+            self.crop = None
+            self.completeTime = None
+            return {item:itemCount} #if these return none then I will need to make item a copy.
 
 
 class Crop:
     def __init__(self,name,time,seed,item,minItem,maxItem):
-        self.name = name #the name of the crop
-        self.time = time #the time it takes for the crop to grow (might use a "min", "max" version in the future)
-        self.seed = seed #the item used to plant this crop
-        self.item = item #the item that this crop grows
-        self.minItem = minItem #the minimum amount of items this crop grows
-        self.maxItem = maxItem # "  maximum    "    "   "     "    "    "
-
-
-class Tree: #basically the same as crop, but lasts longer and gives items throughout its life.
-    def __init__(self,name,time,seed,item,minItem,maxItem,minLifetime,maxLifetime):
-        self.name = name #the type of tree.
-        self.time = time #the time between harvests.
-        self.seed = seed #the seed that grows this tree.
-        self.item = item #the item that this tree grows.
-        self.minItem = minItem #the minimum amount of items per harvest.
+        self.name = name
+        self.time = time
+        self.seed = seed
+        self.item = item
+        self.minItem = minItem
         self.maxItem = maxItem
+
+
+class Tree:
+    def __init__(self,name,time,seed,item,minItem,maxItem,minLifetime,maxLifetime):
+        self.name = name
+        self.time = time
+        self.seed = seed
+        self.item = item
+        self.minItem = minItem
+        self.maxItem = maxItem 
         self.minLifetime = minLifetime
         self.maxLifetime = maxLifetime
 
@@ -39,3 +58,20 @@ class Item:
         self.name = name
         self.buy = buy
         self.sell = sell
+
+
+crops = []
+lines = open('crops.txt','r').readlines()
+for line in lines:
+    if line[0] != '#':
+        line = line.split(',')
+        line[-1] = line[-1].replace('\n','')
+        name = line[0]
+        time = int(line[1])
+        seed = line[2]
+        item = line[3]
+        minItem = int(line[4])
+        maxItem = int(line[5])
+        crop = Crop(name, time, seed, item, minItem, maxItem)
+        crops.append(crop)
+#print(crops)
