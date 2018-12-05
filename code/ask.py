@@ -1,7 +1,10 @@
 ## no.
 # import datetime, asyncio, discord
 ## yes.
-import time, asyncio, discord
+import time
+import asyncio
+
+import discord
 
 colourAsked = 0x00ff00
 colourAnswered = 0xf4d85a

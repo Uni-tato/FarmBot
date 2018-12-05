@@ -1,4 +1,8 @@
-import datetime, discord, asyncio
+import datetime
+import asyncio
+
+import discord
+
 import ask
 
 client = discord.Client()
