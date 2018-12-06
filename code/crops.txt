@@ -9,3 +9,6 @@ carrot, 30, carrot seed, carrot, 27, 33
 potato, 15, potato, potato, 20, 30
 #
 marshmallow, 1440, marshmellow pellets, marshmellow, 268, 308
+#
+# Stefan's crops:
+# none for now :P

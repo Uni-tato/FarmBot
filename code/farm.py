@@ -13,7 +13,7 @@ class Plot:
             self.crop = None
             self.completeTime = None
 
-    def plant(crop): #currently only working for crops, not trees.
+    def plant(self, crop): #currently only working for crops, not trees.
         self.crop = crop
         now = datetime.datetime.now()
         timeTaken = datetime.timedelta(minutes = crop.time)
@@ -23,9 +23,7 @@ class Plot:
         now = datetime.datetime.now()
         if now >= self.completeTime:
             item = self.crop.item
-            minItem = self.crop.minItem
-            maxItem = self.crop.maxItem
-            itemCount = randint(minItem,maxItem)
+            itemCount = randint(self.crop.minItem,self.crop.maxItem)
             self.crop = None
             self.completeTime = None
             return {item:itemCount} #if these return none then I will need to make item a copy.
