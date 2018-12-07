@@ -7,13 +7,10 @@ import discord
 # e.g. players.py needing the classes in farm.py
 # eeehhhh, I'm sure it'll all be fine.
 import ask
-import players
+import players as play
 
 client = discord.Client()
-
-# This lets ask.py have access to the client variable
-# needed for sending messages and stuff in ask.py
-ask.init(client)
+ask.init(client) # ask.py wants access to the client too!
 
 @client.event
 async def on_ready():
@@ -27,28 +24,64 @@ async def on_message(message):
         # we aren't doing anything here... for now. :thonk:
         return
 
-    # if the message is not sent by the bot (could still be send by another bot, this is fine, I want to make a bot to play this)
+    # Stooooofin's magic - basically, commands[] becomes the message segmented into words (lower case)
+    # While parts[] becomes the message segmented into parts that lead to the end (raw)
+    # E.G. The message "farm create My Farm!" would make:
+    # commands = ["farm", "create", "my", "farm!"]
+    # parts = ["farm create My Farm!", "create My Farm!", "My Farm!", "Farm!"]
+    # (so parts[2] could be used to get the name of the farm, which will even support spaces)
+    commands = []
+    parts = []
+    word = ''
+    for char in message.content:
+        if char == ' ':
+            commands.append(word.lower())
+            for part_i in range(len(parts)):
+                parts[part_i] = parts[part_i] + " " + word
+            parts.append(word)
+            word = ''
+        else:
+            word += char
+    commands.append(word.lower())
+    for part_i in range(len(parts)):
+        parts[part_i] = parts[part_i] + " " + word
+    parts.append(word)
+
     msg = str(message.content).lower() #store the content of the message (lower case.)
 
-    if msg == "start new farm":
-        # This is a simple example showing how to use the new ask.ask() command.
-        answer = await ask.ask(message, "Are you sure you wish to start a new farm?")
-        if answer == True:
-            print("answered with thumbs up")
-        elif answer == False:
-            print("answered with thumbs down")
-        elif answer == None:
-            print("timed out and did not answer")
+    if message.content.startswith('farm') or message.content.startswith('Farm'):
+        if len(commands) <= 1:
+            # the message is just "farm" - don't do anything!
+            return
 
-        # another example: (which I encourage you to try out)
-        #await ask.ask(message, "You really shouldn't react with a pig", answers={"🐷":"pig","🐮":"cow"}, timeout=10)
-        # which will return "pig" if the user reacts with the pig, "cow" if the user reacts with the cow,
-        # and None if the user didn't respond within 10 seconds
+        # is the thing after 'farm' a 'create'? I.E. did the user type in "farm create *"?
+        if commands[1] == 'create':
+            # a CRAP tonne of error prevention
+            if message.author in play.players:
+                if not play.players.get(message.author).farm == None:
+                    # player already has a farm
+                    await client.send_message(message.channel, "Sorry bud but you've already got a farm!")
+                    return
+            else:
+                # if the player doesn't have their object, create one!
+                play.players[message.author] = play.Player(message.author)
 
-    if msg == "hey": # this is just what I use to get some dubug info
-        await client.send_message(message.channel, "hey")
-        print(questions)
+            try:
+                name = parts[2]
+            except IndexError:
+                # no farm name was provided
+                await client.send_message(message.channel, "No farm name was provided.")
+            else:
+                answer = await ask.ask(message, "Are you sure you wish to start a new farm called `" + name + "`?")
+                if answer:
+                    play.players[message.author].farm = "FARM OBJECT HERE BUT THAT MODULE'S NOT DONE YET >:("
+                    await client.send_message(message.channel, "Farm created!")
+            return
 
+        # the player can't do anything if they don't have a farm / their player object!
+        if not message.author in play.players:
+            await client.send_message(message.channel, "Sorry " + message.author.name + ", but you don't have a farm! Create one with `farm create <name>`")
+            return
 
 @client.event
 async def on_reaction_add(reaction, user): #runs whenever a reaction is added.

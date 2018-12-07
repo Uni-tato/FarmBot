@@ -3,7 +3,8 @@ import datetime
 from random import randint
 
 class Farm:
-    def __init__(self, plotCount = 1):
+    def __init__(self, name, plotCount = 1):
+        self.name = name
         self.plotCount = plotCount
         plots = [Plot() for i in range(plotCount)]
 
