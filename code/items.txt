@@ -1,5 +1,5 @@
-name, buy, sell
-
+#name, buy, sell
+#
 wheat seeds, 0.5, 0.25
 wheat, 0.5, 0.25
 rice seeds, 1, 0.5
@@ -15,7 +15,7 @@ carrot, 5, 2.5
 potato, 5, 2.5
 marshmellow pellets, None, 25
 marshmellow, 1.5, 1
-
+#
 apple seeds, 5, 2.5
 apple, 1, 0.5
 banana seeds, 10, 5
