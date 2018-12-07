@@ -3,7 +3,11 @@ import asyncio
 
 import discord
 
+# oh oh, we might have a problem with these imports needing to communicate with each other but cant
+# e.g. players.py needing the classes in farm.py
+# eeehhhh, I'm sure it'll all be fine.
 import ask
+import players
 
 client = discord.Client()
 
@@ -23,27 +27,27 @@ async def on_message(message):
         # we aren't doing anything here... for now. :thonk:
         return
 
-    else: # if the message is not sent by the bot (could still be send by another bot, this is fine, I want to make a bot to play this)
-        msg = str(message.content).lower() #store the content of the message (lower case.)
+    # if the message is not sent by the bot (could still be send by another bot, this is fine, I want to make a bot to play this)
+    msg = str(message.content).lower() #store the content of the message (lower case.)
 
-        if msg == "start new farm":
-            # This is a simple example showing how to use the new ask.ask() command.
-            answer = await ask.ask(message, "Are you sure you wish to start a new farm?")
-            if answer == True:
-                print("answered with thumbs up")
-            elif answer == False:
-                print("answered with thumbs down")
-            elif answer == None:
-                print("timed out and did not answer")
+    if msg == "start new farm":
+        # This is a simple example showing how to use the new ask.ask() command.
+        answer = await ask.ask(message, "Are you sure you wish to start a new farm?")
+        if answer == True:
+            print("answered with thumbs up")
+        elif answer == False:
+            print("answered with thumbs down")
+        elif answer == None:
+            print("timed out and did not answer")
 
-            # another example: (which I encourage you to try out)
-            #await ask.ask(message, "You really shouldn't react with a pig", answers={"🐷":"pig","🐮":"cow"}, timeout=10)
-            # which will return "pig" if the user reacts with the pig, "cow" if the user reacts with the cow,
-            # and None if the user didn't respond within 10 seconds
+        # another example: (which I encourage you to try out)
+        #await ask.ask(message, "You really shouldn't react with a pig", answers={"🐷":"pig","🐮":"cow"}, timeout=10)
+        # which will return "pig" if the user reacts with the pig, "cow" if the user reacts with the cow,
+        # and None if the user didn't respond within 10 seconds
 
-        if msg == "hey": # this is just what I use to get some dubug info
-            await client.send_message(message.channel, "hey")
-            print(questions)
+    if msg == "hey": # this is just what I use to get some dubug info
+        await client.send_message(message.channel, "hey")
+        print(questions)
 
 
 @client.event
