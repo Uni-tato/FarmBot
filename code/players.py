@@ -10,7 +10,8 @@ class Player():
 
 		self.items = {}
 
-		self.money = 50
+		# Is this a good starting value?
+		self.money = 20
 
 		# Here, there will probably be some other stuff such as player upgrades and shit
 		# `then with the money you can upgrade your farm, for example get more plots, reduce grow time etc` - Alex
