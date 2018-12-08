@@ -10,7 +10,6 @@ class Player():
 
 		self.items = {}
 
-		# Is this a good starting value?
 		self.money = 20
 
 		# Here, there will probably be some other stuff such as player upgrades and shit

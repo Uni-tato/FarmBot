@@ -3,9 +3,6 @@ import asyncio
 
 import discord
 
-# oh oh, we might have a problem with these imports needing to communicate with each other but cant
-# e.g. players.py needing the classes in farm.py
-# eeehhhh, I'm sure it'll all be fine.
 import ask
 import players as play
 
@@ -21,8 +18,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     #print(message.author,message.content)
-    if message.author == client.user: #if the message was sent by the bot
-        # we aren't doing anything here... for now. :thonk:
+    if message.author == client.user:
         return
 
     # Stooooofin's magic - basically, commands[] becomes the message segmented into words (lower case)
@@ -30,7 +26,6 @@ async def on_message(message):
     # E.G. The message "farm create My Farm!" would make:
     # commands = ["farm", "create", "my", "farm!"]
     # parts = ["farm create My Farm!", "create My Farm!", "My Farm!", "Farm!"]
-    # (so parts[2] could be used to get the name of the farm, which will even support spaces)
     commands = []
     parts = []
     word = ''
@@ -52,13 +47,11 @@ async def on_message(message):
 
     if commands[0] == prefix:
         if len(commands) <= 1:
-            # the message is just "farm" - don't do anything!
+            # the message is just the prefix - don't do anything!
             return
 
-        # is the thing after 'farm' a 'create'? I.E. did the user type in "farm create *"?
         if commands[1] == 'create':
-            # a CRAP tonne of error prevention
-            if message.author in play.players:
+            if message.author in play.players: # Various Error preventions / case handlings
                 if not play.players.get(message.author).farm == None:
                     # player already has a farm
                     await client.send_message(message.channel, "Sorry bud but you've already got a farm!")
@@ -85,12 +78,8 @@ async def on_message(message):
             return
 
 @client.event
-async def on_reaction_add(reaction, user): #runs whenever a reaction is added.
+async def on_reaction_add(reaction, user):
     message = reaction.message
-    '''
-    for message in client.messages:
-        print(message)
-    '''
     if user != client.user:
         for question in ask.questions:
             if question.message.id == message.id:
