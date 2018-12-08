@@ -11,6 +11,7 @@ import players as play
 
 client = discord.Client()
 ask.init(client) # ask.py wants access to the client too!
+prefix = 'fm'
 
 @client.event
 async def on_ready():
@@ -49,7 +50,7 @@ async def on_message(message):
 
     msg = str(message.content).lower() #store the content of the message (lower case.)
 
-    if message.content.startswith('farm') or message.content.startswith('Farm'):
+    if commands[0] == prefix:
         if len(commands) <= 1:
             # the message is just "farm" - don't do anything!
             return
