@@ -8,7 +8,7 @@ import ask
 import players as play
 import farm
 
-prefix = 'fm'
+prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
