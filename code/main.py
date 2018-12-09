@@ -13,26 +13,20 @@ prefix = 'fm'
 client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
 
-async def create(message, segments, parts):
-    if message.author in play.players: # Various Error preventions / case handlings
-        if not play.players.get(message.author).farm == None:
-            # player already has a farm
-            await client.send_message(message.channel, "Sorry bud but you've already got a farm!")
-            return
-    else:
-        # if the player doesn't have their object, create one!
-        play.players[message.author] = play.Player(message.author)
+@client.command(pass_context=True)
+async def create(ctx, *args):
+    # Disallows users to create a farm if they already have one.
+    if ctx.author in play.players and play.players.get(ctx.author) is not None:
+        await ctx.send("Sorry bud but you've already got a farm!")
+        return
+    # The player does not have a farm at this point.
+    play.players[ctx.author] = play.Player(ctx.author)
 
-    try:
-        name = parts[2]
-    except IndexError:
-        # no farm name was provided
-        await client.send_message(message.channel, "No farm name was provided.")
-    else:
-        answer = await ask.ask(message, "Are you sure you wish to start a new farm called `" + name + "`?")
-        if answer:
-            play.players[message.author].farm = farm.Farm(name)
-            await client.send_message(message.channel, "Farm created!")
+    name = " ".join(args)
+    answer = ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
+    if answer:
+        play.players[ctx.author].farm = farm.Farm(name)
+        await ctx.send("Farm created!")
 
 
 async def plant(message, segments, parts):
