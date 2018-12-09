@@ -16,26 +16,26 @@ ask.init(client) # ask.py wants access to the client too!
 @client.command(pass_context=True)
 async def create(ctx, *args):
     # Disallows users to create a farm if they already have one.
-    if play.players.get(ctx.author) is not None:
-        await ctx.send("Sorry bud but you've already got a farm!")
+    if play.players.get(ctx.message.author) is not None:
+        await client.say("Sorry bud but you've already got a farm!")
         return
     # The player does not have a farm at this point.
-    play.players[ctx.author] = play.Player(ctx.author)
+    play.players[ctx.message.author] = play.Player(ctx.message.author)
 
     name = " ".join(args)
     answer = ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
     if answer:
-        play.players[ctx.author].farm = farm.Farm(name)
-        await ctx.send("Farm created!")
+        play.players[ctx.message.author].farm = farm.Farm(name)
+        await client.say("Farm created!")
 
 
 @client.command(pass_context=True)
 async def plant(ctx, *seed_name):
     plant = " ".join(seed_name)
-    current_player = play.players[ctx.author]
+    current_player = play.players[ctx.message.author]
 
     if plant not in current_player.items:
-        await ctx.send("You don't have that item!")
+        await client.say("You don't have that item!")
         return
 
     for plot in current_player.farm.plots:
