@@ -20,6 +20,9 @@ async def create(ctx, *args):
     if play.players.get(ctx.message.author) is not None:
         await client.say("Sorry bud but you've already got a farm!")
         return
+    elif name == "":
+        await client.say("You can't create a farm with no name!")
+        return
     # The player does not have a farm at this point.
     play.players[ctx.message.author] = play.Player(ctx.message.author)
 
