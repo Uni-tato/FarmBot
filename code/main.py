@@ -2,14 +2,16 @@ import datetime
 import asyncio
 
 import discord
+from discord.ext.commands import Bot
 
 import ask
 import players as play
 import farm
 
-client = discord.Client()
-ask.init(client) # ask.py wants access to the client too!
 prefix = 'fm'
+# `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
+client = Bot(command_prefix=prefix)
+ask.init(client) # ask.py wants access to the client too!
 
 async def create(message, segments, parts):
     if message.author in play.players: # Various Error preventions / case handlings
