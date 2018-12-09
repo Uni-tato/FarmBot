@@ -23,7 +23,7 @@ async def create(ctx, *args):
     play.players[ctx.message.author] = play.Player(ctx.message.author)
 
     name = " ".join(args)
-    answer = ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
+    answer = await ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
     if answer:
         play.players[ctx.message.author].farm = farm.Farm(name)
         await client.say("Farm created!")
