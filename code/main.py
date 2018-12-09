@@ -2,98 +2,47 @@ import datetime
 import asyncio
 
 import discord
+from discord.ext.commands import Bot
 
 import ask
 import players as play
 import farm
 
-client = discord.Client()
+prefix = 'fm '
+# `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
+client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
-prefix = 'fm'
 
-async def create(message, segments, parts):
-    if message.author in play.players: # Various Error preventions / case handlings
-        if not play.players.get(message.author).farm == None:
-            # player already has a farm
-            await client.send_message(message.channel, "Sorry bud but you've already got a farm!")
-            return
-    else:
-        # if the player doesn't have their object, create one!
-        play.players[message.author] = play.Player(message.author)
+@client.command(pass_context=True)
+async def create(ctx, *args):
+    # Disallows users to create a farm if they already have one.
+    if play.players.get(ctx.author) is not None:
+        await ctx.send("Sorry bud but you've already got a farm!")
+        return
+    # The player does not have a farm at this point.
+    play.players[ctx.author] = play.Player(ctx.author)
 
-    try:
-        name = parts[2]
-    except IndexError:
-        # no farm name was provided
-        await client.send_message(message.channel, "No farm name was provided.")
-    else:
-        answer = await ask.ask(message, "Are you sure you wish to start a new farm called `" + name + "`?")
-        if answer:
-            play.players[message.author].farm = farm.Farm(name)
-            await client.send_message(message.channel, "Farm created!")
+    name = " ".join(args)
+    answer = ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
+    if answer:
+        play.players[ctx.author].farm = farm.Farm(name)
+        await ctx.send("Farm created!")
 
 
-async def plant(message, segments, parts):
-    try:
-        segments[2]
-    except IndexError:
-        await client.send_message(message.channel, "You need to tell me what to plant!")
-    else:
-        plant = segments[2]
-        if plant in play.players[message.author].items:
-            for plot in play.players[message.author].farm.plots:
-                if plot.crop == None:
-                    pass
-                    #plot.crop = 
+@client.command(pass_context=True)
+async def plant(ctx, *seed_name):
+    plant = " ".join(seed_name)
+    current_player = play.players[ctx.author]
 
-        else:
-            await client.send_message(message.channel, "You don't have that item!")
-
-
-commands = {"create":create}
-
-@client.event
-async def on_message(message):
-    #print(message.author,message.content)
-    if message.author == client.user:
+    if plant not in current_player.items:
+        await ctx.send("You don't have that item!")
         return
 
-    # Stooooofin's magic - basically, commands[] becomes the message segmented into words (lower case)
-    # While parts[] becomes the message segmented into parts that lead to the end (raw)
-    # E.G. The message "farm create My Farm!" would make:
-    # commands = ["farm", "create", "my", "farm!"]
-    # parts = ["farm create My Farm!", "create My Farm!", "My Farm!", "Farm!"]
-    segments = []
-    parts = []
-    word = ''
-    for char in message.content:
-        if char == ' ':
-            segments.append(word.lower())
-            for i in range(len(parts)):
-                parts[i] = parts[i] + " " + word
-            parts.append(word)
-            word = ''
-        else:
-            word += char
-    segments.append(word.lower())
-    for i in range(len(parts)):
-        parts[i] = parts[i] + " " + word
-    parts.append(word)
+    for plot in current_player.farm.plots:
+        if plot.crop is None:
+            # TODO: Implement this.
+            pass
 
-    if segments[0] == prefix:
-        if len(segments) <= 1:
-            # the message is just the prefix - don't do anything!
-            return
-
-        if segments[1] in commands:
-            await commands[segments[1]](message, segments, parts)
-            return
-
-        ###### Where to put this code will become a problem ######
-        # the player can't do anything if they don't have a farm / their player object!
-        #if not message.author in play.players:
-        #    await client.send_message(message.channel, "Sorry " + message.author.name + ", but you don't have a farm! Create one with `farm create <name>`")
-        #    return
 
 @client.event
 async def on_reaction_add(reaction, user):
