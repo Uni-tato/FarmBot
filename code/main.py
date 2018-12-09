@@ -44,10 +44,6 @@ async def plant(ctx, *seed_name):
             pass
 
 
-
-commands = {"create":create}
-
-
 @client.event
 async def on_reaction_add(reaction, user):
     message = reaction.message
