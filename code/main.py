@@ -35,7 +35,12 @@ async def create(ctx, *args):
 @client.command(pass_context=True)
 async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
-    current_player = play.players[ctx.message.author]
+
+    try:
+        current_player = play.players[ctx.message.author]
+    except KeyError:
+        await client.say("You don't have a farm!")
+        return
 
     if plant not in current_player.items:
         await client.say("You don't have that item!")
