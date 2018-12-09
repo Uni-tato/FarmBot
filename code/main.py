@@ -2,7 +2,7 @@ import datetime
 import asyncio
 
 import discord
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, check, CommandError
 
 import ask
 import players as play
@@ -12,6 +12,28 @@ prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
+
+
+class UserHasFarmError(CommandError):
+    pass
+
+
+class UserHasNoFarmError(CommandError):
+    pass
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, UserHasFarmError):
+        await client.say("Sorry bud but you've already got a farm!")
+        return
+    elif isinstance(error, UserHasNoFarmError):
+        await client.say(f"Sorry {ctx.message.author.name}, but you don't have a farm! Create one with `{client.command_prefix}create <name>`")
+        return
+
+    # Everything else can just be handled by the default error handler
+    await client.on_command_error(error, ctx)
+
 
 @client.command(pass_context=True)
 async def create(ctx, *args):
