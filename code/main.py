@@ -54,20 +54,22 @@ async def plant(ctx, *seed_name):
 
 @client.event
 async def on_reaction_add(reaction, user):
+    # Don't act when the bot itself has added a reaction.
+    if user == client.user:
+        return
+
     message = reaction.message
-    if user != client.user:
-        for question in ask.questions:
-            if question.message.id == message.id:
-                # The message reacted to is a question (that hasn't been answered already cause it's in ask.questions)
-                if user == question.origMessage.author:
-                    # And the right person has reacted too it!
-                    for emoji in question.answers:
-                        if emoji == reaction.emoji:
-                            # The correct user has reacted to a question with a valid emoji
-                            question.emoji = emoji
-                            question.answer = question.answers.get(emoji)
-                            question.answered = True
-                            return
+    for question in ask.questions:
+        # The message reacted to is a question (that hasn't been answered already cause it's in ask.questions)
+        if question.message.id == message.id and user == question.origMessage.author:
+            # And the right person has reacted too it!
+            for emoji in question.answers:
+                if emoji == reaction.emoji:
+                    # The correct user has reacted to a question with a valid emoji
+                    question.emoji = emoji
+                    question.answer = question.answers.get(emoji)
+                    question.answered = True
+                    return
 
 
 @client.event
