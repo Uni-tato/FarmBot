@@ -16,7 +16,7 @@ ask.init(client) # ask.py wants access to the client too!
 @client.command(pass_context=True)
 async def create(ctx, *args):
     # Disallows users to create a farm if they already have one.
-    if ctx.author in play.players and play.players.get(ctx.author) is not None:
+    if play.players.get(ctx.author) is not None:
         await ctx.send("Sorry bud but you've already got a farm!")
         return
     # The player does not have a farm at this point.
