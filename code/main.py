@@ -47,48 +47,6 @@ async def plant(ctx, *seed_name):
 
 commands = {"create":create}
 
-@client.event
-async def on_message(message):
-    #print(message.author,message.content)
-    if message.author == client.user:
-        return
-
-    # Stooooofin's magic - basically, commands[] becomes the message segmented into words (lower case)
-    # While parts[] becomes the message segmented into parts that lead to the end (raw)
-    # E.G. The message "farm create My Farm!" would make:
-    # commands = ["farm", "create", "my", "farm!"]
-    # parts = ["farm create My Farm!", "create My Farm!", "My Farm!", "Farm!"]
-    segments = []
-    parts = []
-    word = ''
-    for char in message.content:
-        if char == ' ':
-            segments.append(word.lower())
-            for i in range(len(parts)):
-                parts[i] = parts[i] + " " + word
-            parts.append(word)
-            word = ''
-        else:
-            word += char
-    segments.append(word.lower())
-    for i in range(len(parts)):
-        parts[i] = parts[i] + " " + word
-    parts.append(word)
-
-    if segments[0] == prefix:
-        if len(segments) <= 1:
-            # the message is just the prefix - don't do anything!
-            return
-
-        if segments[1] in commands:
-            await commands[segments[1]](message, segments, parts)
-            return
-
-        ###### Where to put this code will become a problem ######
-        # the player can't do anything if they don't have a farm / their player object!
-        #if not message.author in play.players:
-        #    await client.send_message(message.channel, "Sorry " + message.author.name + ", but you don't have a farm! Create one with `farm create <name>`")
-        #    return
 
 @client.event
 async def on_reaction_add(reaction, user):
