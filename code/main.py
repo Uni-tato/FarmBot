@@ -29,21 +29,20 @@ async def create(ctx, *args):
         await ctx.send("Farm created!")
 
 
-async def plant(message, segments, parts):
-    try:
-        segments[2]
-    except IndexError:
-        await client.send_message(message.channel, "You need to tell me what to plant!")
-    else:
-        plant = segments[2]
-        if plant in play.players[message.author].items:
-            for plot in play.players[message.author].farm.plots:
-                if plot.crop == None:
-                    pass
-                    #plot.crop = 
+@client.command(pass_context=True)
+async def plant(ctx, *seed_name):
+    plant = " ".join(seed_name)
+    current_player = play.players[ctx.author]
 
-        else:
-            await client.send_message(message.channel, "You don't have that item!")
+    if plant not in current_player.items:
+        await ctx.send("You don't have that item!")
+        return
+
+    for plot in current_player.farm.plots:
+        if plot.crop is None:
+            # TODO: Implement this.
+            pass
+
 
 
 commands = {"create":create}
