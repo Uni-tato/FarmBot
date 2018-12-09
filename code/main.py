@@ -60,9 +60,8 @@ async def on_reaction_add(reaction, user):
 
     message = reaction.message
     for question in ask.questions:
-        # The message reacted to is a question (that hasn't been answered already cause it's in ask.questions)
+        # The message reacted to is an unanswered question that was answered by the right person
         if question.message.id == message.id and user == question.origMessage.author:
-            # And the right person has reacted too it!
             for emoji in question.answers:
                 if emoji == reaction.emoji:
                     # The correct user has reacted to a question with a valid emoji
