@@ -34,7 +34,7 @@ async def create(ctx, *args):
 
 @client.command(pass_context=True)
 async def plant(ctx, *seed_name):
-    plant = " ".join(seed_name)
+    plant = " ".join(seed_name).strip()
     current_player = play.players[ctx.message.author]
 
     if plant not in current_player.items:
