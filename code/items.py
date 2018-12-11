@@ -73,7 +73,7 @@ class Container:
             add_item(other)
 
         elif isinstance(other, str):
-            remove_item(Item(other))
+            add_item(Item(other))
 
         else:
             raise ValueError("Unsupported additon on Container object")
