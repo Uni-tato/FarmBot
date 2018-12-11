@@ -60,17 +60,30 @@ class Item:
 
 
 crops = []
-lines = open('crops.txt','r').readlines()
-for line in lines:
-    if line[0] != '#':
-        line = line.split(',')
-        line[-1] = line[-1].replace('\n','')
-        name = line[0]
-        time = int(line[1])
-        seed = line[2]
-        item = line[3]
-        minItem = int(line[4])
-        maxItem = int(line[5])
-        crop = Crop(name, time, seed, item, minItem, maxItem)
-        crops.append(crop)
+import os; print(os.getcwd())
+with open("crops.txt", "r") as crops_file:
+    reader = DictReader(row for row in crops_file if not row.startswith("#"))
+    for row in reader:
+        name = row["name"]         
+        time = int(row["time"])
+        seed = row["seed"]
+        item = row["item"]
+        minItem = int(row["minItem"])
+        maxItem = int(row["maxItem"])
+
+        crops.append(Crop(name, time, seed, item, minItem, maxItem))
+
+# lines = open('crops.txt','r').readlines()
+# for line in lines:
+#     if line[0] != '#':
+#         line = line.split(',')
+#         line[-1] = line[-1].replace('\n','')
+#         name = line[0]
+#         time = int(line[1])
+#         seed = line[2]
+#         item = line[3]
+#         minItem = int(line[4])
+#         maxItem = int(line[5])
+#         crop = Crop(name, time, seed, item, minItem, maxItem)
+#         crops.append(crop)
 #print(crops)

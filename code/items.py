@@ -1,3 +1,5 @@
+from csv import DictReader
+
 class Item:
     def __init__(self, name, buyCost, sellCost):
         self.name = name
@@ -35,13 +37,22 @@ class Container:
 
 
 items = []
-lines = open('items.txt','r').readlines()
-for line in lines:
-    if line[0] != '#':
-        line = line.split(',')
-        line[-1] = line[-1].replace('\n','')
-        name = line[0]
-        buy = line[1]
-        sell = line[2]
-        item = Item(name,buy,sell)
-        items.append(item)
+with open("item.txt", "r") as item_file:
+    reader = DictReader(row for row in item_file if not row.startswith("#"))
+    for row in reader:
+        name = row["name"]
+        buy = row["buy"]
+        sell = row["sell"]
+
+        items.append(Item(name, buy, sell))
+
+# lines = open('items.txt','r').readlines()
+# for line in lines:
+#     if line[0] != '#':
+#         line = line.split(',')
+#         line[-1] = line[-1].replace('\n','')
+#         name = line[0]
+#         buy = line[1]
+#         sell = line[2]
+#         item = Item(name,buy,sell)
+#         items.append(item)
