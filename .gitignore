@@ -104,4 +104,4 @@ venv.bak/
 .mypy_cache/
 
 # The Discord Bot's token
-code/token.txt
+code/txt/token.txt
