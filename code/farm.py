@@ -1,6 +1,7 @@
 #literally does nothing yet.
 import datetime
 from random import randint
+from csv import DictReader
 
 class Farm:
     def __init__(self, name, plotCount = 1):
@@ -60,7 +61,6 @@ class Item:
 
 
 crops = []
-import os; print(os.getcwd())
 with open("crops.txt", "r") as crops_file:
     reader = DictReader(row for row in crops_file if not row.startswith("#"))
     for row in reader:
