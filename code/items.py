@@ -1,4 +1,3 @@
-import constants
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
@@ -30,7 +29,7 @@ class Item:
 # - returns the item object
 #
 # for item in player.items:
-# - returns each item
+# - returns each item object
 class Container:
     ### NO. NO CONTAINER NAMES. PLEASE. ###
     #def __init__(self, name, items = []):
@@ -141,3 +140,5 @@ class Container:
             else:
                 self.items[item] -= items[item]
         self.__sub__(items)
+
+import constants

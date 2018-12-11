@@ -1,6 +1,8 @@
 from util import FarmbotCSVDialect
 import csv
 
+from items import Item
+from farm import Crop
 
 CROPS = []
 with open("txt/crops.txt", "r") as crops_file:
