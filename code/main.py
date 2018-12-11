@@ -2,7 +2,7 @@ import datetime
 import asyncio
 
 import discord
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, check, CommandError
 
 import ask
 import players as play
@@ -14,17 +14,48 @@ prefix = 'fm '
 client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
 
+
+class UserHasFarmError(CommandError):
+    pass
+
+
+class UserHasNoFarmError(CommandError):
+    pass
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, UserHasFarmError):
+        await client.send_message(ctx.message.channel, "Sorry bud but you've already got a farm!")
+        return
+    elif isinstance(error, UserHasNoFarmError):
+        await client.send_message(ctx.message.channel, f"Sorry {ctx.message.author.name}, but you don't have a farm! Create one with `{client.command_prefix}create <name>`")
+        return
+
+    # Everything else can just be handled by the default error handler
+    await client.on_command_error(error, ctx)
+
+
+def has_farm(ctx):
+    if ctx.message.author in play.players:
+        return True
+    raise UserHasNoFarmError
+
+
+def has_no_farm(ctx):
+    if ctx.message.author not in play.players:
+        return True
+    raise UserHasFarmError
+
+
 @client.command(pass_context=True)
+@check(has_no_farm)
 async def create(ctx, *args):
     name = " ".join(args).strip()
-    # Disallows users to create a farm if they already have one.
-    if play.players.get(ctx.message.author) is not None:
-        await client.say("Sorry bud but you've already got a farm!")
-        return
-    elif name == "":
+    if name == "":
         await client.say("You can't create a farm with no name!")
         return
-    # The player does not have a farm at this point.
+
     play.players[ctx.message.author] = play.Player(ctx.message.author)
 
     answer = await ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
@@ -34,14 +65,10 @@ async def create(ctx, *args):
 
 
 @client.command(pass_context=True)
+@check(has_farm)
 async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
-
-    try:
-        current_player = play.players[ctx.message.author]
-    except KeyError:
-        await client.say("You don't have a farm!")
-        return
+    current_player = play.players[ctx.message.author]
 
     if not curent_player.has(plant)
         await client.say("You don't have that item!")
