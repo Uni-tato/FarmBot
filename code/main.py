@@ -7,6 +7,7 @@ from discord.ext.commands import Bot, check, CommandError
 import ask
 import players as play
 import farm
+import items
 
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
@@ -69,7 +70,7 @@ async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
     current_player = play.players[ctx.message.author]
 
-    if plant not in current_player.items:
+    if not curent_player.has(plant)
         await client.say("You don't have that item!")
         return
 
