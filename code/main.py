@@ -8,48 +8,20 @@ import ask
 import players as play
 import farm
 import items
+import errors
 
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 ask.init(client) # ask.py wants access to the client too!
-
-
-class UserHasFarmError(CommandError):
-    pass
-
-
-class UserHasNoFarmError(CommandError):
-    pass
-
+errors.init(client, play.players)
 
 @client.event
 async def on_command_error(ctx, error):
-    if isinstance(error, UserHasFarmError):
-        await client.send_message(ctx.message.channel, "Sorry bud but you've already got a farm!")
-        return
-    elif isinstance(error, UserHasNoFarmError):
-        await client.send_message(ctx.message.channel, f"Sorry {ctx.message.author.name}, but you don't have a farm! Create one with `{client.command_prefix}create <name>`")
-        return
-
-    # Everything else can just be handled by the default error handler
-    await client.on_command_error(error, ctx)
-
-
-def has_farm(ctx):
-    if ctx.message.author in play.players:
-        return True
-    raise UserHasNoFarmError
-
-
-def has_no_farm(ctx):
-    if ctx.message.author not in play.players:
-        return True
-    raise UserHasFarmError
-
+    await errors.on_command_error(ctx, error)
 
 @client.command(pass_context=True)
-@check(has_no_farm)
+@check(errors.has_no_farm)
 async def create(ctx, *args):
     name = " ".join(args).strip()
     if name == "":
@@ -65,12 +37,12 @@ async def create(ctx, *args):
 
 
 @client.command(pass_context=True)
-@check(has_farm)
+@check(errors.has_farm)
 async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
     current_player = play.players[ctx.message.author]
 
-    if not curent_player.has(plant)
+    if not current_player.has(plant):
         await client.say("You don't have that item!")
         return
 
