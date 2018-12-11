@@ -1,5 +1,6 @@
 from csv import Dialect, QUOTE_MINIMAL
 
+
 class FarmbotCSVDialect(Dialect):
     delimiter = ","
     quotechar = '"'
