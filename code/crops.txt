@@ -1,4 +1,4 @@
-#name, time, seed, item, minItem, maxItem
+name, time, seed, item, minItem, maxItem
 #
 wheat, 1, wheat seeds, wheat, 4, 6
 rice, 1, rice seeds, rice, 2, 4

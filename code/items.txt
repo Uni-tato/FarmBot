@@ -1,4 +1,4 @@
-#name, buy, sell
+name, buy, sell
 #
 wheat seeds, 0.5, 0.25
 wheat, 0.5, 0.25
