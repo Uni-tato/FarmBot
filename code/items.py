@@ -1,3 +1,4 @@
+import constants
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
@@ -6,7 +7,7 @@ class Item:
         # This lets the Item class be initialized with just the item name
         # e.g. Item("wheat") will automatically fill the buy and sell costs too
         if buyCost == None and sellCost == None:
-            for item in items:
+            for item in constants.ITEMS:
                 if self.name == item.name:
                     self.buyCost = item.buyCost
                     self.sellCost = item.sellCost
@@ -135,7 +136,7 @@ class Container:
             elif items[item] > self.items[item]:
                 raise valueError(f"More \"{item}\"s removed than in Container.")
             
-            elif items[item] = self.items[item]:
+            elif items[item] == self.items[item]:
                 del self.items[item]
             else:
                 self.items[item] -= items[item]

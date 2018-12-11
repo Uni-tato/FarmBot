@@ -79,10 +79,10 @@ async def on_ready():
 # Will try and get a token from code/token.txt
 # If this fails (file does not exist) then it asks for the token and creates the file
 try:
-    file = open("token.txt")
+    file = open("txt/token.txt")
 except OSError:
     token = input("Please input the Discord Token: ")
-    file = open("token.txt", "w+")
+    file = open("txt/token.txt", "w+")
     file.write(token)
     file.close()
     client.run(token)

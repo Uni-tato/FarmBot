@@ -2,7 +2,7 @@ from util import FarmbotCSVDialect
 
 
 CROPS = []
-with open("crops.txt", "r") as crops_file:
+with open("txt/crops.txt", "r") as crops_file:
     reader = DictReader((row for row in crops_file if not row.startswith("#")), dialect=FarmbotCSVDialect)
     for row in reader:
         name = row["name"]         
@@ -16,7 +16,7 @@ with open("crops.txt", "r") as crops_file:
 
 
 ITEMS = []
-with open("item.txt", "r") as item_file:
+with open("txt/item.txt", "r") as item_file:
     reader = DictReader((row for row in item_file if not row.startswith("#")), dialect=FarmbotCSVDialect)
     for row in reader:
         name = row["name"]

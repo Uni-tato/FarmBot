@@ -1,6 +1,6 @@
 import discord
 import traceback, sys
-from discord.ext.commands import Bot, check, CommandError
+from discord.ext.commands import CommandError
 
 
 client = None
