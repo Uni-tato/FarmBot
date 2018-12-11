@@ -7,6 +7,7 @@ from discord.ext.commands import Bot
 import ask
 import players as play
 import farm
+import items
 
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
@@ -42,7 +43,7 @@ async def plant(ctx, *seed_name):
         await client.say("You don't have a farm!")
         return
 
-    if plant not in current_player.items:
+    if not curent_player.has(plant)
         await client.say("You don't have that item!")
         return
 
