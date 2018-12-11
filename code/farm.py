@@ -7,7 +7,7 @@ class Farm:
     def __init__(self, name, plotCount = 1):
         self.name = name
         self.plotCount = plotCount
-        plots = [Plot() for i in range(plotCount)]
+        self.plots = [Plot() for i in range(plotCount)]
 
 
 class Plot:
