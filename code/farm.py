@@ -3,6 +3,8 @@ import datetime
 from random import randint
 from csv import DictReader
 
+from util import FarmbotCSVDialect
+
 class Farm:
     def __init__(self, name, plotCount = 1):
         self.name = name
@@ -62,7 +64,7 @@ class Item:
 
 crops = []
 with open("crops.txt", "r") as crops_file:
-    reader = DictReader(row for row in crops_file if not row.startswith("#"))
+    reader = DictReader((row for row in crops_file if not row.startswith("#")), dialect=FarmbotCSVDialect)
     for row in reader:
         name = row["name"]         
         time = int(row["time"])

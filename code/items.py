@@ -1,5 +1,7 @@
 from csv import DictReader
 
+from util import FarmbotCSVDialect
+
 class Item:
     def __init__(self, name, buyCost, sellCost):
         self.name = name
@@ -38,7 +40,7 @@ class Container:
 
 items = []
 with open("item.txt", "r") as item_file:
-    reader = DictReader(row for row in item_file if not row.startswith("#"))
+    reader = DictReader((row for row in item_file if not row.startswith("#")), dialect=FarmbotCSVDialect)
     for row in reader:
         name = row["name"]
         buy = row["buy"]
