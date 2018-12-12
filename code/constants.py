@@ -14,8 +14,9 @@ with open("txt/crops.txt", "r") as crops_file:
         item = row["item"]
         minItem = int(row["minItem"])
         maxItem = int(row["maxItem"])
+        emoji = row["emoji"]
 
-        CROPS.append(Crop(name, time, seed, item, minItem, maxItem))
+        CROPS.append(Crop(name, time, seed, item, minItem, maxItem, emoji))
 
 
 ITEMS = []
@@ -25,5 +26,6 @@ with open("txt/items.txt", "r") as item_file:
         name = row["name"]
         buy = row["buy"]
         sell = row["sell"]
+        emoji = row["emoji"]
 
-        ITEMS.append(Item(name, buy, sell))
+        ITEMS.append(Item(name, buy, sell, emoji))

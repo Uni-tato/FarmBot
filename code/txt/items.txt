@@ -1,28 +1,28 @@
-name, buy, sell
+name, buy, sell, emoji
 #
-wheat seeds, 0.5, 0.25
-wheat, 0.5, 0.25
-rice seeds, 1, 0.5
-rice, 1, 0.5
-cucumber seeds, 20, 10
-cucumber, 12, 6
-tomato seeds, 20, 10
-tomato, 10, 5
-pumpkin seeds, 25, 12.5
-pumpkin, 26.5, 13.25
-carrot seeds, 30, 15
-carrot, 5, 2.5
-potato, 5, 2.5
-marshmellow pellets, None, 25
-marshmellow, 1.5, 1
+wheat seeds, 0.5, 0.25, fm_wheat_seed
+wheat, 0.5, 0.25, fm_wheat
+rice seeds, 1, 0.5, x
+rice, 1, 0.5, fm_rice
+cucumber seeds, 20, 10, x
+cucumber, 12, 6, x
+tomato seeds, 20, 10, x
+tomato, 10, 5, x
+pumpkin seeds, 25, 12.5, x
+pumpkin, 26.5, 13.25, x
+carrot seeds, 30, 15, x
+carrot, 5, 2.5, fm_carrot
+potato, 5, 2.5, x
+marshmallow pellets, None, 25, x
+marshmallow, 1.5, 1, x
 #
-apple seeds, 5, 2.5
-apple, 1, 0.5
-banana seeds, 10, 5
-banana, 5, 2.5
-bananana seeds, 10, 5
-bana seeds, 10, 5
-pear seeds, 15, 7.5
-pear, 1.5, 0.75
-orange seeds, 15, 1
-orange, 1, 0.5
+apple seeds, 5, 2.5, x
+apple, 1, 0.5, x
+banana seeds, 10, 5, x
+banana, 5, 2.5, x
+bananana seeds, 10, 5, x
+bana seeds, 10, 5, x
+pear seeds, 15, 7.5, x
+pear, 1.5, 0.75, x
+orange seeds, 15, 1, x
+orange, 1, 0.5, x
