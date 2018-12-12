@@ -59,7 +59,7 @@ async def plant(ctx, *seed_name):
                 if plot.crop is None:
                     plot.plant(crop)
                     current_player.items -= crop.seed
-                    await client.say(f"Successfully planted `{crop.name}`!")
+                    await client.say(f"Successfully planted {crop.emoji} **{crop.name}**!")
                     return
 
             await client.say("Sorry, but all your plots are full!")
@@ -83,7 +83,7 @@ async def harvest(ctx, *args):
         await client.say(f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!")
         return
     else:
-        embed = discord.Embed(title="*Harvest Results:*", colour=0x10ff10)
+        embed = discord.Embed(title="*Harvest Results:*", colour=0xffe48e)
         text = ""
         for item in loot:
             text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
@@ -99,13 +99,22 @@ async def inv(ctx, *args):
         play.players[ctx.message.author] = play.Player(ctx.message.author)
     current_player = play.players[ctx.message.author]
 
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x10ff10)
+    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080d6)
+    embed.add_field(name="**__Money__:**", value=f":moneybag: ${current_player.money}")
+
     items_text = ""
+    seeds_text = ""
     if len(current_player.items) > 0:
         for item in current_player.items:
-            items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+            if item.name.endswith(("seeds", "pellets")):
+                seeds_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+            else:
+                items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
 
-        embed.add_field(name="**__Items__:**", value=items_text)
+        if items_text is not "":
+            embed.add_field(name="**__Items__:**", value=items_text)
+        if seeds_text is not "":
+            embed.add_field(name="**__Seeds__:**", value=seeds_text)
 
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
 
@@ -114,7 +123,7 @@ async def inv(ctx, *args):
 @check(errors.has_farm)
 async def status(ctx, *args):
     current_player = play.players[ctx.message.author]
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Farm \"{current_player.farm.name}\":*", colour=0x10ff10)
+    embed = discord.Embed(title=f"***{current_player.farm.name}*** *status:*", colour=0x00d100)
 
     for plot in current_player.farm.plots:
         text = ""
@@ -155,8 +164,9 @@ async def dgive(ctx, *args):
         play.players[ctx.message.author] = play.Player(ctx.message.author)
     current_player = play.players[ctx.message.author]
 
-    current_player.items += items.Item(plant)
-    await client.say(f"Gave `{plant}` to {current_player.player.name}")
+    item = items.Item(plant, amount=amount)
+    current_player.items += item
+    await client.say(f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}")
 
 
 @client.event
