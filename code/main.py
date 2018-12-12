@@ -65,7 +65,72 @@ async def plant(ctx, *seed_name):
 
 
 @client.command(pass_context=True)
-async def debug_give(ctx, *name):
+@check(errors.has_farm)
+async def harvest(ctx, *args):
+    current_player = play.players[ctx.message.author]
+
+    loot = items.Container([])
+    for plot in current_player.farm.plots:
+        item = plot.harvest()
+        if item is not None:
+            loot += item
+
+    if len(loot) == 0:
+        await client.say(f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!")
+        return
+    else:
+        embed = discord.Embed(title="*Harvest Results:*", colour=0x10ff10)
+        text = ""
+        for item in loot:
+            text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+            current_player.items += item
+        embed.add_field(name="**__Items__:**", value=text)
+
+        await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+
+
+@client.command(pass_context=True)
+async def inv(ctx, *args):
+    if ctx.message.author not in play.players:
+        play.players[ctx.message.author] = play.Player(ctx.message.author)
+    current_player = play.players[ctx.message.author]
+
+    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x10ff10)
+    items_text = ""
+    if len(current_player.items) > 0:
+        for item in current_player.items:
+            items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+
+        embed.add_field(name="**__Items__:**", value=items_text)
+
+    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+
+
+@client.command(pass_context=True)
+@check(errors.has_farm)
+async def status(ctx, *args):
+    current_player = play.players[ctx.message.author]
+    embed = discord.Embed(title=f"*{current_player.player.name}'s Farm \"{current_player.farm.name}\":*", colour=0x10ff10)
+
+    for plot in current_player.farm.plots:
+        text = ""
+        if plot.crop is None:
+            text = "Empty"
+        else:
+            text = f"**Crop:** {plot.crop.emoji} {plot.crop.name}\n"
+            if plot.time_left() is 0:
+                text += f"**Time Left:** Ready!"
+            else:
+                text += f"**Time Left:** {plot.time_left()}min\n"
+
+        index = current_player.farm.plots.index(plot)
+        embed.add_field(name=f"**__Plot #{index+1}__:**", value=text)
+
+    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+
+
+@client.command(pass_context=True)
+async def dgive(ctx, *name):
     plant = " ".join(name).strip()
 
     if not items.is_item(plant):
@@ -102,6 +167,11 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_ready():
     print("FarmBot is online")
+
+    for item in constants.ITEMS:
+        item.init_emoji(client)
+    for crop in constants.CROPS:
+        crop.init_emoji(client)
 
 
 # Will try and get a token from code/token.txt

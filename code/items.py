@@ -1,19 +1,29 @@
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
-    def __init__(self, name, buyCost = None, sellCost = None, amount = 1):
+    def __init__(self, name, buyCost = None, sellCost = None, emoji = None, amount = 1):
         self.name = name
         # This lets the Item class be initialized with just the item name
         # e.g. Item("wheat") will automatically fill the buy and sell costs too
-        if buyCost == None and sellCost == None:
+        if buyCost == None and sellCost == None and emoji == None:
             for item in constants.ITEMS:
                 if self.name == item.name:
                     self.buyCost = item.buyCost
                     self.sellCost = item.sellCost
+                    self.emoji = item.emoji
         else:
             self.buyCost = buyCost
             self.sellCost = sellCost
+            self.emoji = emoji
         self.amount = amount
+
+    def init_emoji(self, client):
+        for emoji in client.get_all_emojis():
+            if emoji.name == self.emoji:
+                self.emoji = str(emoji)
+                return
+
+        self.emoji = ":" + self.emoji + ":"
 
 # USAGE EXAMPLES:
 # player.has(Item), player.has("wheat")
@@ -34,12 +44,12 @@ class Container:
     ### NO. NO CONTAINER NAMES. PLEASE. ###
     #def __init__(self, name, items = []):
     #    self.name = name
-    def __init__(self, items = []):
+    def __init__(self, items_input = []):
         # This if statement makes it so that Container can accept both an item or list of items as an input
-        if isinstance(items, Item):
-            self.items = [items]
-        elif isinstance(items, list):
-            self.items = items
+        if isinstance(items_input, Item):
+            self.items = [items_input]
+        elif isinstance(items_input, list):
+            self.items = items_input
 
     def has(self, item_name):
         name = None
@@ -77,6 +87,8 @@ class Container:
 
         else:
             raise ValueError("Unsupported additon on Container object")
+
+        self.sort()
         return self
 
     def __sub__(self, other):
@@ -104,6 +116,8 @@ class Container:
 
         else:
             raise ValueError("Unsupported subtraction on Container object")
+
+        self.sort()
         return self
 
     def __getitem__(self, key):
@@ -121,6 +135,9 @@ class Container:
     # __iter__ lets the Container object be itterated over, returning the list of items
     def __iter__(self):
         return iter(self.items)
+
+    def __len__(self):
+        return len(self.items)
 
     # Alex still gets his .append() and .remove() he had before
     def append(self, items):
@@ -141,6 +158,11 @@ class Container:
                 self.items[item] -= items[item]
         self.__sub__(items)
 
+    def sort(self):
+        # sort the contents of the container alphabetically
+        # this is done automatically whenever an item is added/removed from the Container
+        self.items.sort(key=get_name)
+
 import constants
 
 def is_item(name):
@@ -148,3 +170,7 @@ def is_item(name):
         if item.name == name:
             return True
     return False
+
+# Don't use this, this is a low-level function
+def get_name(item):
+    return item.name
