@@ -16,7 +16,7 @@ class UserHasFarmError(CommandError):
     pass
 def has_farm(ctx):
     if ctx.message.author in players:
-        if not players[ctx.message.author].farm is None:
+        if players[ctx.message.author].farm is not None:
             return True
     raise UserHasNoFarmError
 
