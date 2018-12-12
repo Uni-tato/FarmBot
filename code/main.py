@@ -134,8 +134,18 @@ async def status(ctx, *args):
 
 
 @client.command(pass_context=True)
-async def dgive(ctx, *name):
-    plant = " ".join(name).strip()
+async def dgive(ctx, *args):
+    if len(args) == 0:
+        return
+
+    amount = 1; plant = ""
+    try:
+        int(args[0])
+    except ValueError:
+        plant = " ".join(args).strip()
+    else:
+        amount = int(args[0])
+        plant = " ".join(args[1:]).strip()
 
     if not items.is_item(plant):
         await client.say(f"`{plant}` isn't a real item...")
