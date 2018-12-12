@@ -9,6 +9,7 @@ import players as play
 import farm
 import items
 import errors
+import constants
 
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
@@ -42,14 +43,41 @@ async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
     current_player = play.players[ctx.message.author]
 
-    if not current_player.has(plant):
-        await client.say("You don't have that item!")
+    for crop in constants.CROPS:
+        if plant == crop.seed or plant == crop.name:
+            # we've fond the crop that the player was looking for
+            if not current_player.has(crop.seed):
+                await client.say(f"Uhhhh, you don't have any `{crop.seed}`...")
+                return
+
+            # now we need to plant it...
+            for plot in current_player.farm.plots:
+                if plot.crop is None:
+                    plot.plant(crop)
+                    current_player.items -= crop.seed
+                    await client.say(f"Successfully planted `{crop.name}`!")
+                    return
+
+            await client.say("Sorry, but all your plots are full!")
+            return
+
+    await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+
+
+@client.command(pass_context=True)
+async def debug_give(ctx, *name):
+    plant = " ".join(name).strip()
+
+    if not items.is_item(plant):
+        await client.say(f"`{plant}` isn't a real item...")
         return
 
-    for plot in current_player.farm.plots:
-        if plot.crop is None:
-            # TODO: Implement this.
-            pass
+    if ctx.message.author not in play.players:
+        play.players[ctx.message.author] = play.Player(ctx.message.author)
+    current_player = play.players[ctx.message.author]
+
+    current_player.items += items.Item(plant)
+    await client.say(f"Gave `{plant}` to {current_player.player.name}")
 
 
 @client.event

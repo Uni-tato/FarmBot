@@ -142,3 +142,9 @@ class Container:
         self.__sub__(items)
 
 import constants
+
+def is_item(name):
+    for item in constants.ITEMS:
+        if item.name == name:
+            return True
+    return False
