@@ -11,6 +11,10 @@ import items
 import errors
 import constants
 
+#### QUICK TO DO LIST: ####
+# - Make a method on Crop that returns the time untill completioin in a nice string e.g. "9.1hours" and not "456mins"
+# - Make the `fm plant` command better - print to the user time until compleation? Let user select plots manually?
+
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
