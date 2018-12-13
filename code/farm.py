@@ -27,11 +27,11 @@ class Plot:
     
     @property
     def completeTime(self):
-        return self._start_time + self.crop.time*60
+        return self._start_time + self.crop.time * 60
 
     def plant(self, crop):
         self.crop = crop
-        self._start_time = time.time()
+        self._start_time = round(time.time())
 
     def harvest(self):
         if self.crop is None:
@@ -49,15 +49,35 @@ class Plot:
         else:
             return None
 
-    def time_left(self):
+    def time(self, data_type, from_present = True):
         if self.crop is None:
-            return None
+            return False
 
-        time_remaining = self.completeTime - time.time()
-        if time_remaining <= 0:
-            return 0
+        # generate time_int in seconds
+        time_int = None
+        if from_present:
+            time_int = self.completeTime - round(time.time())
         else:
-            return round(time_remaining/60, 1)
+            time_int = self.crop.time * 60
+
+        if data_type is int:
+            if time_int <= 0:
+                return 0
+            else:
+                return round(time_int/60, 1)
+
+        elif data_type is str:
+            # We need to nicely format time_int into a non-cancerous string.
+            if time_int < 60:
+                return f"{time} sec"
+            elif time_int < 60*60:
+                return f"{round(time_int/60, 1)} min"
+            elif time_int < 60*60*24:
+                return f"{round(time_int/60/60, 1)} hour"
+            elif time_int < 60*60*24*365:
+                return f"{round(time_int/60/60/24, 1)} days"
+            else:
+                raise ValueError("time is waaaaay too long")
 
 
 class Crop:

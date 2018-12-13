@@ -61,7 +61,8 @@ async def plant(ctx, *seed_name):
                 if plot.crop is None:
                     plot.plant(crop)
                     current_player.items -= crop.seed
-                    await client.say(f"Successfully planted {crop.emoji} **{crop.name}**!")
+                    await client.say(f"Planted {crop.emoji} **{crop.name}** in **Plot #{current_player.farm.plots.index(plot)+1}**!\n\
+Time until completion is **{plot.time(str, False)}**.")
                     return
 
             await client.say("Sorry, but all your plots are full!")
@@ -133,10 +134,10 @@ async def status(ctx, *args):
             text = "Empty"
         else:
             text = f"**Crop:** {plot.crop.emoji} {plot.crop.name}\n"
-            if plot.time_left() is 0:
+            if plot.time(int) is 0:
                 text += f"**Time Left:** Ready!"
             else:
-                text += f"**Time Left:** {plot.time_left()}min\n"
+                text += f"**Time Left:** {plot.time(str)}"
 
         index = current_player.farm.plots.index(plot)
         embed.add_field(name=f"**__Plot #{index+1}__:**", value=text)
