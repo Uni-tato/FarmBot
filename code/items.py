@@ -1,21 +1,29 @@
+import weakref
+
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
-    def __init__(self, name, buyCost = None, sellCost = None, emoji = None, amount = 1):
+    def __init__(self, name, amount = 1, *, manager):
         self.name = name
-        # This lets the Item class be initialized with just the item name
-        # e.g. Item("wheat") will automatically fill the buy and sell costs too
-        if buyCost == None and sellCost == None and emoji == None:
-            for item in constants.ITEMS:
-                if self.name == item.name:
-                    self.buyCost = item.buyCost
-                    self.sellCost = item.sellCost
-                    self.emoji = item.emoji
-        else:
-            self.buyCost = buyCost
-            self.sellCost = sellCost
-            self.emoji = emoji
+        # TODO: Remove this? Make `Container` handle item numbers. 
         self.amount = amount
+        self._manager = weakref.proxy(manager)
+
+    @property
+    def buyCost(self):
+        return self._manager.get_buy_price(self.name)
+
+    @property
+    def sellCost(self):
+        return self._manager.get_sell_price(self.name)
+
+    @property
+    def emoji(self):
+        return self._manager.get_emoji(self.name)
+
+    @property.setter
+    def emoji(self, new_emoji):
+        self._manager._items[self.name]["emoji"] = new_emoji
 
     def init_emoji(self, client):
         for emoji in client.get_all_emojis():
