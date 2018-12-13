@@ -16,7 +16,7 @@ class CropManager:
         self._crops = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
-            (row for row in crops_file if not row.startswith("#")),
+            (row for row in crops_file_text if not row.startswith("#")),
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
@@ -73,7 +73,7 @@ class MarketManager:
         self._items = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
-            (row for row in item_file if not row.startswith("#")),
+            (row for row in item_file_text if not row.startswith("#")),
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
