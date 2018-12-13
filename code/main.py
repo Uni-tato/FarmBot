@@ -10,6 +10,7 @@ import farm
 import items
 import errors
 import constants
+from managers import CropManager, MarketManager
 
 #### QUICK TO DO LIST: ####
 # - Make a method on Crop that returns the time untill completioin in a nice string e.g. "9.1hours" and not "456mins"
@@ -47,7 +48,7 @@ async def plant(ctx, *seed_name):
     plant = " ".join(seed_name).strip()
     current_player = play.players[ctx.message.author]
 
-    for crop in constants.CROPS:
+    for crop in crop_manager.crops:
         if plant == crop.seed or plant == crop.name:
             # we've fond the crop that the player was looking for
             if not current_player.has(crop.seed):
@@ -192,13 +193,19 @@ async def on_reaction_add(reaction, user):
 async def on_ready():
     print("FarmBot is online")
 
-    for item in constants.ITEMS:
+    for item in market_manager.items:
         item.init_emoji(client)
-    for crop in constants.CROPS:
+    for crop in crop_manager.crops:
         crop.init_emoji(client)
 
 
 if __name__ == "__main__":
+    with open("txt/crops.txt", "r") as crops_file:
+        crop_manager = CropManager(crops_file.read())
+
+    with open("txt/items.txt", "r") as items_file:
+        market_manager = MarketManager(items_file.read())
+
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
     try:
