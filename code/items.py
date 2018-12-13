@@ -171,14 +171,6 @@ class Container:
         # this is done automatically whenever an item is added/removed from the Container
         self.items.sort(key=get_name)
 
-import constants
 
-def is_item(name):
-    for item in constants.ITEMS:
-        if item.name == name:
-            return True
-    return False
-
-# Don't use this, this is a low-level function
 def get_name(item):
     return item.name

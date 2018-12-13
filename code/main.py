@@ -157,9 +157,10 @@ async def dgive(ctx, *args):
         amount = int(args[0])
         plant = " ".join(args[1:]).strip()
 
-    if not items.is_item(plant):
-        await client.say(f"`{plant}` isn't a real item...")
-        return
+    for item in market_manager.items:
+        if item.name == name:
+            await client.say(f"`{plant}` isn't a real item...")
+            return
 
     if ctx.message.author not in play.players:
         play.players[ctx.message.author] = play.Player(ctx.message.author)
