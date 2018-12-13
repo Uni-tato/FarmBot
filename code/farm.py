@@ -79,9 +79,3 @@ class Tree:
         self.minLifetime = minLifetime
         self.maxLifetime = maxLifetime
 
-
-class Item:
-    def __init__(self,name,buy,sell):
-        self.name = name
-        self.buy = buy
-        self.sell = sell
