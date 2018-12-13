@@ -11,6 +11,8 @@ class EventManager:
 # Crops and trees are handled by this class.
 class CropManager:
     def __init__(self, crops_file_text):
+        self.crops = []
+        # The internal data storage for crops
         self._crops = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
@@ -27,6 +29,7 @@ class CropManager:
                 "maxLifetime": int(row["maxLifetime"]),
                 "emoji": row["emoji"],
             }
+            self.crops.append(Crop(row["name"]), manager=self)
 
     def _get_inner(self, crop, field):
         try:
@@ -65,22 +68,25 @@ class CropManager:
 
 class MarketManager:
     def __init__(self, items_file_text):
-        self.items = {}
+        self.items = []
+        # The internal data storage for crops
+        self._items = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
             (row for row in item_file if not row.startswith("#")),
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
-            self.items[row["name"]] = {
+            self._items[row["name"]] = {
                 "buy": row["buy"],
                 "sell": row["sell"],
                 "emoji": row["emoji"],
             }
+            self.items.append(Item(row["name"], manager=self))
 
     def _get_inner(self, item, field):
         try:
-            item_info = self.items[item]
+            item_info = self._items[item]
         except KeyError:
             # TODO: Replace with a non-user-facing error?
             raise ValueError(f"`{item}` is not a valid item.")
