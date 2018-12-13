@@ -201,10 +201,10 @@ async def on_ready():
 
 if __name__ == "__main__":
     with open("txt/crops.txt", "r") as crops_file:
-        crop_manager = CropManager(crops_file.read())
+        crop_manager = CropManager(crops_file.readlines())
 
     with open("txt/items.txt", "r") as items_file:
-        market_manager = MarketManager(items_file.read())
+        market_manager = MarketManager(items_file.readlines())
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file

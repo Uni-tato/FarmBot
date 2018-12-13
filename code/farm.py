@@ -61,31 +61,31 @@ class Crop:
 
     @property
     def item(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_item(self.name)
 
     @property
     def minItem(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_min_items(self.name)
 
     @property
     def maxItem(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_max_items(self.name)
 
     @property
     def minLifeTime(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_min_lifetime(self.name)
 
     @property
     def maxLifeTime(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_max_lifetime(self.name)
 
     @property
     def emoji(self):
-        return self._manager.get_seed(self.name)
+        return self._manager.get_emoji(self.name)
 
     @property.setter
     def emoji(self, new_emoji):
-        self._manager._items[self.name]["emoji"] = new_emoji
+        self._manager._crops[self.name]["emoji"] = new_emoji
 
     def init_emoji(self, client):
         for emoji in client.get_all_emojis():

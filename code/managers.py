@@ -29,7 +29,7 @@ class CropManager:
                 "maxLifetime": int(row["maxLifetime"]),
                 "emoji": row["emoji"],
             }
-            self.crops.append(Crop(row["name"]), manager=self)
+            self.crops.append(Crop(row["name"], manager=self))
 
     def _get_inner(self, crop, field):
         try:
