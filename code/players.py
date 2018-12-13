@@ -1,6 +1,14 @@
 import items
+
 # This'll be a dictionary where the keys are the player discord objects, and the values are this custom player class
 players = {}
+
+
+market_manager = None
+def init(market_manager_):
+    global market_manager
+    market_manager = market_manager_
+
 
 class Player():
 	def __init__(self, player):
@@ -9,7 +17,7 @@ class Player():
 
 		self.farm = None
 
-		self.items = items.Container()
+		self.items = items.Container(manager=market_manager)
 
 		self.money = 20
 

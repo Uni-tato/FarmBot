@@ -7,6 +7,12 @@ import weakref
 import items
 
 
+market_manager = None
+def init(market_manager_):
+    global market_manager
+    market_manager = market_manager_
+
+
 class Farm:
     def __init__(self, name, plotCount = 2):
         self.name = name
@@ -36,7 +42,7 @@ class Plot:
             itemCount = randint(self.crop.minItem,self.crop.maxItem)
             self.crop = None
             self.completeTime = None
-            return items.Item(item_name, amount=itemCount)
+            return items.Item(item_name, amount=itemCount, manager=self._manager)
             #return {item:itemCount} #if these return none then I will need to make item a copy.
         else:
             return None
@@ -83,7 +89,7 @@ class Crop:
     def emoji(self):
         return self._manager.get_emoji(self.name)
 
-    @property.setter
+    @emoji.setter
     def emoji(self, new_emoji):
         self._manager._crops[self.name]["emoji"] = new_emoji
 

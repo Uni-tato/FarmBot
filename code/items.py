@@ -21,7 +21,7 @@ class Item:
     def emoji(self):
         return self._manager.get_emoji(self.name)
 
-    @property.setter
+    @emoji.setter
     def emoji(self, new_emoji):
         self._manager._items[self.name]["emoji"] = new_emoji
 
@@ -52,7 +52,9 @@ class Container:
     ### NO. NO CONTAINER NAMES. PLEASE. ###
     #def __init__(self, name, items = []):
     #    self.name = name
-    def __init__(self, items_input = []):
+    def __init__(self, items_input = [], *, manager):
+        # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
+        self._manager = manager
         # This if statement makes it so that Container can accept both an item or list of items as an input
         if isinstance(items_input, Item):
             self.items = [items_input]
@@ -81,7 +83,7 @@ class Container:
                     break
             if not found:
                 # if the target item does not exist in the source, then we must create it there
-                self.items.append(Item(tar_item.name, amount=tar_item.amount))
+                self.items.append(Item(tar_item.name, amount=tar_item.amount, manager=self._manager))
 
         if isinstance(other, Container):
             for item in other:
@@ -91,7 +93,7 @@ class Container:
             add_item(other)
 
         elif isinstance(other, str):
-            add_item(Item(other))
+            add_item(Item(other, manager=self._manager))
 
         else:
             raise ValueError("Unsupported additon on Container object")
@@ -120,7 +122,7 @@ class Container:
             remove_item(other)
 
         elif isinstance(other, str):
-            remove_item(Item(other))
+            remove_item(Item(other, manager=self._manager))
 
         else:
             raise ValueError("Unsupported subtraction on Container object")

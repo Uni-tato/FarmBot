@@ -1,4 +1,6 @@
 from util import FarmbotCSVDialect
+from farm import Crop
+from items import Item
 
 import csv
 
@@ -25,7 +27,7 @@ class CropManager:
                 "item": row["item"],
                 "minItem": int(row["minItem"]),
                 "maxItem": int(row["maxItem"]),
-                "minLifeTime": int(row["minLifeTime"]),
+                "minLifetime": int(row["minLifetime"]),
                 "maxLifetime": int(row["maxLifetime"]),
                 "emoji": row["emoji"],
             }
@@ -41,29 +43,29 @@ class CropManager:
         return crop_info[field]
 
     def get_item(self, crop):
-        return _get_inner(crop, "item")
+        return self._get_inner(crop, "item")
 
     def get_seed(self, crop):
-        return _get_inner(crop, "seed")
+        return self._get_inner(crop, "seed")
 
     def get_min_items(self, crop):
-        return _get_inner(crop, "minItem")
+        return self._get_inner(crop, "minItem")
 
     def get_max_items(self, crop):
-        return _get_inner(crop, "maxItem")
+        return self._get_inner(crop, "maxItem")
 
     def get_min_lifetime(self, crop):
-        return _get_inner(crop, "minLifeTime")
+        return self._get_inner(crop, "minLifetime")
 
     def get_max_lifetime(self, crop):
-        return _get_inner(crop, "minItem")
+        return self._get_inner(crop, "maxLifetime")
 
     def get_emoji(self, crop):
-        return _get_inner(crop, "minItem")
+        return self._get_inner(crop, "emoji")
 
     # Returns whether it is a `Crop` or `Tree`.
     def get_type(self, crop):
-        return _get_inner(crop, "minItem")
+        raise NotImplementedError
 
 
 class MarketManager:
@@ -73,7 +75,7 @@ class MarketManager:
         self._items = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
-            (row for row in item_file_text if not row.startswith("#")),
+            (row for row in items_file_text if not row.startswith("#")),
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
@@ -94,10 +96,10 @@ class MarketManager:
         return item_info[field]
 
     def get_buy_price(self, item_name):
-        return _get_inner(item_name, "buy")
+        return self._get_inner(item_name, "buy")
 
     def get_sell_price(self, item_name):
-        return _get_inner(item_name, "sell")
+        return self._get_inner(item_name, "sell")
 
     def get_emoji(self, item_name):
-        return _get_inner(item_name, "emoji")
+        return self._get_inner(item_name, "emoji")

@@ -9,7 +9,6 @@ import players as play
 import farm
 import items
 import errors
-import constants
 from managers import CropManager, MarketManager
 
 #### QUICK TO DO LIST: ####
@@ -19,8 +18,10 @@ from managers import CropManager, MarketManager
 prefix = 'fm '
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
+
 ask.init(client) # ask.py wants access to the client too!
 errors.init(client, play.players)
+
 
 @client.event
 async def on_command_error(ctx, error):
@@ -74,7 +75,7 @@ async def plant(ctx, *seed_name):
 async def harvest(ctx, *args):
     current_player = play.players[ctx.message.author]
 
-    loot = items.Container([])
+    loot = items.Container([], manager=market_manager)
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
@@ -158,15 +159,17 @@ async def dgive(ctx, *args):
         plant = " ".join(args[1:]).strip()
 
     for item in market_manager.items:
-        if item.name == name:
-            await client.say(f"`{plant}` isn't a real item...")
-            return
+        if item.name == plant:
+            break
+    else:
+        await client.say(f"`{plant}` isn't a real item...")
+        return
 
     if ctx.message.author not in play.players:
         play.players[ctx.message.author] = play.Player(ctx.message.author)
     current_player = play.players[ctx.message.author]
 
-    item = items.Item(plant, amount=amount)
+    item = items.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item
     await client.say(f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}")
 
@@ -206,6 +209,9 @@ if __name__ == "__main__":
 
     with open("txt/items.txt", "r") as items_file:
         market_manager = MarketManager(items_file.readlines())
+
+    play.init(market_manager)
+    farm.init(market_manager)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file

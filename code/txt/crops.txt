@@ -1,14 +1,14 @@
-name, time, seed, item, minItem, maxItem, emoji
+name, seed, item, minItem, maxItem, minLifetime, maxLifetime, emoji
 #
-wheat, 1, wheat seeds, wheat, 4, 6, fm_wheat
-rice, 1, rice seeds, rice, 2, 4, fm_rice
-cucumber, 60, cucumber seeds, cucumber, 4, 8, x
-tomato, 360, tomato seeds, tomato, 50, 70, x
-pumpkin, 120, pumpkin seeds, pumpkin, 7, 13, x
-carrot, 30, carrot seeds, carrot, 27, 33, fm_carrot
-potato, 15, potato, potato, 20, 30, x
+wheat, wheat seeds, wheat, 4, 6, 1, 1, fm_wheat
+rice, rice seeds, rice, 2, 4, 1, 1, fm_rice
+cucumber, cucumber seeds, cucumber, 4, 8, 60, 60, x
+tomato, tomato seeds, tomato, 50, 70, 360, 360, x
+pumpkin, pumpkin seeds, pumpkin, 7, 13, 120, 120, x
+carrot, carrot seeds, carrot, 27, 33, 30, 30, fm_carrot
+potato, potato, potato, 20, 30, 15, 15, x
 #
-marshmallow, 1440, marshmallow pellets, marshmallow, 268, 308, x
+marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, x
 #
 # Stefan's crops
 # none for now P
