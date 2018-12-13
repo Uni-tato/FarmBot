@@ -17,17 +17,17 @@ class CropManager:
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
-            min_item = int(row["minItem"])
-            max_item = int(row["maxItem"])
+            min_Lifetime = int(row["minLifetime"])
+            max_Lifetime = int(row["maxLifetime"])
             self._crops[row["name"]] = {
                 "seed": row["seed"],
                 "item": row["item"],
-                "minItem": min_item,
-                "maxItem": max_item,
-                "minLifetime": int(row["minLifetime"]),
-                "maxLifetime": int(row["maxLifetime"]),
+                "minItem": int(row["minItem"]),
+                "maxItem": int(row["minItem"]),
+                "minLifetime": min_Lifetime,
+                "maxLifetime": max_Lifetime,
                 "emoji": row["emoji"],
-                "time": random.randint(min_item, max_item),
+                "time": random.randint(min_Lifetime, max_Lifetime),
             }
             self.crops.append(Crop(row["name"], manager=self))
 
