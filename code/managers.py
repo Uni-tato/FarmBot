@@ -11,14 +11,14 @@ class EventManager:
 # Crops and trees are handled by this class.
 class CropManager:
     def __init__(self, crops_file_text):
-        self.crops = {}
+        self._crops = {}
         # TODO: Implement a general version of the csv parsing.
         reader = csv.DictReader(
             (row for row in crops_file if not row.startswith("#")),
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
-            self.crops[row["name"]] = {
+            self._crops[row["name"]] = {
                 "seed": row["seed"],
                 "item": row["item"],
                 "minItem": int(row["minItem"]),
@@ -30,12 +30,18 @@ class CropManager:
 
     def _get_inner(self, crop, field):
         try:
-            crop_info = self.crops[crop]
+            crop_info = self._crops[crop]
         except KeyError:
             # TODO: Replace with a non-user-facing error?
             raise ValueError(f"`{crop}` is not a valid crop.")
 
         return crop_info[field]
+
+    def get_item(self, crop):
+        return _get_inner(crop, "item")
+
+    def get_seed(self, crop):
+        return _get_inner(crop, "seed")
 
     def get_min_items(self, crop):
         return _get_inner(crop, "minItem")
