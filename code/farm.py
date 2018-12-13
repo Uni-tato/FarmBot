@@ -22,27 +22,29 @@ class Farm:
 
 class Plot:
     def __init__(self):
-            self.crop = None
-            self.completeTime = None
+        self.crop = None
+        self._start_time = None
+    
+    @property
+    def completeTime(self):
+        return self._start_time + self.crop.time*60
 
-    def plant(self, crop): #currently only working for crops, not trees.
+    def plant(self, crop):
         self.crop = crop
-        #now = datetime.datetime.now()
-        #timeTaken = datetime.timedelta(minutes = crop.time)
-        #self.completeTime = now + timeTaken
-        self.completeTime = time.time() + crop.time * 60
+        self._start_time = time.time()
 
     def harvest(self):
         if self.crop is None:
             return None
-        #now = datetime.datetime.now()
-        #if now >= self.completeTime:
         if time.time() >= self.completeTime:
             item_name = self.crop.item
-            itemCount = randint(self.crop.minItem,self.crop.maxItem)
+            itemCount = randint(self.crop.minItem, self.crop.maxItem)
             self.crop = None
-            self.completeTime = None
-            return items.Item(item_name, amount=itemCount, manager=self._manager)
+            return items.Item(
+                item_name,
+                amount=itemCount,
+                manager=market_manager
+            )
             #return {item:itemCount} #if these return none then I will need to make item a copy.
         else:
             return None
@@ -56,10 +58,16 @@ class Plot:
             return 0
         else:
             return round(time_remaining/60, 1)
+
+
 class Crop:
     def __init__(self, name, *, manager):
         self.name = name
         self._manager = weakref.proxy(manager)
+
+    @property
+    def time(self):
+        return self._manager.get_time(self.name)
 
     @property
     def seed(self):

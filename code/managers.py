@@ -1,16 +1,11 @@
+import random
+import csv
+
 from util import FarmbotCSVDialect
 from farm import Crop
 from items import Item
 
-import csv
 
-
-# TODO: Figure out what methods should be here. Flesh out the events mechanic more.
-class EventManager:
-    pass
-
-
-# Crops and trees are handled by this class.
 class CropManager:
     def __init__(self, crops_file_text):
         self.crops = []
@@ -22,14 +17,17 @@ class CropManager:
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
+            min_item = int(row["minItem"])
+            max_item = int(row["maxItem"])
             self._crops[row["name"]] = {
                 "seed": row["seed"],
                 "item": row["item"],
-                "minItem": int(row["minItem"]),
-                "maxItem": int(row["maxItem"]),
+                "minItem": min_item,
+                "maxItem": max_item,
                 "minLifetime": int(row["minLifetime"]),
                 "maxLifetime": int(row["maxLifetime"]),
                 "emoji": row["emoji"],
+                "time": random.randint(min_item, max_item),
             }
             self.crops.append(Crop(row["name"], manager=self))
 
@@ -41,6 +39,9 @@ class CropManager:
             raise ValueError(f"`{crop}` is not a valid crop.")
 
         return crop_info[field]
+
+    def get_time(self, crop):
+        return self._get_inner(crop, "time")
 
     def get_item(self, crop):
         return self._get_inner(crop, "item")
