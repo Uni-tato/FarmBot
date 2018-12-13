@@ -198,21 +198,21 @@ async def on_ready():
         crop.init_emoji(client)
 
 
-# Will try and get a token from code/token.txt
-# If this fails (file does not exist) then it asks for the token and creates the file
-try:
-    file = open("txt/token.txt")
-except OSError:
-    token = input("Please input the Discord Token: ")
-    file = open("txt/token.txt", "w+")
-    file.write(token)
-    file.close()
-    client.run(token)
-else:
-    token = file.read()
-    file.close()
-    client.run(token)
-
+if __name__ == "__main__":
+    # Will try and get a token from code/token.txt
+    # If this fails (file does not exist) then it asks for the token and creates the file
+    try:
+        f = open("txt/token.txt")
+    except FileNotFoundError:
+        token = input("Please input the Discord Token: ")
+        f = open("txt/token.txt", "w+")
+        f.write(token)
+    else:
+        token = f.read()
+    finally:
+        f.close()
+        client.run(token)
+    
 '''
 test = discord.Embed(title="yas")
 test.add_field(name="I'm a field name", value="and I'm it's value")
