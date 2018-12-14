@@ -61,16 +61,22 @@ class Container:
         elif isinstance(items_input, list):
             self.items = items_input
 
-    def has(self, item_name):
+    def has(self, input_):
         name = None
-        if isinstance(item_name, str):
-            name = item_name
-        elif isinstance(item_name, Item):
-            name = item_name.name
+        if isinstance(input_, str):
+            name = input_
+        elif isinstance(input_, Item):
+            name = input_.name
 
         for item in self.items:
             if name == item.name:
-                return True
+                if isinstance(input_, Item):
+                    if item.amount >= input_.amount:
+                        return True
+                    else:
+                        return False
+                else:
+                    return True
         return False
 
     def __add__(self, other):
