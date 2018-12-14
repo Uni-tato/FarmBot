@@ -10,6 +10,7 @@ import farm
 import items
 import errors
 from managers import CropManager, MarketManager
+from util import get_amount, get_name
 
 #### QUICK TO DO LIST: ####
 # - Make a method on Crop that returns the time untill completioin in a nice string e.g. "9.1hours" and not "456mins"
@@ -26,26 +27,6 @@ errors.init(client, play.players)
 @client.event
 async def on_command_error(error, ctx):
     await errors.on_command_error(error, ctx)
-
-
-def get_amount(args):
-    try:
-        int(args[0])
-    except ValueError:
-        return 1
-    else:
-        return int(args[0])
-
-def get_name(args, allow_ints=False):
-    if allow_ints:
-        return " ".join(args).strip()
-
-    try:
-        int(args[0])
-    except ValueError:
-        return " ".join(args).strip()
-    else:
-        return " ".join(args[1:]).strip()
 
 
 @client.command(pass_context=True)
