@@ -27,10 +27,31 @@ errors.init(client, play.players)
 async def on_command_error(ctx, error):
     await errors.on_command_error(ctx, error)
 
+
+def get_amount(args):
+    try:
+        int(args[0])
+    except ValueError:
+        return 1
+    else:
+        return int(args[0])
+
+def get_name(args, allow_ints=False):
+    if allow_ints:
+        return " ".join(args).strip()
+
+    try:
+        int(args[0])
+    except ValueError:
+        return " ".join(args).strip()
+    else:
+        return " ".join(args[1:]).strip()
+
+
 @client.command(pass_context=True)
 @check(errors.has_no_farm)
 async def create(ctx, *args):
-    name = " ".join(args).strip()
+    name = get_name(args, True)
     if name == "":
         await client.say("You can't create a farm with no name!")
         return
@@ -46,8 +67,8 @@ async def create(ctx, *args):
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
-    plant = " ".join(seed_name).strip()
-    current_player = play.players[ctx.message.author]
+    plant = await get_name(seed_name)
+    current_player = play.get(ctx)
 
     for crop in crop_manager.crops:
         if plant == crop.seed or plant == crop.name:
@@ -74,7 +95,7 @@ Time until completion is **{plot.time(str, False)}**.")
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def harvest(ctx, *args):
-    current_player = play.players[ctx.message.author]
+    current_player = play.get(ctx)
 
     loot = items.Container([], manager=market_manager)
     for plot in current_player.farm.plots:
@@ -98,9 +119,7 @@ async def harvest(ctx, *args):
 
 @client.command(pass_context=True)
 async def inv(ctx, *args):
-    if ctx.message.author not in play.players:
-        play.players[ctx.message.author] = play.Player(ctx.message.author)
-    current_player = play.players[ctx.message.author]
+    current_player = play.get(ctx)
 
     embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080d6)
     embed.add_field(name="**__Money__:**", value=f":moneybag: ${current_player.money}")
@@ -125,7 +144,7 @@ async def inv(ctx, *args):
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def status(ctx, *args):
-    current_player = play.players[ctx.message.author]
+    current_player = play.get(ctx)
     embed = discord.Embed(title=f"***{current_player.farm.name}*** *status:*", colour=0x00d100)
 
     for plot in current_player.farm.plots:
@@ -147,6 +166,7 @@ async def status(ctx, *args):
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
+    current_player = play.get(ctx)
     if len(args) == 0:
         return
 
@@ -165,10 +185,6 @@ async def dgive(ctx, *args):
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
-
-    if ctx.message.author not in play.players:
-        play.players[ctx.message.author] = play.Player(ctx.message.author)
-    current_player = play.players[ctx.message.author]
 
     item = items.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item

@@ -27,3 +27,11 @@ class Player():
 
 	def has(self, item_name):
 		return self.items.has(item_name)
+
+
+# returns the player object corresponding to ctx.message.author
+# Also automagically creates the player object if there isn't one already
+def get(ctx):
+	if ctx.message.author not in players:
+		players[ctx.message.author] = Player(ctx.message.author)
+	return players[ctx.message.author]
