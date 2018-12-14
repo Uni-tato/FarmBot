@@ -173,11 +173,8 @@ async def buy(ctx, *args):
     amount = get_amount(args)
     plant = get_name(args)
 
-    item = None
-    for item_ in market_manager.items:
-        if item_.name == plant:
-            item = items.Item(plant, amount=amount, manager=market_manager)
-            break
+    if market_manager.exists(plant):
+        item = items.Item(plant, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
@@ -208,13 +205,10 @@ async def sell(ctx, *args):
     item_name = get_name(args)
 
     # Then check if the item is actually a real item...
-    item = None
-    for item_ in market_manager.items:
-        if item_.name == item_name:
-            item = items.Item(item_name, amount=amount, manager=market_manager)
-            break
+    if market_manager.exists(item_name):
+        item = items.Item(item_name, amount=amount, manager=market_manager)
     else:
-        await client.say(f"`{plant}` isn't a real item...")
+        await client.say(f"`{item_name}` isn't a real item...")
         return
 
     # Then check if the user actually *has* this item...
@@ -241,6 +235,7 @@ async def dgive(ctx, *args):
 
     amount = 1; plant = ""
     try:
+    # Then check if the item is actually a real item...
         int(args[0])
     except ValueError:
         plant = " ".join(args).strip()
@@ -248,10 +243,7 @@ async def dgive(ctx, *args):
         amount = int(args[0])
         plant = " ".join(args[1:]).strip()
 
-    for item in market_manager.items:
-        if item.name == plant:
-            break
-    else:
+    if not market_manager.exists(plant):
         await client.say(f"`{plant}` isn't a real item...")
         return
 

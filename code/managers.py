@@ -40,6 +40,9 @@ class CropManager:
 
         return crop_info[field]
 
+    def exists(self, crop):
+        return crop in self._crops
+
     def get_time(self, crop):
         return self._get_inner(crop, "time")
 
@@ -95,6 +98,9 @@ class MarketManager:
             raise ValueError(f"`{item}` is not a valid item.")
 
         return item_info[field]
+
+    def exists(self, item_name):
+        return item_name in self._items
 
     def get_buy_price(self, item_name):
         return self._get_inner(item_name, "buy")
