@@ -69,7 +69,7 @@ class Plot:
         elif data_type is str:
             # We need to nicely format time_int into a non-cancerous string.
             if time_int < 60:
-                return f"{time} sec"
+                return f"{time_int} sec"
             elif time_int < 60*60:
                 return f"{round(time_int/60, 1)} min"
             elif time_int < 60*60*24:
