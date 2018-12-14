@@ -37,7 +37,7 @@ class Question:
 
 
     def getEmbed(self):
-        embed = discord.Embed(title = "**"+self.content+"**", color = colourAsked)
+        embed = discord.Embed(title = self.content, color = colourAsked)
         return embed
 
     def setMessage(self,message):
