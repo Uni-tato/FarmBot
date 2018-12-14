@@ -67,7 +67,7 @@ async def create(ctx, *args):
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
-    plant = await get_name(seed_name)
+    plant = get_name(seed_name)
     current_player = play.get(ctx)
 
     for crop in crop_manager.crops:
