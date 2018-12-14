@@ -24,8 +24,8 @@ errors.init(client, play.players)
 
 
 @client.event
-async def on_command_error(ctx, error):
-    await errors.on_command_error(ctx, error)
+async def on_command_error(error, ctx):
+    await errors.on_command_error(error, ctx)
 
 
 def get_amount(args):
