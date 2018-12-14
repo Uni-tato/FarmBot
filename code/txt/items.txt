@@ -13,7 +13,7 @@ pumpkin, 26.5, 13.25, x
 carrot seeds, 30, 15, x
 carrot, 5, 2.5, fm_carrot
 potato, 5, 2.5, x
-marshmallow pellets, None, 25, x
+marshmallow pellets, 999999999, 25, x
 marshmallow, 1.5, 1, x
 #
 apple seeds, 5, 2.5, x
