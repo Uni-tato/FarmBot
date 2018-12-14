@@ -214,7 +214,7 @@ async def sell(ctx, *args):
             item = items.Item(item_name, amount=amount, manager=market_manager)
             break
     else:
-        await client.say(f"`{plant}` isn't a real item...")
+        await client.say(f"`{item_name}` isn't a real item...")
         return
 
     # Then check if the user actually *has* this item...
