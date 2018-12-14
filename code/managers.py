@@ -81,8 +81,8 @@ class MarketManager:
         )
         for row in reader:
             self._items[row["name"]] = {
-                "buy": row["buy"],
-                "sell": row["sell"],
+                "buy": float(row["buy"]),
+                "sell": float(row["sell"]),
                 "emoji": row["emoji"],
             }
             self.items.append(Item(row["name"], manager=self))
