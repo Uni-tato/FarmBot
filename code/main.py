@@ -52,7 +52,7 @@ async def plant(ctx, *seed_name):
     current_player = play.get(ctx)
 
     for crop in crop_manager.crops:
-        if plant == crop.seed or plant == crop.name:
+        if plant in (crop.seed, crop.name):
             # we've fond the crop that the player was looking for
             if not current_player.has(crop.seed):
                 await client.say(f"Uhhhh, you don't have any `{crop.seed}`...")
@@ -211,7 +211,7 @@ async def sell(ctx, *args):
 
     # Then we confirm if the user really wants to sell this...
     answer = await ask.ask(ctx.message, f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sellCost * item.amount}**?")
-    if answer == False or answer == None:
+    if answer in (False, None):
         return
 
     # And only **then** we know we can sell it:
