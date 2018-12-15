@@ -160,6 +160,11 @@ async def buy(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
+    # Ensure that the user cannot buy an invalid number of items.
+    if item.amount < 1:
+        await client.say(f"You can't buy less than **1** item!")
+        return
+
     if current_player.money < item.buyCost * item.amount:
         await client.say(f"Sorry {current_player.player.name} but you don't have enough money! \
 (Only **${current_player.money}** instead of **${item.buyCost * item.amount}**)")
@@ -190,6 +195,11 @@ async def sell(ctx, *args):
         item = items.Item(item_name, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{item_name}` isn't a real item...")
+        return
+
+    # Ensure that the user cannot sell an invalid number of items.
+    if item.amount < 1:
+        await client.say(f"You can't sell less than **1** item!")
         return
 
     # Then check if the user actually *has* this item...
