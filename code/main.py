@@ -165,19 +165,19 @@ async def buy(ctx, *args):
         await client.say(f"You can't buy less than **1** item!")
         return
 
-    if current_player.money < item.buyCost * item.amount:
+    if current_player.money < item.buy_cost * item.amount:
         await client.say(
             f"Sorry {current_player.player.name} but you don't have enough money! "
-            f"(Only **${current_player.money}** instead of **${item.buyCost * item.amount}**)"
+            f"(Only **${current_player.money}** instead of **${item.buy_cost * item.amount}**)"
         )
         return
 
     answer = await ask.ask(ctx.message,
-        f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buyCost * item.amount}**?**",
+        f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buy_cost * item.amount}**?**",
         answers={"💸":True,"❌":False}
     )
     if answer:
-        current_player.money -= item.buyCost * item.amount
+        current_player.money -= item.buy_cost * item.amount
         current_player.items += item
         await client.say(f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**.")
 
@@ -210,13 +210,13 @@ async def sell(ctx, *args):
         return
 
     # Then we confirm if the user really wants to sell this...
-    answer = await ask.ask(ctx.message, f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sellCost * item.amount}**?")
+    answer = await ask.ask(ctx.message, f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sell_cost * item.amount}**?")
     if answer in (False, None):
         return
 
     # And only **then** we know we can sell it:
     current_player.items -= item
-    current_player.money += item.sellCost * item.amount
+    current_player.money += item.sell_cost * item.amount
     await client.say(f"Sold! You now have $**{current_player.money}**.")
 
 
@@ -254,7 +254,7 @@ async def on_reaction_add(reaction, user):
     message = reaction.message
     for question in ask.questions:
         # The message reacted to is an unanswered question that was answered by the right person
-        if question.message.id == message.id and user == question.origMessage.author:
+        if question.message.id == message.id and user == question.orig_message.author:
             for emoji in question.answers:
                 if emoji == reaction.emoji:
                     # The correct user has reacted to a question with a valid emoji
