@@ -9,7 +9,7 @@ import discord
 
 colour_asked = 0x00ff00
 colour_answered = 0xf4d85a
-colourTimedOut = 0xddbb8b
+colour_timed_out = 0xddbb8b
 
 # this variable and function let ask.py have access to the client
 client = None
@@ -43,19 +43,19 @@ class Question:
     def set_message(self,message):
         self.message = message
 
-    def getAnsweredEmbed(self):
+    def get_answered_embed(self):
         embed = discord.Embed(title = "~~"+self.content+"~~", color = colour_answered)
         return embed
 
-    def getTimedOutEmbed(self):
-        embed = discord.Embed(title = "~~"+self.content+"~~", color = colourTimedOut)
+    def get_timed_out_embed(self):
+        embed = discord.Embed(title = "~~"+self.content+"~~", color = colour_timed_out)
         return embed
 
-    def getAnsweredReply(self):
+    def get_answered_reply(self):
         reply = self.orig_message.author.name + " answered with: " + self.emoji
         return reply
 
-    def getTimedOutReply(self):
+    def get_timed_out_reply(self):
         reply = self.orig_message.author.name + " took too long to answer."
         return reply
 
@@ -81,13 +81,13 @@ async def ask(orig_message, content, *, answers={'👍':True,'👎':False}, time
     while True:
         if question.answered:
             # question has been answered
-            await client.edit_message(question.message, question.getAnsweredReply(), embed=question.getAnsweredEmbed())
+            await client.edit_message(question.message, question.get_answered_reply(), embed=question.get_answered_embed())
             break
         if time.time() >= question.time + timeout:
             # question has been timedout (how do you spell this!?!?)
             question.answer = None
             question.answered = False
-            await client.edit_message(question.message, question.getTimedOutReply(), embed=question.getTimedOutEmbed())
+            await client.edit_message(question.message, question.get_timed_out_reply(), embed=question.get_timed_out_embed())
             break
         # this lets other async functions still run while this is waiting for a reaction
         await asyncio.sleep(1.0)

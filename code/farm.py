@@ -106,11 +106,11 @@ class Crop:
         return self._manager.get_max_items(self.name)
 
     @property
-    def minLifeTime(self):
+    def min_lifetime(self):
         return self._manager.get_min_lifetime(self.name)
 
     @property
-    def maxLifeTime(self):
+    def max_lifetime(self):
         return self._manager.get_max_lifetime(self.name)
 
     @property
