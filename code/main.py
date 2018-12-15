@@ -166,18 +166,20 @@ async def buy(ctx, *args):
         return
 
     if current_player.money < item.buyCost * item.amount:
-        await client.say(f"Sorry {current_player.player.name} but you don't have enough money! \
-(Only **${current_player.money}** instead of **${item.buyCost * item.amount}**)")
-        return
-    else:
-        answer = await ask.ask(ctx.message,
-            f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buyCost * item.amount}**?**",
-            answers={"💸":True,"❌":False}
+        await client.say(
+            f"Sorry {current_player.player.name} but you don't have enough money! "
+            f"(Only **${current_player.money}** instead of **${item.buyCost * item.amount}**)"
         )
-        if answer:
-            current_player.money -= item.buyCost * item.amount
-            current_player.items += item
-            await client.say(f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**.")
+        return
+
+    answer = await ask.ask(ctx.message,
+        f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buyCost * item.amount}**?**",
+        answers={"💸":True,"❌":False}
+    )
+    if answer:
+        current_player.money -= item.buyCost * item.amount
+        current_player.items += item
+        await client.say(f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**.")
 
 
 @client.command(pass_context=True)
