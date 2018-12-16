@@ -14,10 +14,10 @@ def init(market_manager_):
 
 
 class Farm:
-    def __init__(self, name, plotCount = 2):
+    def __init__(self, name, plot_count = 2):
         self.name = name
-        self.plotCount = plotCount
-        self.plots = [Plot() for i in range(plotCount)]
+        self.plot_count = plot_count
+        self.plots = [Plot() for i in range(plot_count)]
 
 
 class Plot:
@@ -26,7 +26,7 @@ class Plot:
         self._start_time = None
     
     @property
-    def completeTime(self):
+    def complete_time(self):
         return self._start_time + self.crop.time * 60
 
     def plant(self, crop):
@@ -36,16 +36,16 @@ class Plot:
     def harvest(self):
         if self.crop is None:
             return None
-        if time.time() >= self.completeTime:
+        if time.time() >= self.complete_time:
             item_name = self.crop.item
-            itemCount = randint(self.crop.minItem, self.crop.maxItem)
+            item_count = randint(self.crop.min_item, self.crop.max_item)
             self.crop = None
             return items.Item(
                 item_name,
-                amount=itemCount,
+                amount=item_count,
                 manager=market_manager
             )
-            #return {item:itemCount} #if these return none then I will need to make item a copy.
+            #return {item:item_count} #if these return none then I will need to make item a copy.
         else:
             return None
 
@@ -56,7 +56,7 @@ class Plot:
         # generate time_int in seconds
         time_int = None
         if from_present:
-            time_int = self.completeTime - round(time.time())
+            time_int = self.complete_time - round(time.time())
         else:
             time_int = self.crop.time * 60
 
@@ -98,19 +98,19 @@ class Crop:
         return self._manager.get_item(self.name)
 
     @property
-    def minItem(self):
+    def min_item(self):
         return self._manager.get_min_items(self.name)
 
     @property
-    def maxItem(self):
+    def max_item(self):
         return self._manager.get_max_items(self.name)
 
     @property
-    def minLifeTime(self):
+    def min_lifetime(self):
         return self._manager.get_min_lifetime(self.name)
 
     @property
-    def maxLifeTime(self):
+    def max_lifetime(self):
         return self._manager.get_max_lifetime(self.name)
 
     @property
@@ -131,13 +131,13 @@ class Crop:
 
 
 class Tree:
-    def __init__(self,name,time,seed,item,minItem,maxItem,minLifetime,maxLifetime):
+    def __init__(self,name,time,seed,item,min_item,max_item,min_lifetime,max_lifetime):
         self.name = name
         self.time = time
         self.seed = seed
         self.item = item
-        self.minItem = minItem
-        self.maxItem = maxItem 
-        self.minLifetime = minLifetime
-        self.maxLifetime = maxLifetime
+        self.min_item = min_item
+        self.max_item = max_item 
+        self.min_lifetime = min_lifetime
+        self.max_lifetime = max_lifetime
 

@@ -1,4 +1,4 @@
-name, time, seed, item, minItem, maxItem, minLifetime, maxLifetime
+name, time, seed, item, min_item, max_item, min_lifetime, max_lifetime
 #
 apple, 60 , apple seeds, apple, 6, 8, 23, 25
 banana, 60, banana seeds, banana, 44, 52, 23, 25

@@ -10,11 +10,11 @@ class Item:
         self._manager = weakref.proxy(manager)
 
     @property
-    def buyCost(self):
+    def buy_cost(self):
         return self._manager.get_buy_price(self.name)
 
     @property
-    def sellCost(self):
+    def sell_cost(self):
         return self._manager.get_sell_price(self.name)
 
     @property
@@ -164,9 +164,9 @@ class Container:
             items = items.items
         for item in items:
             if item not in self.items: # return an error if the container does not have (enough of) an item.
-                raise valueError(f"Item: \"{item}\" not present in Container.")
+                raise value_error(f"Item: \"{item}\" not present in Container.")
             elif items[item] > self.items[item]:
-                raise valueError(f"More \"{item}\"s removed than in Container.")
+                raise value_error(f"More \"{item}\"s removed than in Container.")
             
             elif items[item] == self.items[item]:
                 del self.items[item]

@@ -1,4 +1,4 @@
-name, seed, item, minItem, maxItem, minLifetime, maxLifetime, emoji
+name, seed, item, min_item, max_item, min_lifetime, max_lifetime, emoji
 #
 wheat, wheat seeds, wheat, 4, 6, 1, 1, fm_wheat
 rice, rice seeds, rice, 2, 4, 1, 1, fm_rice

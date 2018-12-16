@@ -17,17 +17,17 @@ class CropManager:
             dialect=FarmbotCSVDialect,
         )
         for row in reader:
-            min_Lifetime = int(row["minLifetime"])
-            max_Lifetime = int(row["maxLifetime"])
+            min_lifetime = int(row["min_lifetime"])
+            max_lifetime = int(row["max_lifetime"])
             self._crops[row["name"]] = {
                 "seed": row["seed"],
                 "item": row["item"],
-                "minItem": int(row["minItem"]),
-                "maxItem": int(row["minItem"]),
-                "minLifetime": min_Lifetime,
-                "maxLifetime": max_Lifetime,
+                "min_item": int(row["min_item"]),
+                "max_item": int(row["min_item"]),
+                "min_lifetime": min_lifetime,
+                "max_lifetime": max_lifetime,
                 "emoji": row["emoji"],
-                "time": random.randint(min_Lifetime, max_Lifetime),
+                "time": random.randint(min_lifetime, max_lifetime),
             }
             self.crops.append(Crop(row["name"], manager=self))
 
@@ -53,16 +53,16 @@ class CropManager:
         return self._get_inner(crop, "seed")
 
     def get_min_items(self, crop):
-        return self._get_inner(crop, "minItem")
+        return self._get_inner(crop, "min_item")
 
     def get_max_items(self, crop):
-        return self._get_inner(crop, "maxItem")
+        return self._get_inner(crop, "max_item")
 
     def get_min_lifetime(self, crop):
-        return self._get_inner(crop, "minLifetime")
+        return self._get_inner(crop, "min_lifetime")
 
     def get_max_lifetime(self, crop):
-        return self._get_inner(crop, "maxLifetime")
+        return self._get_inner(crop, "max_lifetime")
 
     def get_emoji(self, crop):
         return self._get_inner(crop, "emoji")
