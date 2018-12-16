@@ -129,15 +129,3 @@ class Crop:
 
         self.emoji = ":" + self.emoji + ":"
 
-
-class Tree:
-    def __init__(self,name,time,seed,item,min_item,max_item,min_lifetime,max_lifetime):
-        self.name = name
-        self.time = time
-        self.seed = seed
-        self.item = item
-        self.min_item = min_item
-        self.max_item = max_item 
-        self.min_lifetime = min_lifetime
-        self.max_lifetime = max_lifetime
-
