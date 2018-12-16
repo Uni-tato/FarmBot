@@ -28,6 +28,7 @@ class CropManager:
                 "max_lifetime": max_lifetime,
                 "emoji": row["emoji"],
                 "time": random.randint(min_lifetime, max_lifetime),
+                "type": row["type"],
             }
             self.crops.append(Crop(row["name"], manager=self))
 
@@ -69,7 +70,7 @@ class CropManager:
 
     # Returns whether it is a `Crop` or `Tree`.
     def get_type(self, crop):
-        raise NotImplementedError
+        return self._get_inner(crop, "type")
 
 
 class MarketManager:
