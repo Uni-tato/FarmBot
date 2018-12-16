@@ -27,10 +27,19 @@ class CropManager:
                 "min_lifetime": min_lifetime,
                 "max_lifetime": max_lifetime,
                 "emoji": row["emoji"],
-                "time": random.randint(min_lifetime, max_lifetime),
+                "time": self._calculate_harvest_time(min_lifetime, max_lifetime, row["type"]),
                 "type": row["type"],
             }
             self.crops.append(Crop(row["name"], manager=self))
+
+    def _calculate_harvest_time(self, min_lifetime, max_lifetime, crop_type):
+        lifetime = random.randint(min_lifetime, max_lifetime)
+
+        if crop_type == "crop":
+            return lifetime
+        elif crop_type == "tree":
+            # An arbitrary number of harvests-- a temporary solution.
+            return lifetime / 10
 
     def _get_inner(self, crop, field):
         try:
