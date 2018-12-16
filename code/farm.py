@@ -1,7 +1,7 @@
 #literally does nothing yet.
 import datetime
 import time
-from random import randint
+import random
 import weakref
 
 import items
@@ -45,7 +45,7 @@ class Plot:
             return None
 
         item_name = self.crop.item
-        item_count = randint(self.crop.min_item, self.crop.max_item)
+        item_count = random.randint(self.crop.min_item, self.crop.max_item)
 
         if self.crop.type == "crop":
             self.crop = None
