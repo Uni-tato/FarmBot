@@ -34,20 +34,18 @@ class Plot:
         self._start_time = round(time.time())
 
     def harvest(self):
-        if self.crop is None:
+        if self.crop is None or time.time() < self.complete_time:
             return None
-        if time.time() >= self.complete_time:
-            item_name = self.crop.item
-            item_count = randint(self.crop.min_item, self.crop.max_item)
-            self.crop = None
-            return items.Item(
-                item_name,
-                amount=item_count,
-                manager=market_manager
-            )
-            #return {item:item_count} #if these return none then I will need to make item a copy.
-        else:
-            return None
+
+        item_name = self.crop.item
+        item_count = randint(self.crop.min_item, self.crop.max_item)
+        self.crop = None
+        return items.Item(
+            item_name,
+            amount=item_count,
+            manager=market_manager
+        )
+        #return {item:item_count} #if these return none then I will need to make item a copy.
 
     def time(self, data_type, from_present = True):
         if self.crop is None:
