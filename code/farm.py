@@ -24,22 +24,37 @@ class Plot:
     def __init__(self):
         self.crop = None
         self._start_time = None
+        self._num_harvests = 0
     
     @property
     def complete_time(self):
-        return self._start_time + self.crop.time * 60
+        if self.crop.type == "crop":
+            return self._start_time + self.crop.time*60
+        elif self.crop.type == "tree":
+            # Only time taken for the number of *full* harvests.
+            total_time_elapsed = self.crop.time * self._num_harvests
+            return self._start_time + total_time_elapsed + self.crop.time*60
 
     def plant(self, crop):
         self.crop = crop
         self._start_time = round(time.time())
 
     def harvest(self):
-        if self.crop is None or time.time() < self.complete_time:
+        current_time = time.time()
+        if self.crop is None or current_time < self.complete_time:
             return None
 
         item_name = self.crop.item
         item_count = randint(self.crop.min_item, self.crop.max_item)
-        self.crop = None
+
+        if self.crop.type == "crop":
+            self.crop = None
+        elif self.crop.type == "tree":
+            # The life of a tree is not set in stone.
+            lifetime = random.randint(self.crop.min_lifetime, self.crop.max_lifetime)
+            if current_time > current_time:
+                self.crop = None
+
         return items.Item(
             item_name,
             amount=item_count,
