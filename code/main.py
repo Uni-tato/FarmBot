@@ -154,9 +154,9 @@ async def status(ctx, *args):
         else:
             text = f"**Crop:** {plot.crop.emoji} {plot.crop.name}\n"
             if plot.time(int) is 0:
-                text += f"**Time Left:** Ready!"
+                text += f"**Status:** Ready!"
             else:
-                text += f"**Time Left:** {plot.time(str)}"
+                text += f"**Status:** {plot.time(str)}"
 
         index = current_player.farm.plots.index(plot)
         embed.add_field(name=f"**__Plot #{index+1}__:**", value=text)
