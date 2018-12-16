@@ -129,3 +129,7 @@ class Crop:
 
         self.emoji = ":" + self.emoji + ":"
 
+    @property
+    def type(self):
+        return self._manager.get_type(self.name)
+
