@@ -24,6 +24,7 @@ class Plot:
     def __init__(self):
         self.crop = None
         self._start_time = None
+        self._first_planted_time = None
         self._num_harvests = 0
     
     @property
@@ -31,8 +32,13 @@ class Plot:
         return self._start_time + self.crop.time*60
 
     def plant(self, crop):
+        current_time = round(time.time())
+
         self.crop = crop
-        self._start_time = round(time.time())
+        self._start_time = current_time
+        # A temporary work-around to be able to detect when trees should die.
+        if self.crop.type == "tree" and self._num_harvests == 0 or self.crop.type == "crop":
+            self._first_planted_time = current_time
 
     def harvest(self):
         current_time = time.time()
