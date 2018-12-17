@@ -28,12 +28,7 @@ class Plot:
     
     @property
     def complete_time(self):
-        if self.crop.type == "crop":
-            return self._start_time + self.crop.time*60
-        elif self.crop.type == "tree":
-            # Only time taken for the number of *full* harvests.
-            total_time_elapsed = self.crop.time * self._num_harvests
-            return self._start_time + total_time_elapsed + self.crop.time*60
+        return self._start_time + self.crop.time*60
 
     def plant(self, crop):
         self.crop = crop
