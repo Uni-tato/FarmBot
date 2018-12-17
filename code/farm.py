@@ -52,9 +52,18 @@ class Plot:
             self.crop = None
         elif self.crop.type == "tree":
             # The life of a tree is not set in stone.
-            lifetime = random.randint(self.crop.min_lifetime, self.crop.max_lifetime)
-            if current_time > current_time:
+            lifetime = random.randint(self.crop.min_lifetime, self.crop.max_lifetime) * 60
+            # The user foregoes any fruit that they don't harvest on time.
+            death_time = self._first_planted_time + lifetime
+
+            if current_time > death_time: 
                 self.crop = None
+                self._num_harvests = 0
+            else:
+                # Replant the tree as if it were another crop but ensure that
+                # is *not* as if it is a new plant.
+                self._num_harvests += 1
+                self.plant(self.crop)
 
         return items.Item(
             item_name,
