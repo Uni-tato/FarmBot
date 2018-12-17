@@ -1,7 +1,7 @@
 #literally does nothing yet.
 import datetime
 import time
-from random import randint
+import random
 import weakref
 
 import items
@@ -24,30 +24,54 @@ class Plot:
     def __init__(self):
         self.crop = None
         self._start_time = None
+        self._first_planted_time = None
+        self._num_harvests = 0
     
     @property
     def complete_time(self):
-        return self._start_time + self.crop.time * 60
+        return self._start_time + self.crop.time*60
 
     def plant(self, crop):
+        current_time = round(time.time())
+
         self.crop = crop
-        self._start_time = round(time.time())
+        self._start_time = current_time
+        # A temporary work-around to be able to detect when trees should die.
+        if self.crop.type == "tree" and self._num_harvests == 0 or self.crop.type == "crop":
+            self._first_planted_time = current_time
 
     def harvest(self):
-        if self.crop is None:
+        current_time = time.time()
+        if self.crop is None or current_time < self.complete_time:
             return None
-        if time.time() >= self.complete_time:
-            item_name = self.crop.item
-            item_count = randint(self.crop.min_item, self.crop.max_item)
+
+        # The crop can now be harvested.
+        item_name = self.crop.item
+        item_count = random.randint(self.crop.min_item, self.crop.max_item)
+
+        if self.crop.type == "crop":
             self.crop = None
-            return items.Item(
-                item_name,
-                amount=item_count,
-                manager=market_manager
-            )
-            #return {item:item_count} #if these return none then I will need to make item a copy.
-        else:
-            return None
+        elif self.crop.type == "tree":
+            # The life of a tree is not set in stone.
+            lifetime = random.randint(self.crop.min_lifetime, self.crop.max_lifetime) * 60
+            # The user foregoes any fruit that they don't harvest on time.
+            death_time = self._first_planted_time + lifetime
+
+            if current_time > death_time: 
+                self.crop = None
+                self._num_harvests = 0
+            else:
+                # Replant the tree as if it were another crop but ensure that
+                # is *not* as if it is a new plant.
+                self._num_harvests += 1
+                self.plant(self.crop)
+
+        return items.Item(
+            item_name,
+            amount=item_count,
+            manager=market_manager
+        )
+        #return {item:item_count} #if these return none then I will need to make item a copy.
 
     def time(self, data_type, from_present = True):
         if self.crop is None:
@@ -129,15 +153,7 @@ class Crop:
 
         self.emoji = ":" + self.emoji + ":"
 
-
-class Tree:
-    def __init__(self,name,time,seed,item,min_item,max_item,min_lifetime,max_lifetime):
-        self.name = name
-        self.time = time
-        self.seed = seed
-        self.item = item
-        self.min_item = min_item
-        self.max_item = max_item 
-        self.min_lifetime = min_lifetime
-        self.max_lifetime = max_lifetime
+    @property
+    def type(self):
+        return self._manager.get_type(self.name)
 

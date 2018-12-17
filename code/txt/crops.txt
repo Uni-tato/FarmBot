@@ -1,14 +1,21 @@
-name, seed, item, min_item, max_item, min_lifetime, max_lifetime, emoji
+name, seed, item, min_item, max_item, min_lifetime, max_lifetime, emoji, type
 #
-wheat, wheat seeds, wheat, 4, 6, 1, 1, fm_wheat
-rice, rice seeds, rice, 2, 4, 1, 1, fm_rice
-cucumber, cucumber seeds, cucumber, 4, 8, 60, 60, x
-tomato, tomato seeds, tomato, 50, 70, 360, 360, x
-pumpkin, pumpkin seeds, pumpkin, 7, 13, 120, 120, x
-carrot, carrot seeds, carrot, 27, 33, 30, 30, fm_carrot
-potato, potato, potato, 20, 30, 15, 15, x
+wheat, wheat seeds, wheat, 4, 6, 1, 1, fm_wheat, crop
+rice, rice seeds, rice, 2, 4, 1, 1, fm_rice, crop
+cucumber, cucumber seeds, cucumber, 4, 8, 60, 60, x, crop
+tomato, tomato seeds, tomato, 50, 70, 360, 360, x, crop
+pumpkin, pumpkin seeds, pumpkin, 7, 13, 120, 120, x, crop
+carrot, carrot seeds, carrot, 27, 33, 30, 30, fm_carrot, crop
+potato, potato, potato, 20, 30, 15, 15, x, crop
 #
-marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, x
+marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, x, crop
 #
 # Stefan's crops
 # none for now P
+
+apple, apple seeds, apple, 6, 8, 23, 25, x, tree
+banana, banana seeds, banana, 44, 52, 23, 25, x, tree
+pear, pear seeds, pear, 1, 1, 60, 60, x, tree
+orange, orange seeds, orange, 10, 16, 23, 25, x, tree
+test, tseeds, test, 5, 10, 10, 15, x, tree
+

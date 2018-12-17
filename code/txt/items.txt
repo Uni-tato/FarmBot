@@ -26,3 +26,6 @@ pear seeds, 15, 7.5, x
 pear, 1.5, 0.75, x
 orange seeds, 15, 1, x
 orange, 1, 0.5, x
+
+tseeds, 1, 1, x
+test, 1, 1, x
