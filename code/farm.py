@@ -45,6 +45,7 @@ class Plot:
         if self.crop is None or current_time < self.complete_time:
             return None
 
+        # The crop can now be harvested.
         item_name = self.crop.item
         item_count = random.randint(self.crop.min_item, self.crop.max_item)
 
