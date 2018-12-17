@@ -164,9 +164,9 @@ class Container:
             items = items.items
         for item in items:
             if item not in self.items: # return an error if the container does not have (enough of) an item.
-                raise value_error(f"Item: \"{item}\" not present in Container.")
+                raise ValueError(f"Item: \"{item}\" not present in Container.")
             elif items[item] > self.items[item]:
-                raise value_error(f"More \"{item}\"s removed than in Container.")
+                raise ValueError(f"More \"{item}\"s removed than in Container.")
             
             elif items[item] == self.items[item]:
                 del self.items[item]
