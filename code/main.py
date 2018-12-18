@@ -79,7 +79,7 @@ Time until completion is **{plot.time(str, False)}**.")
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
-async def harvest(ctx, *args):
+async def harvest(ctx):
     """Harvest any available crops and fruit from trees."""
     current_player = play.get(ctx)
 
@@ -104,7 +104,7 @@ async def harvest(ctx, *args):
 
 
 @client.command(pass_context=True)
-async def inv(ctx, *args):
+async def inv(ctx):
     """Display inventory and current balance."""
     current_player = play.get(ctx)
 
@@ -130,7 +130,7 @@ async def inv(ctx, *args):
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
-async def status(ctx, *args):
+async def status(ctx):
     """Display harvest status of crops and trees in plots."""
     current_player = play.get(ctx)
     embed = discord.Embed(title=f"***{current_player.farm.name}*** *status:*", colour=0x00d100)
