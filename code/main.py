@@ -9,6 +9,7 @@ import players as play
 import farm
 import items
 import errors
+import assist
 from managers import CropManager, MarketManager
 from util import get_amount, get_name
 
@@ -22,6 +23,12 @@ client = Bot(command_prefix=prefix)
 
 ask.init(client) # ask.py wants access to the client too!
 errors.init(client, play.players)
+assist.init(client, prefix)
+
+client.remove_command('help')
+@client.command(pass_context=True)
+async def help(ctx, *args):
+    await assist.help(ctx, args)
 
 
 @client.event
@@ -32,7 +39,6 @@ async def on_command_error(error, ctx):
 @client.command(pass_context=True)
 @check(errors.has_no_farm)
 async def create(ctx, *args):
-    """Create a farm."""
     name = get_name(args, True)
     if name == "":
         await client.say("You can't create a farm with no name!")
@@ -49,9 +55,6 @@ async def create(ctx, *args):
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
-    """Plant a crop or tree.
-
-    It can either be the crop's name or the name of its seed."""
     plant = get_name(seed_name)
     current_player = play.get(ctx)
 
@@ -80,7 +83,6 @@ Time until completion is **{plot.time(str, False)}**.")
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def harvest(ctx):
-    """Harvest any available crops and fruit from trees."""
     current_player = play.get(ctx)
 
     loot = items.Container([], manager=market_manager)
@@ -105,7 +107,6 @@ async def harvest(ctx):
 
 @client.command(pass_context=True)
 async def inv(ctx):
-    """Display inventory and current balance."""
     current_player = play.get(ctx)
 
     embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080d6)
@@ -131,7 +132,6 @@ async def inv(ctx):
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def status(ctx):
-    """Display harvest status of crops and trees in plots."""
     current_player = play.get(ctx)
     embed = discord.Embed(title=f"***{current_player.farm.name}*** *status:*", colour=0x00d100)
 
@@ -154,7 +154,6 @@ async def status(ctx):
 
 @client.command(pass_context=True)
 async def buy(ctx, *args):
-    """Buy an item."""
     if len(args) == 0:
         return
 
@@ -192,7 +191,6 @@ async def buy(ctx, *args):
 
 @client.command(pass_context=True)
 async def sell(ctx, *args):
-    """Sell an item."""
     if len(args) == 0:
         return
 
@@ -231,9 +229,6 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
-    """Give yourself an item.
-
-    Note: This is a debug-only command."""
     current_player = play.get(ctx)
     if len(args) == 0:
         return
