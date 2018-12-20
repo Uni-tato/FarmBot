@@ -19,7 +19,7 @@ class Player():
 
 		self.items = items.Container([items.Item("wheat seeds", manager=market_manager)], manager=market_manager)
 
-		self.money = 20
+		self.money = 10
 
 		# Here, there will probably be some other stuff such as player upgrades and shit
 		# `then with the money you can upgrade your farm, for example get more plots, reduce grow time etc` - Alex
