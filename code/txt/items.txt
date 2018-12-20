@@ -1,18 +1,18 @@
 name, buy, sell, emoji
 #
-wheat seeds, 0.5, 0.25, fm_wheat_seed
+wheat seeds, 0.5, 0.25, fm_wheat_seeds
 wheat, 0.5, 0.25, fm_wheat
-rice seeds, 1, 0.5, x
+rice seeds, 1, 0.5, fm_rice_seeds
 rice, 1, 0.5, fm_rice
-cucumber seeds, 20, 10, x
-cucumber, 12, 6, x
-tomato seeds, 20, 10, x
-tomato, 10, 5, x
-pumpkin seeds, 25, 12.5, x
-pumpkin, 26.5, 13.25, x
+cucumber seeds, 20, 10, fm_cucumber_seeds
+cucumber, 12, 6, fm_cucumber
+tomato seeds, 20, 10, fm_tomato_seeds
+tomato, 10, 5, fm_tomato
+pumpkin seeds, 25, 12.5, fm_pumpkin_seeds
+pumpkin, 26.5, 13.25, fm_pumpkin
 carrot seeds, 30, 15, x
 carrot, 5, 2.5, fm_carrot
-potato, 5, 2.5, x
+potato, 5, 2.5, fm_potato
 marshmallow pellets, 999999999, 25, x
 marshmallow, 1.5, 1, x
 #
