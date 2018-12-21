@@ -64,33 +64,43 @@ def init(client_, prefix_):
 
 async def help(ctx, args):
 
-	if len(args) is 0:
-		await generic(ctx, args)
-		return
+    if len(args) is 0:
+        await generic(ctx, args)
+        return
 
-	else:
-		command = args[0]
-		if command not in commands:
-			await client.say(f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`.")
-			return
-	i = commands.index(command)
+    else:
+        command = args[0]
+        if command not in commands:
+            await client.say(
+                f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`."
+            )
+            return
+    i = commands.index(command)
 
-	embed = discord.Embed(title=f"*Help for* `{prefix}{command}`:", colour=0x808080)
-	embed.add_field(name=f"**Usage:**", value=f"`{prefix}{usages[i]}`", inline=False)
-	embed.add_field(name="**Description:**", value=f"{descriptions[i]}", inline=False)
+    embed = discord.Embed(title=f"*Help for* `{prefix}{command}`:", colour=0x808080)
+    embed.add_field(name=f"**Usage:**", value=f"`{prefix}{usages[i]}`", inline=False)
+    embed.add_field(name="**Description:**", value=f"{descriptions[i]}", inline=False)
 
-	await client.send_message(ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed)
+    await client.send_message(
+        ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed
+    )
+
 
 async def generic(ctx, args):
-	embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
+    embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
 
-	text = ""
-	for command in commands:
-		i = commands.index(command)
-		text += f"    `{command}` - {descriptions_short[i]}\n"
-	embed.add_field(name="**Commands:**", value=text)
+    text = ""
+    for command in commands:
+        i = commands.index(command)
+        text += f"    `{command}` - {descriptions_short[i]}\n"
+    embed.add_field(name="**Commands:**", value=text)
 
-	embed.add_field(name="**Usage:**", value=f'''Do `{prefix}help <command name>` to get more information on a specific command.\
-		Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional.*''')
+    embed.add_field(
+        name="**Usage:**",
+        value=f"""Do `{prefix}help <command name>` to get more information on a specific command.\
+		Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional.*""",
+    )
 
-	await client.send_message(ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed)
+    await client.send_message(
+        ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed
+    )
