@@ -1,44 +1,60 @@
 import discord
+
 # Cause `help` is a key word, `assist` is the next best thing :)
 
-commands = ["dgive", "sell", "buy", "plant", "harvest", "inv", "status", "create", "help"]
-usages = [
-	"dgive [item amount = 1] <item name>",
-	"sell [item amount = 1] <item name>",
-	"buy [item amount = 1] <item name>",
-	"plant <item name / crop name>",
-	"harvest",
-	"inv",
-	"status",
-	"create <farm name>",
-	"help [command]"]
-
-descriptions = [
-	"Will give the player the specified item in the optional amount. Used *only* for debugging.",
-	"Sell the item for its current market price * by the optional quantity. Player must have the item.",
-	"Buy the item for its current market price * by the optional quantity. Player must have enough money.",
-	"Plant the given item in the first avaliable plot, creating a new crop/tree. Player must have the item.",
-	"Harvest any harvestable plots automatically. Will also give the player all the items from the harvest.",
-	"Show the players current inventory.",
-	"Show the status of the players farm.",
-	"Create a new farm if one hasn't been already made. Farm must have a name.",
-	"Show how to use the avaliable commands."]
-
-descriptions_short = [
-	"Give items cheatly.",
-	"Sell items.",
-	"Buy items.",
-	"Plant crops/trees.",
-	"Harvest plots.",
-	"Show inventory.",
-	"Show status of plots.",
-	"Create new farm.",
-	"Get information on a command."]
-
+commands = {
+    "dgive": {
+        "usage": "dgive [item amount = 1] <item name>",
+        "description": "Will give the player the specified item in the optional amount. Used *only* for debugging.",
+        "short_description": "Give items cheatly.",
+    },
+    "sell": {
+        "usage": "sell [item amount = 1] <item name>",
+        "description": "Sell the item for its current market price * by the optional quantity. Player must have the item.",
+        "short_description": "Sell items.",
+    },
+    "buy": {
+        "usage": "buy [item amount = 1] <item name>",
+        "description": "Buy the item for its current market price * by the optional quantity. Player must have enough money.",
+        "short_description": "Buy items.",
+    },
+    "plant": {
+        "usage": "plant <item name / crop name>",
+        "description": "Plant the given item in the first avaliable plot creating a new crop/tree. Player must have the item.",
+        "short_description": "Plant crops/trees.",
+    },
+    "harvest": {
+        "usage": "harvest",
+        "description": "Harvest any harvestable plots automatically. Will also give the player all the items from the harvest.",
+        "short_description": "Harvest plots.",
+    },
+    "inv": {
+        "usage": "inv",
+        "description": "Show the players current inventory.",
+        "short_description": "Show inventory.",
+    },
+    "status": {
+        "usage": "status",
+        "description": "Show the status of the players farm.",
+        "short_description": "Show status of plots.",
+    },
+    "create": {
+        "usage": "create <farm name>",
+        "description": "Create a new farm if one hasn't been already made. Farm must have a name.",
+        "short_description": "Create new farm.",
+    },
+    "help": {
+        "usage": "help [command]",
+        "description": "Show how to use the avaliable commands.",
+        "short_description": "Get information on a command.",
+    },
+}
 
 
 prefix = None
 client = None
+
+
 def init(client_, prefix_):
     global client
     global prefix
