@@ -75,11 +75,16 @@ async def help(ctx, args):
                 f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`."
             )
             return
-    i = commands.index(command)
+
+    command_info = commands[command]
+
+    usage = command_info["usage"]
+    description = command_info["description"]
+    short_description = command_info["short_description"]
 
     embed = discord.Embed(title=f"*Help for* `{prefix}{command}`:", colour=0x808080)
-    embed.add_field(name=f"**Usage:**", value=f"`{prefix}{usages[i]}`", inline=False)
-    embed.add_field(name="**Description:**", value=f"{descriptions[i]}", inline=False)
+    embed.add_field(name=f"**Usage:**", value=f"`{prefix}{usage}`", inline=False)
+    embed.add_field(name="**Description:**", value=f"{description}", inline=False)
 
     await client.send_message(
         ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed
@@ -90,9 +95,9 @@ async def generic(ctx, args):
     embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
 
     text = ""
-    for command in commands:
-        i = commands.index(command)
-        text += f"    `{command}` - {descriptions_short[i]}\n"
+    for command, command_info in commands.items():
+        short_description = command_info["short_description"]
+        text += f"    `{command}` - {short_description}\n"
     embed.add_field(name="**Commands:**", value=text)
 
     embed.add_field(
