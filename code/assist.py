@@ -63,11 +63,11 @@ def init(client_, prefix_):
 
 
 async def help(ctx, args):
-
-    if len(args) is 0:
+    # `help` can have 0 or more arguments, so this needs to check
+    # the number of args to decide what to display.
+    if len(args) == 0:
         await generic(ctx, args)
         return
-
     else:
         command = args[0]
         if command not in commands:
@@ -77,10 +77,8 @@ async def help(ctx, args):
             return
 
     command_info = commands[command]
-
     usage = command_info["usage"]
     description = command_info["description"]
-    short_description = command_info["short_description"]
 
     embed = discord.Embed(title=f"*Help for* `{prefix}{command}`:", colour=0x808080)
     embed.add_field(name=f"**Usage:**", value=f"`{prefix}{usage}`", inline=False)
@@ -102,10 +100,11 @@ async def generic(ctx, args):
 
     embed.add_field(
         name="**Usage:**",
-        value=f"""Do `{prefix}help <command name>` to get more information on a specific command.\
-		Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional.*""",
+        value=f"Do `{prefix}help <command name>` to get more information on a specific command. "
+	      f"Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional*.",
     )
 
     await client.send_message(
         ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed
     )
+
