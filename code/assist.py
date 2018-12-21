@@ -66,7 +66,7 @@ async def help(ctx, args):
     # `help` can have 0 or more arguments, so this needs to check
     # the number of args to decide what to display.
     if len(args) == 0:
-        await generic(ctx, args)
+        await show_all_commands(ctx, args)
         return
     
     command = args[0]
@@ -89,7 +89,7 @@ async def help(ctx, args):
     )
 
 
-async def generic(ctx, args):
+async def show_all_commands(ctx, args):
     embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
 
     text = ""
