@@ -68,13 +68,13 @@ async def help(ctx, args):
     if len(args) == 0:
         await generic(ctx, args)
         return
-    else:
-        command = args[0]
-        if command not in commands:
-            await client.say(
-                f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`."
-            )
-            return
+    
+    command = args[0]
+    if command not in commands:
+        await client.say(
+            f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`."
+        )
+        return
 
     command_info = commands[command]
     usage = command_info["usage"]
