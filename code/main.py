@@ -257,7 +257,7 @@ async def items(ctx):
         category = item.category
         if category not in categories:
             categories[category] = ""
-        categories[category] += f"{item.emoji} **{item.name}**\n"
+        categories[category] += f"{item.emoji} **{item.name}**:\n\t buy: **${item.buy_cost}**, sell: **${item.sell_cost}**.\n"
     embed = discord.Embed(title = "**__FarmBot Items.__**",colour=0x0080d6)
     for category in categories:
         embed.add_field(name = f"**{category}**", value = categories[category])
