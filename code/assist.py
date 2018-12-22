@@ -2,7 +2,7 @@ import discord
 
 # Cause `help` is a key word, `assist` is the next best thing :)
 
-commands = {
+COMMANDS = {
     "dgive": {
         "usage": "dgive [item amount = 1] <item name>",
         "description": "Will give the player the specified item in the optional amount. Used *only* for debugging.",
@@ -70,13 +70,13 @@ async def help(ctx, args):
         return
 
     command = args[0]
-    if command not in commands:
+    if command not in COMMANDS:
         await client.say(
             f"Sorry, but I don't know what the `{command}` command is! For help, do `{prefix}help`."
         )
         return
 
-    command_info = commands[command]
+    command_info = COMMANDS[command]
     usage = command_info["usage"]
     description = command_info["description"]
 
@@ -93,7 +93,7 @@ async def show_all_commands(ctx, args):
     embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
 
     text = ""
-    for command, command_info in commands.items():
+    for command, command_info in COMMANDS.items():
         short_description = command_info["short_description"]
         text += f"`{command}` - {short_description}\n"
     embed.add_field(name="**Commands:**", value=text)
