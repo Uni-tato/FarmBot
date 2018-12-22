@@ -120,26 +120,6 @@ async def inv(ctx):
         embed.add_field(name = f"**{category}**", value = categories[category])
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
 
-'''
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080d6)
-    embed.add_field(name="**__Money__:**", value=f":moneybag: ${current_player.money}")
-
-    items_text = ""
-    seeds_text = ""
-    if len(current_player.items) > 0:
-        for item in current_player.items:
-            if item.name.endswith(("seeds", "pellets")):
-                seeds_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
-            else:
-                items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
-
-        if items_text is not "":
-            embed.add_field(name="**__Items__:**", value=items_text)
-        if seeds_text is not "":
-            embed.add_field(name="**__Seeds__:**", value=seeds_text)
-
-    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
-'''
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
