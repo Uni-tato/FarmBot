@@ -3,9 +3,8 @@ import weakref
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
-    def __init__(self, name, category ,amount = 1, *, manager):
+    def __init__(self, name ,amount = 1, *, manager):
         self.name = name
-        self.category = category
         # TODO: Remove this? Make `Container` handle item numbers. 
         self.amount = amount
         self._manager = weakref.proxy(manager)
@@ -33,6 +32,10 @@ class Item:
                 return
 
         self.emoji = ":" + self.emoji + ":"
+
+    @property
+    def category(self):
+        return self._manager.get_category(self.name)
 
 # USAGE EXAMPLES:
 # player.has(Item), player.has("wheat")

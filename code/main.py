@@ -111,9 +111,10 @@ async def inv(ctx):
     items = current_player.items
     categories = {}
     for item in items:
-        if item.category not in categories:
-            categories[item.category] = ""
-        categories[item.category] += f"{item.emoji} **{item.name}** x{item.amount}\n"
+        category = item.category
+        if category not in categories:
+            categories[category] = ""
+        categories[category] += f"{item.emoji} **{item.name}** x{item.amount}\n"
     embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*",colour=0x0080d6)
     embed.add_field(name="**Money:**", value=f":moneybag: ${current_player.money}")
     for category in categories:
@@ -249,9 +250,10 @@ async def items(ctx):
     items = market_manager.items
     categories = {}
     for item in items:
-        if item.category not in categories:
-            categories[item.category] = ""
-        categories[item.category] += f"{item.emoji} **{item.name}**\n"
+        category = item.category
+        if category not in categories:
+            categories[category] = ""
+        categories[category] += f"{item.emoji} **{item.name}**\n"
     embed = discord.Embed(title = "**__FarmBot Items.__**",colour=0x0080d6)
     for category in categories:
         embed.add_field(name = f"**{category}**", value = categories[category])

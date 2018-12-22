@@ -99,7 +99,7 @@ class MarketManager:
                 "emoji": row["emoji"],
                 "category": row["category"]
             }
-            self.items.append(Item(row["name"], row["category"], manager=self))
+            self.items.append(Item(row["name"], manager=self))
 
     def _get_inner(self, item, field):
         try:
@@ -121,3 +121,6 @@ class MarketManager:
 
     def get_emoji(self, item_name):
         return self._get_inner(item_name, "emoji")
+
+    def get_category(self, item_name):
+        return self._get_inner(item_name, "category")
