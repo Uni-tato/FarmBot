@@ -120,6 +120,7 @@ class MarketManager:
                 "buy": float(row["buy"]),
                 "sell": float(row["sell"]),
                 "emoji": row["emoji"],
+                "category": row["category"]
             }
             self.items.append(Item(row["name"], manager=self))
 
@@ -147,3 +148,6 @@ class MarketManager:
     def get_emoji(self, item_name):
         """Get the emoji of `item_name`."""
         return self._get_inner(item_name, "emoji")
+
+    def get_category(self, item_name):
+        return self._get_inner(item_name, "category")

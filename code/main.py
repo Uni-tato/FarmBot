@@ -119,27 +119,21 @@ async def harvest(ctx):
 async def inv(ctx):
     current_player = play.get(ctx)
 
-    embed = discord.Embed(
-        title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080D6
-    )
-    embed.add_field(name="**__Money__:**", value=f":moneybag: ${current_player.money}")
-
-    items_text = ""
-    seeds_text = ""
+    # Separate items into categories.
+    categories = {}
     for item in current_player.items:
-        if item.name.endswith(("seeds", "pellets")):
-            seeds_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
-        else:
-            items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+        category = item.category
+        if category not in categories:
+            categories[category] = ""
+        categories[category] += f"{item.emoji} **{item.name}** x{item.amount}\n"
 
-    if items_text != "":
-        embed.add_field(name="**__Items__:**", value=items_text)
-    if seeds_text != "":
-        embed.add_field(name="**__Seeds__:**", value=seeds_text)
+    # Create and prepare embed.
+    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*",colour=0x0080d6)
+    embed.add_field(name="**Money:**", value=f":moneybag: ${current_player.money}")
+    for category in categories:
+        embed.add_field(name = f"**{category}**", value = categories[category])
 
-    await client.send_message(
-        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
-    )
+    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
 
 
 @client.command(pass_context=True)
@@ -275,11 +269,29 @@ async def dgive(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
-    item = items.Item(plant, amount=amount, manager=market_manager)
+    item = items.Item(plant, amount=amount, manager=market_manager)# someone has gotta do something about how we add items to inventories.
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
     )
+
+
+@client.command(pass_context=True)
+async def items(ctx):
+    items = market_manager.items
+    categories = {}
+    for item in items:
+        category = item.category
+        if category not in categories:
+            categories[category] = ""
+        categories[category] += f"{item.emoji} **{item.name}**\n"
+    embed = discord.Embed(title = "**__FarmBot Items.__**",colour=0x0080d6)
+    for category in categories:
+        embed.add_field(name = f"**{category}**", value = categories[category])
+    current_player = play.get(ctx)
+    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
+
+
 
 
 @client.event

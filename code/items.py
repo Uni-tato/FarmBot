@@ -51,6 +51,10 @@ class Item:
 
         self.emoji = ":" + self.emoji + ":"
 
+    @property
+    def category(self):
+        return self._manager.get_category(self.name)
+
 
 # USAGE EXAMPLES:
 # player.has(Item), player.has("wheat")
