@@ -128,17 +128,16 @@ async def inv(ctx):
 
     items_text = ""
     seeds_text = ""
-    if len(current_player.items) > 0:
-        for item in current_player.items:
-            if item.name.endswith(("seeds", "pellets")):
-                seeds_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
-            else:
-                items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+    for item in current_player.items:
+        if item.name.endswith(("seeds", "pellets")):
+            seeds_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+        else:
+            items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
 
-        if items_text == "":
-            embed.add_field(name="**__Items__:**", value=items_text)
-        if seeds_text == "":
-            embed.add_field(name="**__Seeds__:**", value=seeds_text)
+    if items_text != "":
+        embed.add_field(name="**__Items__:**", value=items_text)
+    if seeds_text != "":
+        embed.add_field(name="**__Seeds__:**", value=seeds_text)
 
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
