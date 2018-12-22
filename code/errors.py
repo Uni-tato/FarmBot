@@ -17,10 +17,20 @@ def init(client_, players_):
 
 
 class UserHasFarmError(CommandError):
+    """The user needs to NOT have a farm.
+
+    This is used by `discord.py`'s `discord.ext.commands` subpackage
+    to enable clean error handling for the `Context` when commands are
+    invoked."""
     pass
 
 
 def has_farm(ctx):
+    """Check if the user has created a farm.
+
+    This is required by some commands because, logically, they can't
+    happen *without* farms. Examples include the `plant` and `harvest`
+    commands."""
     if ctx.message.author in players:
         if players[ctx.message.author].farm is not None:
             return True
@@ -28,10 +38,19 @@ def has_farm(ctx):
 
 
 class UserHasNoFarmError(CommandError):
+    """The user needs to have a farm.
+
+    This is used by `discord.py`'s `discord.ext.commands` subpackage
+    to enable clean error handling for the `Context` when commands are
+    invoked."""
     pass
 
 
 def has_no_farm(ctx):
+    """Check if the user has NOT created a farm.
+
+    This is required by some commands because, logically, they can't
+    happen *with* farms. An example is the `create` command."""
     if ctx.message.author not in players:
         return True
     elif players[ctx.message.author].farm is None:
@@ -40,6 +59,7 @@ def has_no_farm(ctx):
 
 
 async def on_command_error(error, ctx):
+    """Implement the command error handling."""
     if isinstance(error, UserHasFarmError):
         await client.send_message(
             ctx.message.channel, "Sorry bud but you've already got a farm!"
