@@ -1,5 +1,7 @@
-import discord
-import traceback, sys
+"""Deal with the bot's error-handling."""
+import traceback
+import sys
+
 from discord.ext.commands import CommandError
 
 
