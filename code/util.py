@@ -3,6 +3,10 @@ from csv import Dialect, QUOTE_MINIMAL
 
 
 class FarmbotCSVDialect(Dialect):
+    """Specifies what the CSV files in the project should parse as.
+
+    Because CSV is not a standardised format, mutually incompatible
+    dialects of CSV exist. This extends to our dialect."""
     delimiter = ","
     quotechar = '"'
     doublequote = True
