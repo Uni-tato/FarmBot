@@ -158,7 +158,7 @@ async def status(ctx):
             text = "Empty"
         else:
             text = f"**Crop:** {plot.crop.emoji} {plot.crop.name}\n"
-            if plot.time(int) is 0:
+            if plot.time(int) == 0:
                 text += f"**Status:** Ready!"
             else:
                 text += f"**Status:** {plot.time(str)}"
