@@ -1,3 +1,4 @@
+"""Handle questions asked to player."""
 # another example: (which I encourage you to try out)
 # await ask.ask(message, "You really shouldn't react with a pig", answers={"🐷":"pig","🐮":"cow"}, timeout=10)
 # which will return "pig" if the user reacts with the pig, "cow" if the user reacts with the cow,
