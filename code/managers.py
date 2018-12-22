@@ -39,7 +39,8 @@ class CropManager:
             }
             self.crops.append(Crop(row["name"], manager=self))
 
-    def _calculate_harvest_time(self, min_lifetime, max_lifetime, crop_type):
+    @staticmethod
+    def _calculate_harvest_time(min_lifetime, max_lifetime, crop_type):
         lifetime = random.randint(min_lifetime, max_lifetime)
 
         if crop_type == "crop":
