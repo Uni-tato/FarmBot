@@ -63,6 +63,7 @@ def init(client_, prefix_):
 
 
 async def help(ctx, args):
+    """Implement the `help` command."""
     # `help` can have 0 or more arguments, so this needs to check
     # the number of args to decide what to display.
     if len(args) == 0:
@@ -89,7 +90,10 @@ async def help(ctx, args):
     )
 
 
-async def show_all_commands(ctx, args):
+async def show_all_commands(ctx):
+    """Show the user all defined commands.
+
+    This gets called whenever the user gives an empty input for the `help` command."""
     embed = discord.Embed(title="*Help for* ***FarmBot:***", colour=0x808080)
 
     text = ""
