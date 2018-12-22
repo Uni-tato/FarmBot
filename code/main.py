@@ -79,6 +79,10 @@ Time until completion is **{plot.time(str, False)}**.")
 
     await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
 
+@client.command(pass_context=True)
+async def p(ctx):
+    await plant.invoke(ctx)
+
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
@@ -103,6 +107,10 @@ async def harvest(ctx):
         embed.add_field(name="**__Items__:**", value=text)
 
         await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+
+@client.command(pass_context=True)
+async def h(ctx):
+    await harvest.invoke(ctx)
 
 
 @client.command(pass_context=True)
