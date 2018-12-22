@@ -1,5 +1,3 @@
-#literally does nothing yet.
-import datetime
 import time
 import random
 import weakref
