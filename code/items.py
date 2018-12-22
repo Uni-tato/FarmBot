@@ -5,7 +5,6 @@ import weakref
 class Item:
     def __init__(self, name, amount=1, *, manager):
         self.name = name
-        # TODO: Remove this? Make `Container` handle item numbers.
         self.amount = amount
         self._manager = weakref.proxy(manager)
 
