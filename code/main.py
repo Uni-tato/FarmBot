@@ -104,9 +104,8 @@ async def harvest(ctx):
 
         await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
 
-
 @client.command(pass_context=True)
-async def inv(ctx):
+async def inventory(ctx):
     current_player = play.get(ctx)
     items = current_player.items
     categories = {}
@@ -121,6 +120,17 @@ async def inv(ctx):
         embed.add_field(name = f"**{category}**", value = categories[category])
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
 
+@client.command(pass_context=True)
+async def i(ctx):
+    await inventory.invoke(ctx)
+
+@client.command(pass_context=True)
+async def inv(ctx):
+    await inventory.invoke(ctx)
+
+@client.command(pass_context=True)
+async def invin(ctx):
+    await inventory.invoke(ctx)
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
