@@ -68,7 +68,7 @@ async def help(ctx, args):
     if len(args) == 0:
         await show_all_commands(ctx, args)
         return
-    
+
     command = args[0]
     if command not in commands:
         await client.say(
@@ -101,10 +101,9 @@ async def show_all_commands(ctx, args):
     embed.add_field(
         name="**Usage:**",
         value=f"Do `{prefix}help <command name>` to get more information on a specific command. "
-	      f"Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional*.",
+        f"Also note that `<foo>` means foo's *compulsory* and `[bar]` means bar's *optional*.",
     )
 
     await client.send_message(
         ctx.message.channel, f"{ctx.message.author.mention} ->", embed=embed
     )
-

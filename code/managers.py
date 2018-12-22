@@ -27,7 +27,9 @@ class CropManager:
                 "min_lifetime": min_lifetime,
                 "max_lifetime": max_lifetime,
                 "emoji": row["emoji"],
-                "time": self._calculate_harvest_time(min_lifetime, max_lifetime, row["type"]),
+                "time": self._calculate_harvest_time(
+                    min_lifetime, max_lifetime, row["type"]
+                ),
                 "type": row["type"],
             }
             self.crops.append(Crop(row["name"], manager=self))

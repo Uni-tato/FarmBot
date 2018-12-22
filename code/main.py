@@ -16,15 +16,17 @@ from util import get_amount, get_name
 # - Make a method on Crop that returns the time untill completioin in a nice string e.g. "9.1hours" and not "456mins"
 # - Make the `fm plant` command better - print to the user time until compleation? Let user select plots manually?
 
-prefix = 'fm '
+prefix = "fm "
 # `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 
-ask.init(client) # ask.py wants access to the client too!
+ask.init(client)  # ask.py wants access to the client too!
 errors.init(client, play.players)
 assist.init(client, prefix)
 
-client.remove_command('help')
+client.remove_command("help")
+
+
 @client.command(pass_context=True)
 async def help(ctx, *args):
     await assist.help(ctx, args)
@@ -45,7 +47,9 @@ async def create(ctx, *args):
 
     play.players[ctx.message.author] = play.Player(ctx.message.author)
 
-    answer = await ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
+    answer = await ask.ask(
+        ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
+    )
     if answer:
         play.players[ctx.message.author].farm = farm.Farm(name)
         await client.say("Farm created!")
@@ -69,14 +73,18 @@ async def plant(ctx, *seed_name):
                 if plot.crop is None:
                     plot.plant(crop)
                     current_player.items -= crop.seed
-                    await client.say(f"Planted {crop.emoji} **{crop.name}** in **Plot #{current_player.farm.plots.index(plot)+1}**!\n\
-Time until completion is **{plot.time(str, False)}**.")
+                    await client.say(
+                        f"Planted {crop.emoji} **{crop.name}** in **Plot #{current_player.farm.plots.index(plot)+1}**!\n\
+Time until completion is **{plot.time(str, False)}**."
+                    )
                     return
 
             await client.say("Sorry, but all your plots are full!")
             return
 
-    await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+    await client.say(
+        f"I wasn't able to find `{plant}`, are you sure you spelt it right?"
+    )
 
 
 @client.command(pass_context=True)
@@ -91,24 +99,30 @@ async def harvest(ctx):
             loot += item
 
     if len(loot) == 0:
-        await client.say(f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!")
+        await client.say(
+            f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!"
+        )
         return
     else:
-        embed = discord.Embed(title="*Harvest Results:*", colour=0xffe48e)
+        embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
         text = ""
         for item in loot:
             text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
             current_player.items += item
         embed.add_field(name="**__Items__:**", value=text)
 
-        await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+        await client.send_message(
+            ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+        )
 
 
 @client.command(pass_context=True)
 async def inv(ctx):
     current_player = play.get(ctx)
 
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080d6)
+    embed = discord.Embed(
+        title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080D6
+    )
     embed.add_field(name="**__Money__:**", value=f":moneybag: ${current_player.money}")
 
     items_text = ""
@@ -125,14 +139,18 @@ async def inv(ctx):
         if seeds_text is not "":
             embed.add_field(name="**__Seeds__:**", value=seeds_text)
 
-    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+    await client.send_message(
+        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+    )
 
 
 @client.command(pass_context=True)
 @check(errors.has_farm)
 async def status(ctx):
     current_player = play.get(ctx)
-    embed = discord.Embed(title=f"***{current_player.farm.name}*** *status:*", colour=0x00d100)
+    embed = discord.Embed(
+        title=f"***{current_player.farm.name}*** *status:*", colour=0x00D100
+    )
 
     for plot in current_player.farm.plots:
         text = ""
@@ -148,7 +166,9 @@ async def status(ctx):
         index = current_player.farm.plots.index(plot)
         embed.add_field(name=f"**__Plot #{index+1}__:**", value=text)
 
-    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed=embed)
+    await client.send_message(
+        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+    )
 
 
 @client.command(pass_context=True)
@@ -178,14 +198,17 @@ async def buy(ctx, *args):
         )
         return
 
-    answer = await ask.ask(ctx.message,
+    answer = await ask.ask(
+        ctx.message,
         f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buy_cost * item.amount}**?**",
-        answers={"💸":True,"❌":False}
+        answers={"💸": True, "❌": False},
     )
     if answer:
         current_player.money -= item.buy_cost * item.amount
         current_player.items += item
-        await client.say(f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**.")
+        await client.say(
+            f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**."
+        )
 
 
 @client.command(pass_context=True)
@@ -216,7 +239,10 @@ async def sell(ctx, *args):
         return
 
     # Then we confirm if the user really wants to sell this...
-    answer = await ask.ask(ctx.message, f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sell_cost * item.amount}**?")
+    answer = await ask.ask(
+        ctx.message,
+        f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sell_cost * item.amount}**?",
+    )
     if answer in (False, None):
         return
 
@@ -232,9 +258,10 @@ async def dgive(ctx, *args):
     if len(args) == 0:
         return
 
-    amount = 1; plant = ""
+    amount = 1
+    plant = ""
     try:
-    # Then check if the item is actually a real item...
+        # Then check if the item is actually a real item...
         int(args[0])
     except ValueError:
         plant = " ".join(args).strip()
@@ -248,7 +275,9 @@ async def dgive(ctx, *args):
 
     item = items.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item
-    await client.say(f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}")
+    await client.say(
+        f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
+    )
 
 
 @client.event
@@ -303,17 +332,16 @@ if __name__ == "__main__":
     finally:
         f.close()
         client.run(token)
-    
-'''
+
+"""
 test = discord.Embed(title="yas")
 test.add_field(name="I'm a field name", value="and I'm it's value")
 test.add_field(name="And I'm another field name!", value="and I'm another value!")
 test.add_field(name="This time, we're not inline!", value="Yep, we aren't indeed!", inline=False)
 await client.send_message(message.channel, "I'm some content", embed = test)
-'''
-'''
+"""
+"""
 for emoji in client.get_all_emojis():
     print(emoji.name)
     await client.add_reaction(message, emoji)
-'''
-
+"""

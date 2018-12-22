@@ -6,13 +6,15 @@ import items
 
 
 market_manager = None
+
+
 def init(market_manager_):
     global market_manager
     market_manager = market_manager_
 
 
 class Farm:
-    def __init__(self, name, plot_count = 2):
+    def __init__(self, name, plot_count=2):
         self.name = name
         self.plot_count = plot_count
         self.plots = [Plot() for _ in range(plot_count)]
@@ -24,10 +26,10 @@ class Plot:
         self._start_time = None
         self._first_planted_time = None
         self._num_harvests = 0
-    
+
     @property
     def complete_time(self):
-        return self._start_time + self.crop.time*60
+        return self._start_time + self.crop.time * 60
 
     def plant(self, crop):
         current_time = round(time.time())
@@ -35,7 +37,11 @@ class Plot:
         self.crop = crop
         self._start_time = current_time
         # A temporary work-around to be able to detect when trees should die.
-        if self.crop.type == "tree" and self._num_harvests == 0 or self.crop.type == "crop":
+        if (
+            self.crop.type == "tree"
+            and self._num_harvests == 0
+            or self.crop.type == "crop"
+        ):
             self._first_planted_time = current_time
 
     def harvest(self):
@@ -51,11 +57,13 @@ class Plot:
             self.crop = None
         elif self.crop.type == "tree":
             # The life of a tree is not set in stone.
-            lifetime = random.randint(self.crop.min_lifetime, self.crop.max_lifetime) * 60
+            lifetime = (
+                random.randint(self.crop.min_lifetime, self.crop.max_lifetime) * 60
+            )
             # The user foregoes any fruit that they don't harvest on time.
             death_time = self._first_planted_time + lifetime
 
-            if current_time > death_time: 
+            if current_time > death_time:
                 self.crop = None
                 self._num_harvests = 0
             else:
@@ -64,14 +72,10 @@ class Plot:
                 self._num_harvests += 1
                 self.plant(self.crop)
 
-        return items.Item(
-            item_name,
-            amount=item_count,
-            manager=market_manager
-        )
-        #return {item:item_count} #if these return none then I will need to make item a copy.
+        return items.Item(item_name, amount=item_count, manager=market_manager)
+        # return {item:item_count} #if these return none then I will need to make item a copy.
 
-    def time(self, data_type, from_present = True):
+    def time(self, data_type, from_present=True):
         if self.crop is None:
             return False
 
@@ -86,17 +90,17 @@ class Plot:
             if time_int <= 0:
                 return 0
             else:
-                return round(time_int/60, 1)
+                return round(time_int / 60, 1)
 
         elif data_type is str:
             # We need to nicely format time_int into a non-cancerous string.
             if time_int < 60:
                 return f"{time_int} sec"
-            elif time_int < 60*60:
+            elif time_int < 60 * 60:
                 return f"{round(time_int/60, 1)} min"
-            elif time_int < 60*60*24:
+            elif time_int < 60 * 60 * 24:
                 return f"{round(time_int/60/60, 1)} hour"
-            elif time_int < 60*60*24*365:
+            elif time_int < 60 * 60 * 24 * 365:
                 return f"{round(time_int/60/60/24, 1)} days"
             else:
                 raise ValueError("time is waaaaay too long")
@@ -154,4 +158,3 @@ class Crop:
     @property
     def type(self):
         return self._manager.get_type(self.name)
-

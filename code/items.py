@@ -3,9 +3,9 @@ import weakref
 # Each item object now has an associated amount - think stacks of items in Minecraft,
 # Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
 class Item:
-    def __init__(self, name, amount = 1, *, manager):
+    def __init__(self, name, amount=1, *, manager):
         self.name = name
-        # TODO: Remove this? Make `Container` handle item numbers. 
+        # TODO: Remove this? Make `Container` handle item numbers.
         self.amount = amount
         self._manager = weakref.proxy(manager)
 
@@ -33,6 +33,7 @@ class Item:
 
         self.emoji = ":" + self.emoji + ":"
 
+
 # USAGE EXAMPLES:
 # player.has(Item), player.has("wheat")
 # - returns True if item is present, False if not
@@ -50,9 +51,9 @@ class Item:
 # - returns each item object
 class Container:
     ### NO. NO CONTAINER NAMES. PLEASE. ###
-    #def __init__(self, name, items = []):
+    # def __init__(self, name, items = []):
     #    self.name = name
-    def __init__(self, items_input = [], *, manager):
+    def __init__(self, items_input=[], *, manager):
         # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
         self._manager = manager
         # This if statement makes it so that Container can accept both an item or list of items as an input
@@ -80,16 +81,24 @@ class Container:
         return False
 
     def __add__(self, other):
-        def add_item(tar_item): # target_item = items in the container that's being added from
+        def add_item(
+            tar_item
+        ):  # target_item = items in the container that's being added from
             found = False
-            for sor_item in self.items: # sorce_item = items in the container that's being added too
+            for (
+                sor_item
+            ) in (
+                self.items
+            ):  # sorce_item = items in the container that's being added too
                 if sor_item.name == tar_item.name:
                     sor_item.amount += tar_item.amount
                     found = True
                     break
             if not found:
                 # if the target item does not exist in the source, then we must create it there
-                self.items.append(Item(tar_item.name, amount=tar_item.amount, manager=self._manager))
+                self.items.append(
+                    Item(tar_item.name, amount=tar_item.amount, manager=self._manager)
+                )
 
         if isinstance(other, Container):
             for item in other:
@@ -116,9 +125,11 @@ class Container:
                     elif sor_item.amount == tar_item.amount:
                         self.items.remove(sor_item)
                     else:
-                        raise ValueError(f"More \"{tar_item.name}\"'s removed than in Container.")
+                        raise ValueError(
+                            f'More "{tar_item.name}"\'s removed than in Container.'
+                        )
                     return
-            raise ValueError(f"Item \"{tar_item.name}\" not present in Container.")
+            raise ValueError(f'Item "{tar_item.name}" not present in Container.')
 
         if isinstance(other, Container):
             for item in other:
@@ -163,11 +174,13 @@ class Container:
         if type(items) == Container:
             items = items.items
         for item in items:
-            if item not in self.items: # return an error if the container does not have (enough of) an item.
-                raise ValueError(f"Item: \"{item}\" not present in Container.")
+            if (
+                item not in self.items
+            ):  # return an error if the container does not have (enough of) an item.
+                raise ValueError(f'Item: "{item}" not present in Container.')
             elif items[item] > self.items[item]:
-                raise ValueError(f"More \"{item}\"s removed than in Container.")
-            
+                raise ValueError(f'More "{item}"s removed than in Container.')
+
             elif items[item] == self.items[item]:
                 del self.items[item]
             else:
