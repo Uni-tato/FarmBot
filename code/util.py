@@ -16,6 +16,11 @@ class FarmbotCSVDialect(Dialect):
 
 
 def get_amount(args):
+    """Parse an `int` from `args`.
+
+    Only uses the first element and if it fails to parse as an `int`
+    (via a call to `int`), then it returns `1`, otherwise the `int`
+    made from the first element of `args`."""
     try:
         int(args[0])
     except ValueError:
@@ -25,6 +30,7 @@ def get_amount(args):
 
 
 def get_name(args, allow_ints=False):
+    """Parse a name from `args`."""
     if allow_ints:
         return " ".join(args).strip()
 
