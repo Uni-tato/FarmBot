@@ -89,19 +89,19 @@ async def p(ctx):
 async def harvest(ctx):
     current_player = play.get(ctx)
 
-    loot = items.Container([], manager=market_manager)
+    reap = items.Container([], manager=market_manager)
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
-            loot += item
+            reap += item
 
-    if len(loot) == 0:
+    if len(reap) == 0:
         await client.say(f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!")
         return
     else:
         embed = discord.Embed(title="*Harvest Results:*", colour=0xffe48e)
         text = ""
-        for item in loot:
+        for item in reap:
             text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
             current_player.items += item
         embed.add_field(name="**__Items__:**", value=text)
