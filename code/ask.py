@@ -73,13 +73,17 @@ class Question:
         return reply
 
 
-# orig_message: the message that triggered the question (used for channel and author)
-# content: the question that'll be asked
-# OPTIONAL:
-# answers: a dictionary whos keys are the emojis (characters) and values their returned values (any data type)
-#     - MAKE SURE THAT `NONE` IS NEVER A POSSIBLE ANSWER, since this is what the function returns if it times out
-# timeout: the duration of the question
+
 async def ask(orig_message, content, *, answers={"👍": True, "👎": False}, timeout=30):
+    """Ask the user a question.
+    
+    orig_message: the message that triggered the question (used for channel and author)
+    content: the question that'll be asked
+    OPTIONAL:
+    answers: a dictionary whos keys are the emojis (characters) and values their returned values (any data type)
+        - MAKE SURE THAT `NONE` IS NEVER A POSSIBLE ANSWER, since this is what the function returns if it times out
+    timeout: the duration of the question
+    """
     # these 2 lines make the whole function MUCH more readable :)
     channel = orig_message.channel
     author = orig_message.author
