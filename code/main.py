@@ -104,17 +104,17 @@ async def harvest(ctx):
             f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!"
         )
         return
-    else:
-        embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
-        text = ""
-        for item in loot:
-            text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
-            current_player.items += item
-        embed.add_field(name="**__Items__:**", value=text)
 
-        await client.send_message(
-            ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
-        )
+    embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
+    text = ""
+    for item in loot:
+        text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
+        current_player.items += item
+    embed.add_field(name="**__Items__:**", value=text)
+
+    await client.send_message(
+        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+    )
 
 
 @client.command(pass_context=True)
