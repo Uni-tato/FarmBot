@@ -1,8 +1,14 @@
+"""Handle `Item`s and `Container`s."""
 import weakref
 
-# Each item object now has an associated amount - think stacks of items in Minecraft,
-# Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
+
 class Item:
+    """Represents a "stack" of items.
+
+    All `Item`s are the same, except in their `amount` and `name`
+    attributes. This is because this is essentially a proxy for the
+    `MarketManager`, which provides all the values for price, emoji,
+    etc."""
     def __init__(self, name, amount=1, *, manager):
         self.name = name
         self.amount = amount
@@ -10,21 +16,33 @@ class Item:
 
     @property
     def buy_cost(self):
+        """Get price to buy this item."""
         return self._manager.get_buy_price(self.name)
 
     @property
     def sell_cost(self):
+        """Get price when selling this item."""
         return self._manager.get_sell_price(self.name)
 
     @property
     def emoji(self):
+        """Get the emoji of this item."""
         return self._manager.get_emoji(self.name)
 
     @emoji.setter
     def emoji(self, new_emoji):
+        """Set the emoji of this item."""
         self._manager._items[self.name]["emoji"] = new_emoji
 
     def init_emoji(self, client):
+        """Initialise the emoji for this item.
+        
+        This needs to loop through the available server emojis
+        because the server-specific "fm_wheat" emoji will *not*
+        be a valid emoji upon output. Calling `str` on the actual
+        emoji object (supplied by `client.get_all_emojis`) will
+        provide the server-specific emoji string,
+        e.g., ":fm_wheat:123456", which is what we want."""
         for emoji in client.get_all_emojis():
             if emoji.name == self.emoji:
                 self.emoji = str(emoji)
