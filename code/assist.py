@@ -69,7 +69,7 @@ async def help(ctx, args):
     # `help` can have 0 or more arguments, so this needs to check
     # the number of args to decide what to display.
     if len(args) == 0:
-        await show_all_commands(ctx, args)
+        await show_all_commands(ctx)
         return
 
     command = args[0]
