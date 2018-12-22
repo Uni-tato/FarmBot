@@ -135,9 +135,9 @@ async def inv(ctx):
             else:
                 items_text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
 
-        if items_text is not "":
+        if items_text == "":
             embed.add_field(name="**__Items__:**", value=items_text)
-        if seeds_text is not "":
+        if seeds_text == "":
             embed.add_field(name="**__Seeds__:**", value=seeds_text)
 
     await client.send_message(
