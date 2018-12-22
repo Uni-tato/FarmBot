@@ -1,3 +1,4 @@
+"""Handle syncing of info in `Crop` and `Item` with managers."""
 import random
 import csv
 

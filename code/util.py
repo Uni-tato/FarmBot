@@ -1,3 +1,4 @@
+"""Provide various utilities for use throughout the bot."""
 from csv import Dialect, QUOTE_MINIMAL
 
 

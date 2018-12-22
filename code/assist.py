@@ -1,3 +1,4 @@
+"""Handle `help` command."""
 import discord
 
 # Cause `help` is a key word, `assist` is the next best thing :)

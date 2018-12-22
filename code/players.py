@@ -1,3 +1,4 @@
+"""Implement player code."""
 import items
 
 # This'll be a dictionary where the keys are the player discord objects, and the values are this custom player class
