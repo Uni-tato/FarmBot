@@ -9,11 +9,11 @@ client = None
 players = None
 
 
-def init(Client, Players):
+def init(client_, players_):
     global client
     global players
-    client = Client
-    players = Players
+    client = client_
+    players = players_
 
 
 class UserHasFarmError(CommandError):
