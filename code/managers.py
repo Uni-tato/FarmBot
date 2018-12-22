@@ -97,8 +97,9 @@ class MarketManager:
                 "buy": float(row["buy"]),
                 "sell": float(row["sell"]),
                 "emoji": row["emoji"],
+                "category": row["category"]
             }
-            self.items.append(Item(row["name"], manager=self))
+            self.items.append(Item(row["name"], row["category"], manager=self))
 
     def _get_inner(self, item, field):
         try:

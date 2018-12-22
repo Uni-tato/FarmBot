@@ -17,7 +17,7 @@ class Player():
 
 		self.farm = None
 
-		self.items = items.Container([items.Item("wheat seeds", manager=market_manager)], manager=market_manager)
+		self.items = items.Container([items.Item("wheat seeds", "seed", manager=market_manager)], manager=market_manager)
 
 		self.money = 10
 

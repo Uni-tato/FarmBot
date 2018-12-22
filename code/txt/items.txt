@@ -1,31 +1,31 @@
-name, buy, sell, emoji
+name, buy, sell, emoji, category
 #
-wheat seeds, 0.5, 0.25, fm_wheat_seeds
-wheat, 0.5, 0.25, fm_wheat
-rice seeds, 1, 0.5, fm_rice_seeds
-rice, 1, 0.5, fm_rice
-cucumber seeds, 20, 10, fm_cucumber_seeds
-cucumber, 12, 6, fm_cucumber
-tomato seeds, 20, 10, fm_tomato_seeds
-tomato, 10, 5, fm_tomato
-pumpkin seeds, 25, 12.5, fm_pumpkin_seeds
-pumpkin, 26.5, 13.25, fm_pumpkin
-carrot seeds, 30, 15, x
-carrot, 5, 2.5, fm_carrot
-potato, 5, 2.5, fm_potato
-marshmallow pellets, 999999999, 25, x
-marshmallow, 1.5, 1, x
+wheat seeds, 0.5, 0.25, fm_wheat_seeds, seed
+wheat, 0.5, 0.25, fm_wheat, crop
+rice seeds, 1, 0.5, fm_rice_seeds, seed
+rice, 1, 0.5, fm_rice, crop
+cucumber seeds, 20, 10, fm_cucumber_seeds, seed
+cucumber, 12, 6, fm_cucumber, crop
+tomato seeds, 20, 10, fm_tomato_seeds, seed
+tomato, 10, 5, fm_tomato, crop
+pumpkin seeds, 25, 12.5, fm_pumpkin_seeds, seed
+pumpkin, 26.5, 13.25, fm_pumpkin, crop
+carrot seeds, 30, 15, x, seed
+carrot, 5, 2.5, fm_carrot, crop
+potato, 5, 2.5, fm_potato, crop
+marshmallow pellets, 999999999, 25, x, seed
+marshmallow, 1.5, 1, x, crop
 #
-apple seeds, 5, 2.5, x
-apple, 1, 0.5, x
-banana seeds, 10, 5, x
-banana, 5, 2.5, x
-bananana seeds, 10, 5, x
-bana seeds, 10, 5, x
-pear seeds, 15, 7.5, x
-pear, 1.5, 0.75, x
-orange seeds, 15, 1, x
-orange, 1, 0.5, x
-
-tseeds, 1, 1, x
-test, 1, 1, x
+apple seeds, 5, 2.5, x, seed
+apple, 1, 0.5, x, crop
+banana seeds, 10, 5, x, seed
+banana, 5, 2.5, x, crop
+bananana seeds, 10, 5, x, seed
+bana seeds, 10, 5, x, seed
+pear seeds, 15, 7.5, x, seed
+pear, 1.5, 0.75, x, crop
+orange seeds, 15, 1, x, seed
+orange, 1, 0.5, x, crop
+#
+tseeds, 1, 1, x, test
+test, 1, 1, x, test
