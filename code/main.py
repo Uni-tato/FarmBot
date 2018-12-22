@@ -1,8 +1,6 @@
 """A Discord bot for a farm idle game."""
-import asyncio
-
 import discord
-from discord.ext.commands import Bot, check, CommandError
+from discord.ext.commands import Bot, check
 
 import ask
 import players as play
