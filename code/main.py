@@ -337,15 +337,3 @@ if __name__ == "__main__":
         f.close()
         client.run(token)
 
-"""
-test = discord.Embed(title="yas")
-test.add_field(name="I'm a field name", value="and I'm it's value")
-test.add_field(name="And I'm another field name!", value="and I'm another value!")
-test.add_field(name="This time, we're not inline!", value="Yep, we aren't indeed!", inline=False)
-await client.send_message(message.channel, "I'm some content", embed = test)
-"""
-"""
-for emoji in client.get_all_emojis():
-    print(emoji.name)
-    await client.add_reaction(message, emoji)
-"""
