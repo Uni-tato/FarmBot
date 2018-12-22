@@ -1,3 +1,4 @@
+"""A Discord bot for a farm idle game."""
 import asyncio
 
 import discord
@@ -198,16 +199,20 @@ async def buy(ctx, *args):
         )
         return
 
+    name_and_amount = f"{item.name} x{item.amount}"
+    total_price = item.buy_cost * item.amount
+
     answer = await ask.ask(
         ctx.message,
-        f"**Are you sure you want to buy {item.emoji} **{item.name} x{item.amount}** for **${item.buy_cost * item.amount}**?**",
+        f"**Are you sure you want to buy {item.emoji} **{name_and_amount}** for **${total_price}**?**",
         answers={"💸": True, "❌": False},
     )
     if answer:
         current_player.money -= item.buy_cost * item.amount
         current_player.items += item
         await client.say(
-            f"Bought {item.emoji} **{item.name} (x{item.amount})**! Money Remaining: $**{current_player.money}**."
+            f"Bought {item.emoji} **{item.name} (x{item.amount})**! "
+            f"Money Remaining: $**{current_player.money}**."
         )
 
 
@@ -239,16 +244,18 @@ async def sell(ctx, *args):
         return
 
     # Then we confirm if the user really wants to sell this...
+    total_price = item.sell_cost * item.amount
     answer = await ask.ask(
         ctx.message,
-        f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) for $**{item.sell_cost * item.amount}**?",
+        f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) "
+        f"for $**{total_price}**?",
     )
     if answer in (False, None):
         return
 
     # And only **then** we know we can sell it:
     current_player.items -= item
-    current_player.money += item.sell_cost * item.amount
+    current_player.money += total_price
     await client.say(f"Sold! You now have $**{current_player.money}**.")
 
 
