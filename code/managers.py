@@ -59,34 +59,43 @@ class CropManager:
         return crop_info[field]
 
     def exists(self, crop):
+        """Check if `crop` is a crop registered with the manager."""
         return crop in self._crops
 
     def get_time(self, crop):
+        """Get the time that `crop` takes until it is ready to harvest."""
         return self._get_inner(crop, "time")
 
     def get_item(self, crop):
+        """Get the name of the `Item` that `crop` yields upon harvest."""
         return self._get_inner(crop, "item")
 
     def get_seed(self, crop):
+        """Get the seed name of `crop`."""
         return self._get_inner(crop, "seed")
 
     def get_min_items(self, crop):
+        """Get the minimum number of items `crop` can yield."""
         return self._get_inner(crop, "min_item")
 
     def get_max_items(self, crop):
+        """Get the maximum number of items `crop` can yield."""
         return self._get_inner(crop, "max_item")
 
     def get_min_lifetime(self, crop):
+        """Get the minimum time until `crop` can die."""
         return self._get_inner(crop, "min_lifetime")
 
     def get_max_lifetime(self, crop):
+        """Get the maximum time until `crop` can die."""
         return self._get_inner(crop, "max_lifetime")
 
     def get_emoji(self, crop):
+        """Get the emoji of `crop`."""
         return self._get_inner(crop, "emoji")
 
-    # Returns whether it is a `Crop` or `Tree`.
     def get_type(self, crop):
+        """Return whether `crop` is a normal crop ("crop") or "tree"."""
         return self._get_inner(crop, "type")
 
 
@@ -122,13 +131,17 @@ class MarketManager:
         return item_info[field]
 
     def exists(self, item_name):
+        """Check if `item_name` is an item registered with the manager."""
         return item_name in self._items
 
     def get_buy_price(self, item_name):
+        """Get price to buy `item_name`."""
         return self._get_inner(item_name, "buy")
 
     def get_sell_price(self, item_name):
+        """Get price when selling `item_name`."""
         return self._get_inner(item_name, "sell")
 
     def get_emoji(self, item_name):
+        """Get the emoji of `item_name`."""
         return self._get_inner(item_name, "emoji")
