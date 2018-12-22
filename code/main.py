@@ -266,7 +266,6 @@ async def dgive(ctx, *args):
     amount = 1
     plant = ""
     try:
-        # Then check if the item is actually a real item...
         int(args[0])
     except ValueError:
         plant = " ".join(args).strip()
