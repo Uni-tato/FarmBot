@@ -152,7 +152,7 @@ async def status(ctx):
         title=f"***{current_player.farm.name}*** *status:*", colour=0x00D100
     )
 
-    for plot in current_player.farm.plots:
+    for index, plot in enumerate(current_player.farm.plots):
         text = ""
         if plot.crop is None:
             text = "Empty"
@@ -163,8 +163,7 @@ async def status(ctx):
             else:
                 text += f"**Status:** {plot.time(str)}"
 
-        index = current_player.farm.plots.index(plot)
-        embed.add_field(name=f"**__Plot #{index+1}__:**", value=text)
+        embed.add_field(name=f"**__Plot #{index + 1}__:**", value=text)
 
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
