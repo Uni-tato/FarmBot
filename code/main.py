@@ -106,17 +106,21 @@ async def harvest(ctx):
 
 
 @client.command(pass_context=True, aliases = ['i','inv','invin'])
-async def inventory(ctx):
+async def inventory(ctx, player = None):
     current_player = play.get(ctx)
-    items = current_player.items
+    if player == None:
+        queried_player = current_player
+    else:
+        queried_player = play.get_from_member(ctx.message.mentions[0])
+    items = queried_player.items
     categories = {}
     for item in items:
         category = item.category
         if category not in categories:
             categories[category] = ""
         categories[category] += f"{item.emoji} **{item.name}** x{item.amount}\n"
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*",colour=0x0080d6)
-    embed.add_field(name="**Money:**", value=f":moneybag: ${current_player.money}")
+    embed = discord.Embed(title=f"*{queried_player.player.name}'s Inventory:*",colour=0x0080d6)
+    embed.add_field(name="**Money:**", value=f":moneybag: ${queried_player.money}")
     for category in categories:
         embed.add_field(name = f"**{category}**", value = categories[category])
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
@@ -240,7 +244,7 @@ async def dgive(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
-    item = items.Item(plant, amount=amount, manager=market_manager)# someone has gotta do something about how we add items to inventories.
+    item = items_mod.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item
     await client.say(f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}")
 

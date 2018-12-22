@@ -35,3 +35,10 @@ def get(ctx):
 	if ctx.message.author not in players:
 		players[ctx.message.author] = Player(ctx.message.author)
 	return players[ctx.message.author]
+
+# does the same as get, but with a member/user object
+# perhaps we should make this part of get instead of a new function.
+def get_from_member(member):
+	if member not in players:
+		players[member] = Player(member)
+	return players[member]
