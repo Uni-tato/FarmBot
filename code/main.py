@@ -128,12 +128,16 @@ async def inv(ctx):
         categories[category] += f"{item.emoji} **{item.name}** x{item.amount}\n"
 
     # Create and prepare embed.
-    embed = discord.Embed(title=f"*{current_player.player.name}'s Inventory:*",colour=0x0080d6)
+    embed = discord.Embed(
+        title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080D6
+    )
     embed.add_field(name="**Money:**", value=f":moneybag: ${current_player.money}")
     for category in categories:
-        embed.add_field(name = f"**{category}**", value = categories[category])
+        embed.add_field(name=f"**{category}**", value=categories[category])
 
-    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
+    await client.send_message(
+        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+    )
 
 
 @client.command(pass_context=True)
@@ -269,7 +273,8 @@ async def dgive(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
-    item = items.Item(plant, amount=amount, manager=market_manager)# someone has gotta do something about how we add items to inventories.
+    # Someone has gotta do something about how we add items to inventories.
+    item = items.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
@@ -285,13 +290,13 @@ async def items(ctx):
         if category not in categories:
             categories[category] = ""
         categories[category] += f"{item.emoji} **{item.name}**\n"
-    embed = discord.Embed(title = "**__FarmBot Items.__**",colour=0x0080d6)
+    embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
     for category in categories:
-        embed.add_field(name = f"**{category}**", value = categories[category])
+        embed.add_field(name=f"**{category}**", value=categories[category])
     current_player = play.get(ctx)
-    await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
-
-
+    await client.send_message(
+        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+    )
 
 
 @client.event

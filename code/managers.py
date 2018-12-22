@@ -120,7 +120,7 @@ class MarketManager:
                 "buy": float(row["buy"]),
                 "sell": float(row["sell"]),
                 "emoji": row["emoji"],
-                "category": row["category"]
+                "category": row["category"],
             }
             self.items.append(Item(row["name"], manager=self))
 
