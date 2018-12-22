@@ -10,6 +10,7 @@ players = None
 
 
 def init(client_, players_):
+    """Provide module with `client` and `players`."""
     global client
     global players
     client = client_

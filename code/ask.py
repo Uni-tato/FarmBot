@@ -17,6 +17,7 @@ client = None
 
 
 def init(client_):
+    """Provide module with `client`."""
     global client
     client = client_
 

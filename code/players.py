@@ -9,6 +9,7 @@ market_manager = None
 
 
 def init(market_manager_):
+    """Provide module with `market_manager`."""
     global market_manager
     market_manager = market_manager_
 

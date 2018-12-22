@@ -57,6 +57,7 @@ client = None
 
 
 def init(client_, prefix_):
+    """Provide module with `client` and `prefix`."""
     global client
     global prefix
     client = client_
