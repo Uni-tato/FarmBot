@@ -159,7 +159,7 @@ async def buy(ctx, *args):
     plant = get_name(args)
 
     if market_manager.exists(plant):
-        item = items.Item(plant, amount=amount, manager=market_manager)
+        item = items_mod.Item(plant, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
@@ -198,7 +198,7 @@ async def sell(ctx, *args):
 
     # Then check if the item is actually a real item...
     if market_manager.exists(item_name):
-        item = items.Item(item_name, amount=amount, manager=market_manager)
+        item = items_mod.Item(item_name, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{item_name}` isn't a real item...")
         return
