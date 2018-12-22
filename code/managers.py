@@ -12,6 +12,7 @@ class CropManager:
 
     This means that there is *one* place that needs to change if crop
     yields, lifetimes, etc. change due to events, for example."""
+
     def __init__(self, crops_file_text):
         self.crops = []
         # The internal data storage for crops
@@ -104,6 +105,7 @@ class MarketManager:
 
     This means that there is *one* place that needs to change if
     prices change due to events, for example."""
+
     def __init__(self, items_file_text):
         self.items = []
         # The internal data storage for crops

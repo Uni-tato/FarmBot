@@ -24,6 +24,7 @@ questions = []
 
 class Question:
     """Represents a question asked to the user."""
+
     def __init__(self, orig_message, content, answers, timeout):
         self.orig_message = orig_message
         self.content = content
@@ -69,7 +70,6 @@ class Question:
         """Get the bot's reply if the user did not answer in time."""
         reply = self.orig_message.author.name + " took too long to answer."
         return reply
-
 
 
 async def ask(orig_message, content, *, answers={"👍": True, "👎": False}, timeout=30):

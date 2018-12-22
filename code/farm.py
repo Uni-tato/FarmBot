@@ -21,6 +21,7 @@ class Farm:
     This just stores `Plot`s which handle the real work of the
     harvesting and planting mechanic.
     """
+
     def __init__(self, name, plot_count=2):
         self.name = name
         self.plot_count = plot_count
@@ -32,6 +33,7 @@ class Plot:
 
     This handles the harvesting and planting code for crops
     and trees."""
+
     def __init__(self):
         self.crop = None
         self._start_time = None
@@ -132,6 +134,7 @@ class Crop:
     to represent what crop it is (e.g. wheat). This was done in order
     to remain compatible with old code that dealt with `Crop`s as if
     they were entities separate from a `CropManager`."""
+
     def __init__(self, name, *, manager):
         self.name = name
         self._manager = weakref.proxy(manager)

@@ -7,6 +7,7 @@ class FarmbotCSVDialect(Dialect):
 
     Because CSV is not a standardised format, mutually incompatible
     dialects of CSV exist. This extends to our dialect."""
+
     delimiter = ","
     quotechar = '"'
     doublequote = True

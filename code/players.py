@@ -16,6 +16,7 @@ def init(market_manager_):
 
 class Player:
     """Represents the users that play the game."""
+
     def __init__(self, player):
         # This'll be the discord object that represents the player
         self.player = player

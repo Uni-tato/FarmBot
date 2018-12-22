@@ -9,6 +9,7 @@ class Item:
     attributes. This is because this is essentially a proxy for the
     `MarketManager`, which provides all the values for price, emoji,
     etc."""
+
     def __init__(self, name, amount=1, *, manager):
         self.name = name
         self.amount = amount

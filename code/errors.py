@@ -23,6 +23,7 @@ class UserHasFarmError(CommandError):
     This is used by `discord.py`'s `discord.ext.commands` subpackage
     to enable clean error handling for the `Context` when commands are
     invoked."""
+
     pass
 
 
@@ -44,6 +45,7 @@ class UserHasNoFarmError(CommandError):
     This is used by `discord.py`'s `discord.ext.commands` subpackage
     to enable clean error handling for the `Context` when commands are
     invoked."""
+
     pass
 
 
@@ -69,7 +71,8 @@ async def on_command_error(error, ctx):
     elif isinstance(error, UserHasNoFarmError):
         await client.send_message(
             ctx.message.channel,
-            f"Sorry {ctx.message.author.name}, but you don't have a farm! Create one with `{client.command_prefix}create <name>`",
+            f"Sorry {ctx.message.author.name}, but you don't have a farm! "
+            f"Create one with `{client.command_prefix}create <name>`",
         )
         return
 
