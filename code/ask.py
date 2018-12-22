@@ -7,17 +7,17 @@ import asyncio
 
 import discord
 
-colour_asked = 0x00FF00
-colour_answered = 0xF4D85A
-colour_timed_out = 0xDDBB8B
+COLOUR_ASKED = 0x00FF00
+COLOUR_ANSWERED = 0xF4D85A
+COLOUR_TIMED_OUT = 0xDDBB8B
 
 # this variable and function let ask.py have access to the client
 client = None
 
 
-def init(Client):
+def init(client_):
     global client
-    client = Client
+    client = client_
 
 
 # stores all question objects currently waiting to be answered
@@ -25,6 +25,7 @@ questions = []
 
 
 class Question:
+    """Represents a question asked to the user."""
     def __init__(self, orig_message, content, answers, timeout):
         self.orig_message = orig_message
         self.content = content
@@ -40,26 +41,34 @@ class Question:
         # will end up being answers.get(emoji)
         self.answer = None
 
+        self.message = None
+
     def get_embed(self):
-        embed = discord.Embed(title=self.content, color=colour_asked)
+        """Get the embed object to be used in this question."""
+        embed = discord.Embed(title=self.content, color=COLOUR_ASKED)
         return embed
 
     def set_message(self, message):
+        """Set the message which represents the question to be asked."""
         self.message = message
 
     def get_answered_embed(self):
-        embed = discord.Embed(title="~~" + self.content + "~~", color=colour_answered)
+        """Get an embed object that represents an answered question."""
+        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_ANSWERED)
         return embed
 
     def get_timed_out_embed(self):
-        embed = discord.Embed(title="~~" + self.content + "~~", color=colour_timed_out)
+        """Get an embed object that represents a timed out question."""
+        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_TIMED_OUT)
         return embed
 
     def get_answered_reply(self):
+        """Get the bot's reply if the user answered in time."""
         reply = self.orig_message.author.name + " answered with: " + self.emoji
         return reply
 
     def get_timed_out_reply(self):
+        """Get the bot's reply if the user did not answer in time."""
         reply = self.orig_message.author.name + " took too long to answer."
         return reply
 
