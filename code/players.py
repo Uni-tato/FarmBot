@@ -14,6 +14,7 @@ def init(market_manager_):
 
 
 class Player:
+    """Represents the users that play the game."""
     def __init__(self, player):
         # This'll be the discord object that represents the player
         self.player = player
@@ -31,12 +32,22 @@ class Player:
         # These values might be here if they're player specific
 
     def has(self, item_name):
+        """Check if player has `item_name` in inventory.
+
+        If `item_name` is a `str`:
+            It just checks if player *has* the item.
+        If `item_name` is an `Item`:
+            It checks if player has the item *and* has
+            a greater than or equal to amount than the
+            input item."""
         return self.items.has(item_name)
 
 
-# returns the player object corresponding to ctx.message.author
-# Also automagically creates the player object if there isn't one already
 def get(ctx):
+    """Get a `Player` representing `ctx.message.author`.
+
+    Also automagically creates the player object if there isn't one already.
+    """
     if ctx.message.author not in players:
         players[ctx.message.author] = Player(ctx.message.author)
     return players[ctx.message.author]
