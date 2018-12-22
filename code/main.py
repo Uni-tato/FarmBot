@@ -7,7 +7,7 @@ from discord.ext.commands import Bot, check, CommandError
 import ask
 import players as play
 import farm
-import items
+import items as items_mod # we can change this to something else, I jsut cant be bothered thinking
 import errors
 import assist
 from managers import CropManager, MarketManager
@@ -89,7 +89,7 @@ async def p(ctx):
 async def harvest(ctx):
     current_player = play.get(ctx)
 
-    reap = items.Container([], manager=market_manager)
+    reap = items_mod.Container([], manager=market_manager)
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
