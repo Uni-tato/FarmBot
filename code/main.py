@@ -69,13 +69,13 @@ async def plant(ctx, *seed_name):
                 return
 
             # now we need to plant it...
-            for plot in current_player.farm.plots:
+            for index, plot in enumerate(current_player.farm.plots):
                 if plot.crop is None:
                     plot.plant(crop)
                     current_player.items -= crop.seed
                     await client.say(
-                        f"Planted {crop.emoji} **{crop.name}** in **Plot #{current_player.farm.plots.index(plot)+1}**!\n\
-Time until completion is **{plot.time(str, False)}**."
+                        f"Planted {crop.emoji} **{crop.name}** in **Plot #{index + 1}**! "
+                        f"Time until completion is **{plot.time(str, False)}**."
                     )
                     return
 
