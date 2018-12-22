@@ -95,7 +95,7 @@ async def show_all_commands(ctx, args):
     text = ""
     for command, command_info in commands.items():
         short_description = command_info["short_description"]
-        text += f"    `{command}` - {short_description}\n"
+        text += f"`{command}` - {short_description}\n"
     embed.add_field(name="**Commands:**", value=text)
 
     embed.add_field(
