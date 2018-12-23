@@ -4,7 +4,8 @@ from discord.ext.commands import Context
 
 import items
 
-# This'll be a dictionary where the keys are the player discord objects, and the values are this custom player class
+# This'll be a dictionary where the keys are the player discord objects,
+# and the values are this custom player class
 players = {}
 
 
@@ -33,7 +34,8 @@ class Player:
         self.money = 10
 
         # Here, there will probably be some other stuff such as player upgrades and shit
-        # `then with the money you can upgrade your farm, for example get more plots, reduce grow time etc` - Alex
+        # then with the money you can upgrade your farm, for example get more plots,
+        # reduce grow time etc` - Alex
         # These values might be here if they're player specific
 
     def has(self, item_name):

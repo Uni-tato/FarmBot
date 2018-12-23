@@ -46,9 +46,12 @@ class CropManager:
 
         if crop_type == "crop":
             return lifetime
-        elif crop_type == "tree":
+        if crop_type == "tree":
             # An arbitrary number of harvests-- a temporary solution.
             return lifetime / 10
+
+        # TODO: Replace with a non-user-facing error?
+        raise ValueError("'{crop_type}' is not a valid crop type.")
 
     def _get_inner(self, crop, field):
         try:
@@ -150,4 +153,5 @@ class MarketManager:
         return self._get_inner(item_name, "emoji")
 
     def get_category(self, item_name):
+        """Get the category of `item_name`."""
         return self._get_inner(item_name, "category")

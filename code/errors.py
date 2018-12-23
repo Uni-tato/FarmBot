@@ -54,9 +54,8 @@ def has_no_farm(ctx):
 
     This is required by some commands because, logically, they can't
     happen *with* farms. An example is the `create` command."""
-    if ctx.message.author not in players:
-        return True
-    elif players[ctx.message.author].farm is None:
+    current_user = ctx.message.author
+    if current_user not in players or players[current_user].farm is None:
         return True
     raise UserHasFarmError
 
@@ -68,7 +67,7 @@ async def on_command_error(error, ctx):
             ctx.message.channel, "Sorry bud but you've already got a farm!"
         )
         return
-    elif isinstance(error, UserHasNoFarmError):
+    if isinstance(error, UserHasNoFarmError):
         await client.send_message(
             ctx.message.channel,
             f"Sorry {ctx.message.author.name}, but you don't have a farm! "

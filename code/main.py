@@ -31,6 +31,7 @@ assist.init(client, prefix)
 client.remove_command("help")
 
 
+# TODO: Rename this so that it doesn't conflict with `builtins.help`.
 @client.command(pass_context=True)
 async def help(ctx, *args):
     await assist.help(ctx, args)
