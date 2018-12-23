@@ -53,11 +53,9 @@ class Plot:
         self._start_time = current_time
 
         # A temporary work-around to be able to detect when trees should die.
-        if (
-            self.crop.type == "tree"
-            and self._num_harvests == 0
-            or self.crop.type == "crop"
-        ):
+        is_new_tree = self.crop.type == "tree" and self._num_harvests == 0
+        is_crop = self.crop.type == "crop"
+        if is_new_tree or is_crop:
             self._first_planted_time = current_time
 
     def harvest(self):
