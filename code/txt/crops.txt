@@ -19,3 +19,8 @@ pear, pear seeds, pear, 1, 1, 60, 60, x, tree
 orange, orange seeds, orange, 10, 16, 23, 25, x, tree
 test, tseeds, test, 5, 10, 10, 15, x, tree
 
+#lemon,
+#combustible lemon,
+#rambutan,
+#
+#pizza,
