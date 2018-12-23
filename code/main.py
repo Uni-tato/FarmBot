@@ -25,13 +25,8 @@ prefix = "fm "
 # so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 
-ask.init(client)  # ask.py wants access to the client too!
-errors.init(client, play.players)
-assist.init(client, prefix)
 
 client.remove_command("help")
-
-
 # TODO: Rename this so that it doesn't conflict with `builtins.help`.
 @client.command(pass_context=True)
 async def help(ctx, *args):
@@ -391,6 +386,10 @@ async def on_ready():
 
 
 if __name__ == "__main__":
+    ask.init(client)
+    errors.init(client, play.players)
+    assist.init(client, prefix)
+
     with open("txt/crops.txt", "r") as crops_file:
         crop_manager = CropManager(crops_file.readlines())
 
