@@ -1,5 +1,7 @@
 import datetime
 import asyncio
+import pickle
+import os
 
 import discord
 from discord.ext.commands import Bot, check, CommandError
@@ -263,6 +265,32 @@ async def items(ctx):
         embed.add_field(name = f"**{category}**", value = categories[category])
     current_player = play.get(ctx)
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
+
+
+@client.command()
+async def save():
+    try:
+        os.remove("../players.dat")
+    except FileNotFoundError: pass
+    f = open("../players.dat", "wb+")
+
+    pickle.dump(play.players, f)
+
+    f.close()
+
+    await client.say("saved!")
+
+@client.command()
+async def reload():
+    try:
+        f = open("../players.dat", "rb")
+    except Exception:
+        await client.say("Sorry, but there's nothing to reload!")
+    else:
+        play.players = pickle.load(f)
+        f.close()
+        await client.say("Reloaded!")
+
 
 
 
