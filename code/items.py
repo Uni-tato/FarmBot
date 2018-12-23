@@ -137,7 +137,6 @@ class Container:
         else:
             raise ValueError("Unsupported subtraction on Container object")
 
-        self.sort()
         return self
 
     def __getitem__(self, key):
