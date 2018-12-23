@@ -80,9 +80,7 @@ class Container:
     low-friction as possible by overloading operators
     such as `+` and `-`."""
 
-    # TODO: Change default value of `items_input` to avoid problems
-    #       with the late-binding of names.
-    def __init__(self, items_input=[], *, manager):
+    def __init__(self, items_input=None, *, manager):
         # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
         self._manager = manager
 
@@ -92,6 +90,8 @@ class Container:
             self.items = [items_input]
         elif isinstance(items_input, list):
             self.items = items_input
+        elif items_input is None:
+            self.items = []
 
     def has(self, input_):
         """Check if player has `input_` item.
