@@ -52,7 +52,7 @@ async def create(ctx, *args):
         await client.say("Farm created!")
 
 
-@client.command(pass_context=True, aliases = ['p'])
+@client.command(pass_context=True, aliases = ['p', 'plan'])
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
     plant = get_name(seed_name)
@@ -80,7 +80,7 @@ Time until completion is **{plot.time(str, False)}**.")
     await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
 
 
-@client.command(pass_context=True, aliases = ['h'])
+@client.command(pass_context=True, aliases = ['h', 'harv', 'har'])
 @check(errors.has_farm)
 async def harvest(ctx):
     current_player = play.get(ctx)
@@ -126,7 +126,7 @@ async def inventory(ctx, player = None):
     await client.send_message(ctx.message.channel, f"{current_player.player.mention} ->", embed = embed)
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases=["stat", "stats", "sta", "s"])
 @check(errors.has_farm)
 async def status(ctx):
     current_player = play.get(ctx)
