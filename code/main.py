@@ -8,7 +8,7 @@ from discord.ext.commands import Bot, check
 import ask
 import players as play
 import farm
-import items as items_mod # we can change this to something else, I jsut cant be bothered thinking
+import items as items_mod  # we can change this to something else, I jsut cant be bothered thinking
 import errors
 import assist
 from managers import CropManager, MarketManager
@@ -57,7 +57,7 @@ async def create(ctx, *args):
         await client.say("Farm created!")
 
 
-@client.command(pass_context=True, aliases = ['p', 'plan'])
+@client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
     plant = get_name(seed_name)
@@ -89,7 +89,7 @@ async def plant(ctx, *seed_name):
     )
 
 
-@client.command(pass_context=True, aliases = ['h', 'harv', 'har'])
+@client.command(pass_context=True, aliases=["h", "harv", "har"])
 @check(errors.has_farm)
 async def harvest(ctx):
     current_player = play.get(ctx)
@@ -106,7 +106,6 @@ async def harvest(ctx):
         )
         return
 
-
     embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
     text = ""
     for item in reap:
@@ -119,8 +118,8 @@ async def harvest(ctx):
     )
 
 
-@client.command(pass_context=True, aliases = ['i','inv','invin'])
-async def inventory(ctx, player = None):
+@client.command(pass_context=True, aliases=["i", "inv", "invin"])
+async def inventory(ctx, player=None):
     current_player = play.get(ctx)
 
     if player is None:
@@ -299,7 +298,9 @@ async def items(ctx):
         category = item.category
         if category not in categories:
             categories[category] = ""
-        categories[category] += f"{item.emoji} **{item.name}**:\n\t buy: **${item.buy_cost}**, sell: **${item.sell_cost}**.\n"
+        categories[
+            category
+        ] += f"{item.emoji} **{item.name}**:\n\t buy: **${item.buy_cost}**, sell: **${item.sell_cost}**.\n"
     embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
 
     for category in categories:
@@ -314,7 +315,8 @@ async def items(ctx):
 async def save():
     try:
         os.remove("../players.dat")
-    except FileNotFoundError: pass
+    except FileNotFoundError:
+        pass
     f = open("../players.dat", "wb+")
 
     pickle.dump(play.players, f)

@@ -64,4 +64,3 @@ def get(i):
     if member not in players:
         players[member] = Player(member)
     return players[member]
-
