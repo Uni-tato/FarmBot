@@ -1,25 +1,31 @@
-# another example: (which I encourage you to try out)
-#await ask.ask(message, "You really shouldn't react with a pig", answers={"🐷":"pig","🐮":"cow"}, timeout=10)
-# which will return "pig" if the user reacts with the pig, "cow" if the user reacts with the cow,
-# and None if the user didn't respond within 10 seconds
+"""Handle questions asked to player."""
 import time
 import asyncio
 
 import discord
 
-colour_asked = 0x00ff00
-colour_answered = 0xf4d85a
-colour_timed_out = 0xddbb8b
+COLOUR_ASKED = 0x00FF00
+COLOUR_ANSWERED = 0xF4D85A
+COLOUR_TIMED_OUT = 0xDDBB8B
 
 # this variable and function let ask.py have access to the client
 client = None
-def init(Client):
+
+
+def init(client_):
+    """Provide module with `client`."""
     global client
-    client = Client
+    client = client_
+
 
 # stores all question objects currently waiting to be answered
 questions = []
+
+
 class Question:
+    """Represents a question asked to the user."""
+
+    # TODO: Make use of `timeout` argument.
     def __init__(self, orig_message, content, answers, timeout):
         self.orig_message = orig_message
         self.content = content
@@ -35,43 +41,59 @@ class Question:
         # will end up being answers.get(emoji)
         self.answer = None
 
+        self.message = None
 
     def get_embed(self):
-        embed = discord.Embed(title = self.content, color = colour_asked)
+        """Get the embed object to be used in this question."""
+        embed = discord.Embed(title=self.content, color=COLOUR_ASKED)
         return embed
 
-    def set_message(self,message):
+    def set_message(self, message):
+        """Set the message which represents the question to be asked."""
         self.message = message
 
     def get_answered_embed(self):
-        embed = discord.Embed(title = "~~"+self.content+"~~", color = colour_answered)
+        """Get an embed object that represents an answered question."""
+        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_ANSWERED)
         return embed
 
     def get_timed_out_embed(self):
-        embed = discord.Embed(title = "~~"+self.content+"~~", color = colour_timed_out)
+        """Get an embed object that represents a timed out question."""
+        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_TIMED_OUT)
         return embed
 
     def get_answered_reply(self):
+        """Get the bot's reply if the user answered in time."""
         reply = self.orig_message.author.name + " answered with: " + self.emoji
         return reply
 
     def get_timed_out_reply(self):
+        """Get the bot's reply if the user did not answer in time."""
         reply = self.orig_message.author.name + " took too long to answer."
         return reply
 
-# orig_message: the message that triggered the question (used for channel and author)
-# content: the question that'll be asked
-# OPTIONAL:
-# answers: a dictionary whos keys are the emojis (characters) and values their returned values (any data type)
-#     - MAKE SURE THAT `NONE` IS NEVER A POSSIBLE ANSWER, since this is what the function returns if it times out
-# timeout: the duration of the question
-async def ask(orig_message, content, *, answers={'👍':True,'👎':False}, timeout=30):
+
+async def ask(orig_message, content, *, answers={"👍": True, "👎": False}, timeout=30):
+    """Ask the user a question.
+
+    orig_message: the message that triggered the question (used for channel and author)
+    content: the question that'll be asked
+
+    OPTIONAL:
+    answers: a dictionary whose keys are the emojis (characters)
+             and values their returned values (any data type)
+        - MAKE SURE THAT `NONE` IS NEVER A POSSIBLE ANSWER,
+          since this is what the function returns if it times out
+    timeout: the duration of the question
+    """
     # these 2 lines make the whole function MUCH more readable :)
     channel = orig_message.channel
     author = orig_message.author
     # generate the quesition object fully and send the message object
     question = Question(orig_message, content, answers, timeout)
-    question.message = await client.send_message(channel, author.mention, embed=question.embed)
+    question.message = await client.send_message(
+        channel, author.mention, embed=question.embed
+    )
     questions.append(question)
 
     # make the bot react with the necceccary reactions
@@ -81,13 +103,21 @@ async def ask(orig_message, content, *, answers={'👍':True,'👎':False}, time
     while True:
         if question.answered:
             # question has been answered
-            await client.edit_message(question.message, question.get_answered_reply(), embed=question.get_answered_embed())
+            await client.edit_message(
+                question.message,
+                question.get_answered_reply(),
+                embed=question.get_answered_embed(),
+            )
             break
         if time.time() >= question.time + timeout:
             # question has been timedout (how do you spell this!?!?)
             question.answer = None
             question.answered = False
-            await client.edit_message(question.message, question.get_timed_out_reply(), embed=question.get_timed_out_embed())
+            await client.edit_message(
+                question.message,
+                question.get_timed_out_reply(),
+                embed=question.get_timed_out_embed(),
+            )
             break
         # this lets other async functions still run while this is waiting for a reaction
         await asyncio.sleep(1.0)
@@ -97,5 +127,3 @@ async def ask(orig_message, content, *, answers={'👍':True,'👎':False}, time
     questions.remove(question)
     # return the given answer
     return question.answer
-
-

@@ -1,31 +1,49 @@
+"""Handle `Item`s and `Container`s."""
 import weakref
 
-# Each item object now has an associated amount - think stacks of items in Minecraft,
-# Where an item in your inventory can have a 1 or 2 or 64 value, signifying its amount
+
 class Item:
-    def __init__(self, name ,amount = 1, *, manager):
+    """Represents a "stack" of items.
+
+    All `Item`s are the same, except in their `amount` and `name`
+    attributes. This is because this is essentially a proxy for the
+    `MarketManager`, which provides all the values for price, emoji,
+    etc."""
+
+    def __init__(self, name, amount=1, *, manager):
         self.name = name
-        # TODO: Remove this? Make `Container` handle item numbers. 
         self.amount = amount
         self._manager = weakref.proxy(manager)
 
     @property
     def buy_cost(self):
+        """Get price to buy this item."""
         return self._manager.get_buy_price(self.name)
 
     @property
     def sell_cost(self):
+        """Get price when selling this item."""
         return self._manager.get_sell_price(self.name)
 
     @property
     def emoji(self):
+        """Get the emoji of this item."""
         return self._manager.get_emoji(self.name)
 
     @emoji.setter
     def emoji(self, new_emoji):
+        """Set the emoji of this item."""
         self._manager._items[self.name]["emoji"] = new_emoji
 
     def init_emoji(self, client):
+        """Initialise the emoji for this item.
+
+        This needs to loop through the available server emojis
+        because the server-specific "fm_wheat" emoji will *not*
+        be a valid emoji upon output. Calling `str` on the actual
+        emoji object (supplied by `client.get_all_emojis`) will
+        provide the server-specific emoji string,
+        e.g., ":fm_wheat:123456", which is what we want."""
         for emoji in client.get_all_emojis():
             if emoji.name == self.emoji:
                 self.emoji = str(emoji)
@@ -35,7 +53,9 @@ class Item:
 
     @property
     def category(self):
+        """Get the category of this item."""
         return self._manager.get_category(self.name)
+
 
 # USAGE EXAMPLES:
 # player.has(Item), player.has("wheat")
@@ -45,7 +65,8 @@ class Item:
 # ALL EQUIVILANT TO player.items.append()
 # player.items -= Item, player.items -= "wheat", player.items -= Container
 # ALL EQUIVILANT TO player.items.remove()
-# - will add/remove an item/items from the players inventory, returns an error if not present or if too many are removed
+# - will add/remove an item/items from the players inventory,
+#   returns an error if not present or if too many are removed
 #
 # player.items[Item], player.items["wheat"]
 # - returns the item object
@@ -53,19 +74,32 @@ class Item:
 # for item in player.items:
 # - returns each item object
 class Container:
-    ### NO. NO CONTAINER NAMES. PLEASE. ###
-    #def __init__(self, name, items = []):
-    #    self.name = name
-    def __init__(self, items_input = [], *, manager):
+    """Stores `Item`s.
+
+    This attempts to make interactions with the players' inventory as
+    low-friction as possible by overloading operators
+    such as `+` and `-`."""
+
+    # TODO: Change default value of `items_input` to avoid problems
+    #       with the late-binding of names.
+    def __init__(self, items_input=[], *, manager):
         # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
         self._manager = manager
-        # This if statement makes it so that Container can accept both an item or list of items as an input
+
+        # This if statement makes it so that Container can accept
+        # both an item or list of items as an input
         if isinstance(items_input, Item):
             self.items = [items_input]
         elif isinstance(items_input, list):
             self.items = items_input
 
     def has(self, input_):
+        """Check if player has `input_` item.
+
+        `input_` can be a `str` representing an item, e.g., "wheat"
+        OR an instance of `Item`, which additionally checks if
+        the player has greater than or equal to the amount of items
+        in the stack of items represented by `input_`."""
         name = None
         if isinstance(input_, str):
             name = input_
@@ -75,25 +109,25 @@ class Container:
         for item in self.items:
             if name == item.name:
                 if isinstance(input_, Item):
-                    if item.amount >= input_.amount:
-                        return True
-                    else:
-                        return False
-                else:
-                    return True
+                    return item.amount >= input_.amount
+                return True
         return False
 
     def __add__(self, other):
-        def add_item(tar_item): # target_item = items in the container that's being added from
+        # target_item = items in the container that's being added from
+        def add_item(tar_item):
+            # sorce_item = items in the container that's being added too
             found = False
-            for sor_item in self.items: # sorce_item = items in the container that's being added too
+            for sor_item in self.items:
                 if sor_item.name == tar_item.name:
                     sor_item.amount += tar_item.amount
                     found = True
                     break
             if not found:
                 # if the target item does not exist in the source, then we must create it there
-                self.items.append(Item(tar_item.name, amount=tar_item.amount, manager=self._manager))
+                self.items.append(
+                    Item(tar_item.name, amount=tar_item.amount, manager=self._manager)
+                )
 
         if isinstance(other, Container):
             for item in other:
@@ -120,9 +154,11 @@ class Container:
                     elif sor_item.amount == tar_item.amount:
                         self.items.remove(sor_item)
                     else:
-                        raise ValueError(f"More \"{tar_item.name}\"'s removed than in Container.")
+                        raise ValueError(
+                            f'More "{tar_item.name}"\'s removed than in Container.'
+                        )
                     return
-            raise ValueError(f"Item \"{tar_item.name}\" not present in Container.")
+            raise ValueError(f'Item "{tar_item.name}" not present in Container.')
 
         if isinstance(other, Container):
             for item in other:
@@ -160,17 +196,20 @@ class Container:
 
     # Alex still gets his .append() and .remove() he had before
     def append(self, items):
+        """Add `items` to this container."""
         self.__add__(items)
 
     def remove(self, items):
-        if type(items) == Container:
+        """Remove `items` from this container."""
+        if isinstance(items, Container):
             items = items.items
         for item in items:
-            if item not in self.items: # return an error if the container does not have (enough of) an item.
-                raise ValueError(f"Item: \"{item}\" not present in Container.")
+            # return an error if the container does not have (enough of) an item.
+            if item not in self.items:
+                raise ValueError(f'Item: "{item}" not present in Container.')
             elif items[item] > self.items[item]:
-                raise ValueError(f"More \"{item}\"s removed than in Container.")
-            
+                raise ValueError(f'More "{item}"s removed than in Container.')
+
             elif items[item] == self.items[item]:
                 del self.items[item]
             else:
@@ -178,8 +217,7 @@ class Container:
         self.__sub__(items)
 
     def sort(self):
-        def get_name(item):
-            return item.name
+        """Sort this container by the name of its items."""
         # sort the contents of the container alphabetically
         # this is done automatically whenever an item is added/removed from the Container
-        self.items.sort(key=get_name)
+        self.items.sort(key=lambda item: item.name)
