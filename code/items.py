@@ -53,6 +53,7 @@ class Item:
 
     @property
     def category(self):
+        """Get the category of this item."""
         return self._manager.get_category(self.name)
 
 
@@ -73,19 +74,32 @@ class Item:
 # for item in player.items:
 # - returns each item object
 class Container:
-    ### NO. NO CONTAINER NAMES. PLEASE. ###
-    # def __init__(self, name, items = []):
-    #    self.name = name
+    """Stores `Item`s.
+
+    This attempts to make interactions with the players' inventory as
+    low-friction as possible by overloading operators
+    such as `+` and `-`."""
+
+    # TODO: Change default value of `items_input` to avoid problems
+    #       with the late-binding of names.
     def __init__(self, items_input=[], *, manager):
         # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
         self._manager = manager
-        # This if statement makes it so that Container can accept both an item or list of items as an input
+
+        # This if statement makes it so that Container can accept
+        # both an item or list of items as an input
         if isinstance(items_input, Item):
             self.items = [items_input]
         elif isinstance(items_input, list):
             self.items = items_input
 
     def has(self, input_):
+        """Check if player has `input_` item.
+
+        `input_` can be a `str` representing an item, e.g., "wheat"
+        OR an instance of `Item`, which additionally checks if
+        the player has greater than or equal to the amount of items
+        in the stack of items represented by `input_`."""
         name = None
         if isinstance(input_, str):
             name = input_
@@ -204,6 +218,7 @@ class Container:
         self.__sub__(items)
 
     def sort(self):
+        """Sort this container by the name of its items."""
         # sort the contents of the container alphabetically
         # this is done automatically whenever an item is added/removed from the Container
         self.items.sort(key=get_name)
