@@ -46,7 +46,7 @@ async def create(ctx, *args):
         await client.say("You can't create a farm with no name!")
         return
 
-    play.players[ctx.message.author] = play.Player(ctx.message.author)
+    play.get(ctx)
 
     answer = await ask.ask(ctx.message, f"Are you sure you wish to start a new farm called `{name}`?")
     if answer:
