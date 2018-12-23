@@ -37,7 +37,7 @@ class Item:
 
     def init_emoji(self, client):
         """Initialise the emoji for this item.
-        
+
         This needs to loop through the available server emojis
         because the server-specific "fm_wheat" emoji will *not*
         be a valid emoji upon output. Calling `str` on the actual
@@ -64,7 +64,8 @@ class Item:
 # ALL EQUIVILANT TO player.items.append()
 # player.items -= Item, player.items -= "wheat", player.items -= Container
 # ALL EQUIVILANT TO player.items.remove()
-# - will add/remove an item/items from the players inventory, returns an error if not present or if too many are removed
+# - will add/remove an item/items from the players inventory,
+#   returns an error if not present or if too many are removed
 #
 # player.items[Item], player.items["wheat"]
 # - returns the item object
@@ -94,24 +95,16 @@ class Container:
         for item in self.items:
             if name == item.name:
                 if isinstance(input_, Item):
-                    if item.amount >= input_.amount:
-                        return True
-                    else:
-                        return False
-                else:
-                    return True
+                    return item.amount >= input_.amount
+                return True
         return False
 
     def __add__(self, other):
-        def add_item(
-            tar_item
-        ):  # target_item = items in the container that's being added from
+        # target_item = items in the container that's being added from
+        def add_item(tar_item):
+            # sorce_item = items in the container that's being added too
             found = False
-            for (
-                sor_item
-            ) in (
-                self.items
-            ):  # sorce_item = items in the container that's being added too
+            for sor_item in self.items:
                 if sor_item.name == tar_item.name:
                     sor_item.amount += tar_item.amount
                     found = True
@@ -190,15 +183,16 @@ class Container:
 
     # Alex still gets his .append() and .remove() he had before
     def append(self, items):
+        """Add `items` to this container."""
         self.__add__(items)
 
     def remove(self, items):
-        if type(items) == Container:
+        """Remove `items` from this container."""
+        if isinstance(items, Container):
             items = items.items
         for item in items:
-            if (
-                item not in self.items
-            ):  # return an error if the container does not have (enough of) an item.
+            # return an error if the container does not have (enough of) an item.
+            if item not in self.items:
                 raise ValueError(f'Item: "{item}" not present in Container.')
             elif items[item] > self.items[item]:
                 raise ValueError(f'More "{item}"s removed than in Container.')
