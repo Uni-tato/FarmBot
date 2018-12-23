@@ -2,6 +2,7 @@ import datetime
 import asyncio
 import pickle
 import os
+import weakref
 
 import discord
 from discord.ext.commands import Bot, check, CommandError
@@ -286,13 +287,25 @@ async def reload():
         f = open("../players.dat", "rb")
     except Exception:
         await client.say("Sorry, but there's nothing to reload!")
+
     else:
-        play.players = pickle.load(f)
+        play.players.clear()
+        play.players.update(pickle.load(f))
         f.close()
         await client.say("Reloaded!")
 
+        # Here we reapply any instance of a manager in play.players, cause they don't like being serialized.
+        for player_i in play.players:
+            player = play.players[player_i]
 
+            player.items._manager = market_manager
+            for item in player.items:
+                item._manager = weakref.proxy(market_manager)
 
+            if player.farm != None:
+                for plot in player.farm.plots:
+                    if plot.crop != None:
+                        plot.crop._manager = weakref.proxy(crop_manager)
 
 
 @client.event
