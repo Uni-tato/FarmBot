@@ -17,7 +17,7 @@ def init(market_manager_):
 
 class Farm:
     """Represents farms owned by players.
-    
+
     This just stores `Plot`s which handle the real work of the
     harvesting and planting mechanic.
     """
@@ -51,6 +51,7 @@ class Plot:
 
         self.crop = crop
         self._start_time = current_time
+
         # A temporary work-around to be able to detect when trees should die.
         if (
             self.crop.type == "tree"
@@ -128,7 +129,7 @@ class Crop:
 
     This is distinct from `Item`s, which can be bought and sold via
     the `MarketManager`.
-    
+
     This is essentially a proxy to the `CropManager`, meaning that
     `Crop`s don't have any meaningful data by themselves, just a name
     to represent what crop it is (e.g. wheat). This was done in order
@@ -142,7 +143,7 @@ class Crop:
     @property
     def time(self):
         """Get the time taken until this crop can be harvested.
-        
+
         This is NOT an absolute time, it is a delta
         (not referring to any class here)."""
         return self._manager.get_time(self.name)
@@ -170,10 +171,10 @@ class Crop:
     @property
     def min_lifetime(self):
         """Get the minimum time until this crop can die.
-        
+
         This is NOT an absolute time, it is a delta
         (not referring to any class here).
-        
+
         This is an important property for trees as this determines
         when they die, from which the time until they can
         be harvested is derived."""
@@ -182,10 +183,10 @@ class Crop:
     @property
     def max_lifetime(self):
         """Get the maximum time until this crop can die.
-        
+
         This is NOT an absolute time, it is a delta
         (not referring to any class here).
-        
+
         This is an important property for trees as this determines
         when they die, from which the time until they can
         be harvested is derived."""
@@ -207,7 +208,7 @@ class Crop:
 
     def init_emoji(self, client):
         """Initialise the emoji for this crop.
-        
+
         This needs to loop through the available server emojis
         because the server-specific "fm_wheat" emoji will *not*
         be a valid emoji upon output. Calling `str` on the actual
