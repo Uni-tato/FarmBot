@@ -179,10 +179,8 @@ class Container:
         self.__sub__(items)
 
     def sort(self):
+        def get_name(item):
+            return item.name
         # sort the contents of the container alphabetically
         # this is done automatically whenever an item is added/removed from the Container
         self.items.sort(key=get_name)
-
-
-def get_name(item):
-    return item.name
