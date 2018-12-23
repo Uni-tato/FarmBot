@@ -15,11 +15,13 @@ from managers import CropManager, MarketManager
 from util import get_amount, get_name
 
 #### QUICK TO DO LIST: ####
-# - Make a method on Crop that returns the time untill completioin in a nice string e.g. "9.1hours" and not "456mins"
-# - Make the `fm plant` command better - print to the user time until compleation? Let user select plots manually?
+# - Make the `fm plant` command better:
+#   print to the user time until compleation? Let user select plots manually?
 
+# TODO: Make `prefix` a constant.
 prefix = "fm "
-# `Bot` is a subclass of `discord.Client` so it can be used anywhere that `discord.Client` can be used.
+# `Bot` is a subclass of `discord.Client`
+# so it can be used anywhere that `discord.Client` can be used.
 client = Bot(command_prefix=prefix)
 
 ask.init(client)  # ask.py wants access to the client too!
@@ -128,7 +130,6 @@ async def inventory(ctx, player=None):
         queried_player = play.get(ctx.message.mentions[0])
 
     # Separate items into categories.
-    items = queried_player.items
     categories = {}
     for item in queried_player.items:
         category = item.category
@@ -292,19 +293,24 @@ async def dgive(ctx, *args):
 
 @client.command(pass_context=True)
 async def items(ctx):
-    items = market_manager.items
+    # Separate items into categories.
     categories = {}
-    for item in items:
+    for item in market_manager.items:
         category = item.category
         if category not in categories:
             categories[category] = ""
-        categories[
-            category
-        ] += f"{item.emoji} **{item.name}**:\n\t buy: **${item.buy_cost}**, sell: **${item.sell_cost}**.\n"
-    embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
 
+        item_header = f"{item.emoji} **{item.name}**"
+        buy_text = f"buy: **${item.buy_cost}**"
+        sell_text = f"sell: **${item.sell_cost}**"
+
+        categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
+
+    # Create and prepare embed.
+    embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
+
     current_player = play.get(ctx)
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
