@@ -29,7 +29,7 @@ class CropManager:
                 "seed": row["seed"],
                 "item": row["item"],
                 "min_item": int(row["min_item"]),
-                "max_item": int(row["min_item"]),
+                "max_item": int(row["max_item"]),
                 "min_lifetime": min_lifetime,
                 "max_lifetime": max_lifetime,
                 "emoji": row["emoji"],

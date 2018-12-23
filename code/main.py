@@ -1,11 +1,14 @@
 """A Discord bot for a farm idle game."""
+import pickle
+import os
+
 import discord
 from discord.ext.commands import Bot, check
 
 import ask
 import players as play
 import farm
-import items
+import items as items_mod # we can change this to something else, I jsut cant be bothered thinking
 import errors
 import assist
 from managers import CropManager, MarketManager
@@ -54,7 +57,7 @@ async def create(ctx, *args):
         await client.say("Farm created!")
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases = ['p', 'plan'])
 @check(errors.has_farm)
 async def plant(ctx, *seed_name):
     plant = get_name(seed_name)
@@ -86,26 +89,27 @@ async def plant(ctx, *seed_name):
     )
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases = ['h', 'harv', 'har'])
 @check(errors.has_farm)
 async def harvest(ctx):
     current_player = play.get(ctx)
 
-    loot = items.Container([], manager=market_manager)
+    reap = items_mod.Container([], manager=market_manager)
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
-            loot += item
+            reap += item
 
-    if len(loot) == 0:
+    if len(reap) == 0:
         await client.say(
             f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!"
         )
         return
 
+
     embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
     text = ""
-    for item in loot:
+    for item in reap:
         text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
         current_player.items += item
     embed.add_field(name="**__Items__:**", value=text)
@@ -115,13 +119,19 @@ async def harvest(ctx):
     )
 
 
-@client.command(pass_context=True)
-async def inv(ctx):
+@client.command(pass_context=True, aliases = ['i','inv','invin'])
+async def inventory(ctx, player = None):
     current_player = play.get(ctx)
 
+    if player is None:
+        queried_player = current_player
+    else:
+        queried_player = play.get(ctx.message.mentions[0])
+
     # Separate items into categories.
+    items = queried_player.items
     categories = {}
-    for item in current_player.items:
+    for item in queried_player.items:
         category = item.category
         if category not in categories:
             categories[category] = ""
@@ -129,9 +139,9 @@ async def inv(ctx):
 
     # Create and prepare embed.
     embed = discord.Embed(
-        title=f"*{current_player.player.name}'s Inventory:*", colour=0x0080D6
+        title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
     )
-    embed.add_field(name="**Money:**", value=f":moneybag: ${current_player.money}")
+    embed.add_field(name="**Money:**", value=f":moneybag: ${queried_player.money}")
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
 
@@ -140,7 +150,7 @@ async def inv(ctx):
     )
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases=["stat", "stats", "s"])
 @check(errors.has_farm)
 async def status(ctx):
     current_player = play.get(ctx)
@@ -176,7 +186,7 @@ async def buy(ctx, *args):
     plant = get_name(args)
 
     if market_manager.exists(plant):
-        item = items.Item(plant, amount=amount, manager=market_manager)
+        item = items_mod.Item(plant, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
@@ -222,7 +232,7 @@ async def sell(ctx, *args):
 
     # Then check if the item is actually a real item...
     if market_manager.exists(item_name):
-        item = items.Item(item_name, amount=amount, manager=market_manager)
+        item = items_mod.Item(item_name, amount=amount, manager=market_manager)
     else:
         await client.say(f"`{item_name}` isn't a real item...")
         return
@@ -274,7 +284,7 @@ async def dgive(ctx, *args):
         return
 
     # Someone has gotta do something about how we add items to inventories.
-    item = items.Item(plant, amount=amount, manager=market_manager)
+    item = items_mod.Item(plant, amount=amount, manager=market_manager)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
@@ -289,14 +299,41 @@ async def items(ctx):
         category = item.category
         if category not in categories:
             categories[category] = ""
-        categories[category] += f"{item.emoji} **{item.name}**\n"
+        categories[category] += f"{item.emoji} **{item.name}**:\n\t buy: **${item.buy_cost}**, sell: **${item.sell_cost}**.\n"
     embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
+
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
     current_player = play.get(ctx)
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
+
+
+@client.command()
+async def save():
+    try:
+        os.remove("../players.dat")
+    except FileNotFoundError: pass
+    f = open("../players.dat", "wb+")
+
+    pickle.dump(play.players, f)
+
+    f.close()
+
+    await client.say("saved!")
+
+
+@client.command()
+async def reload():
+    try:
+        f = open("../players.dat", "rb")
+    except Exception:
+        await client.say("Sorry, but there's nothing to reload!")
+    else:
+        play.players = pickle.load(f)
+        f.close()
+        await client.say("Reloaded!")
 
 
 @client.event

@@ -1,4 +1,7 @@
 """Implement player code."""
+import discord
+from discord.ext.commands import Context
+
 import items
 
 # This'll be a dictionary where the keys are the player discord objects, and the values are this custom player class
@@ -45,11 +48,20 @@ class Player:
         return self.items.has(item_name)
 
 
-def get(ctx):
+# TODO: Rename argument to something meaningful.
+def get(i):
     """Get a `Player` representing `ctx.message.author`.
 
-    Also automagically creates the player object if there isn't one already.
-    """
-    if ctx.message.author not in players:
-        players[ctx.message.author] = Player(ctx.message.author)
-    return players[ctx.message.author]
+    Also automagically creates the player object if there isn't one already."""
+    if isinstance(i, discord.Member):
+        member = i
+    elif isinstance(i, Context):
+        member = i.message.author
+    else:
+        # TODO: Should this just raise an exception?
+        return None
+
+    if member not in players:
+        players[member] = Player(member)
+    return players[member]
+

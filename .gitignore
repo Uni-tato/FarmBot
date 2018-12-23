@@ -103,5 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# The Discord Bot's token
+# Custom things
 code/txt/token.txt
+players.dat
