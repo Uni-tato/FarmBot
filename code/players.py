@@ -1,3 +1,6 @@
+import discord
+from discord.ext.commands import Context
+
 import items
 
 # This'll be a dictionary where the keys are the player discord objects, and the values are this custom player class
@@ -31,14 +34,14 @@ class Player():
 
 # returns the player object corresponding to ctx.message.author
 # Also automagically creates the player object if there isn't one already
-def get(ctx):
-	if ctx.message.author not in players:
-		players[ctx.message.author] = Player(ctx.message.author)
-	return players[ctx.message.author]
+def get(i):
+	if isinstance(i, discord.Member):
+		member = i
+	elif isinstance(i, Context):
+		member = i.message.author
+	else:
+		return
 
-# does the same as get, but with a member/user object
-# perhaps we should make this part of get instead of a new function.
-def get_from_member(member):
 	if member not in players:
 		players[member] = Player(member)
 	return players[member]

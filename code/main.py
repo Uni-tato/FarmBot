@@ -111,7 +111,7 @@ async def inventory(ctx, player = None):
     if player == None:
         queried_player = current_player
     else:
-        queried_player = play.get_from_member(ctx.message.mentions[0])
+        queried_player = play.get(ctx.message.mentions[0])
     items = queried_player.items
     categories = {}
     for item in items:
