@@ -221,8 +221,4 @@ class Container:
         """Sort this container by the name of its items."""
         # sort the contents of the container alphabetically
         # this is done automatically whenever an item is added/removed from the Container
-        self.items.sort(key=get_name)
-
-
-def get_name(item):
-    return item.name
+        self.items.sort(key=lambda item: item.name)
