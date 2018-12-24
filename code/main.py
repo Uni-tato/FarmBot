@@ -2,6 +2,7 @@
 import pickle
 import os
 import weakref
+import asyncio
 
 import discord
 from discord.ext.commands import Bot, check
@@ -21,8 +22,8 @@ from util import get_amount, get_name
 
 # TODO: Make `prefix` a constant.
 prefix = "fm "
-# `Bot` is a subclass of `discord.Client`
-# so it can be used anywhere that `discord.Client` can be used.
+# Autosave interval is in minutes. Making this larger does NOT improve performance.
+autosave_interval = 1
 client = Bot(command_prefix=prefix)
 
 
@@ -266,15 +267,8 @@ async def dgive(ctx, *args):
     if len(args) == 0:
         return
 
-    amount = 1
-    plant = ""
-    try:
-        int(args[0])
-    except ValueError:
-        plant = " ".join(args).strip()
-    else:
-        amount = int(args[0])
-        plant = " ".join(args[1:]).strip()
+    amount = get_amount(args)
+    name = get_name(args)
 
     if not market_manager.exists(plant):
         await client.say(f"`{plant}` isn't a real item...")
@@ -313,33 +307,29 @@ async def items(ctx):
     )
 
 
-@client.command()
 async def save():
     try:
         os.remove("../players.dat")
     except FileNotFoundError:
         pass
     f = open("../players.dat", "wb+")
-
     pickle.dump(play.players, f)
-
     f.close()
 
-    await client.say("saved!")
+    print('saved')
 
 
-@client.command()
 async def reload():
     try:
         f = open("../players.dat", "rb")
     except Exception:
-        await client.say("Sorry, but there's nothing to reload!")
+        print("reloading error - no save detected, ignore this error")
 
     else:
         play.players.clear()
         play.players.update(pickle.load(f))
         f.close()
-        await client.say("Reloaded!")
+        print('reloaded')
 
         # Here we reapply any instance of a manager in play.players, cause they don't like being serialized.
         for player_i in play.players:
@@ -353,6 +343,18 @@ async def reload():
                 for plot in player.farm.plots:
                     if plot.crop != None:
                         plot.crop._manager = weakref.proxy(crop_manager)
+
+
+async def loop():
+    await client.wait_until_ready()
+    autosave_counter = 0
+    while not client.is_closed:
+        await asyncio.sleep(5.0)
+
+        autosave_counter += 1
+        if autosave_counter * 5 >= autosave_interval * 60:
+            autosave_counter = 0
+            await save()
 
 
 @client.event
@@ -377,6 +379,8 @@ async def on_reaction_add(reaction, user):
 @client.event
 async def on_ready():
     print("FarmBot is online")
+
+    await reload()
 
     for item in market_manager.items:
         item.init_emoji(client)
@@ -411,4 +415,5 @@ if __name__ == "__main__":
         token = f.read()
     finally:
         f.close()
+        client.loop.create_task(loop())
         client.run(token)
