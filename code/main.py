@@ -93,7 +93,7 @@ async def plant(ctx, *seed_name):
 async def harvest(ctx):
     current_player = play.get(ctx)
 
-    reap = items_mod.Container([], manager=market_manager)
+    reap = items_mod.Container([])
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
@@ -183,7 +183,7 @@ async def buy(ctx, *args):
     plant = get_name(args)
 
     if market_manager.exists(plant):
-        item = items_mod.Item(plant, amount=amount, manager=market_manager)
+        item = items_mod.Item(plant, amount)
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
@@ -229,7 +229,7 @@ async def sell(ctx, *args):
 
     # Then check if the item is actually a real item...
     if market_manager.exists(item_name):
-        item = items_mod.Item(item_name, amount=amount, manager=market_manager)
+        item = items_mod.Item(item_name, amount)
     else:
         await client.say(f"`{item_name}` isn't a real item...")
         return
@@ -280,8 +280,7 @@ async def dgive(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
-    # Someone has gotta do something about how we add items to inventories.
-    item = items_mod.Item(plant, amount=amount, manager=market_manager)
+    item = items_mod.Item(plant, amount)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
@@ -398,6 +397,7 @@ if __name__ == "__main__":
 
     play.init(market_manager)
     farm.init(market_manager)
+    items_mod.init(market_manager)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file

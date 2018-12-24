@@ -1,6 +1,11 @@
 """Handle `Item`s and `Container`s."""
 import weakref
 
+market_manager = None
+def init(market_manager_):
+    """Provide module with `market_manager`."""
+    global market_manager
+    market_manager = market_manager_
 
 class Item:
     """Represents a "stack" of items.
@@ -10,10 +15,13 @@ class Item:
     `MarketManager`, which provides all the values for price, emoji,
     etc."""
 
-    def __init__(self, name, amount=1, *, manager):
+    def __init__(self, name, amount=1, *, manager=None):
         self.name = name
         self.amount = amount
-        self._manager = weakref.proxy(manager)
+        if manager is None:
+            self._manager = market_manager
+        else:
+            self._manager = manager
 
     @property
     def buy_cost(self):
@@ -80,9 +88,12 @@ class Container:
     low-friction as possible by overloading operators
     such as `+` and `-`."""
 
-    def __init__(self, items_input=None, *, manager):
+    def __init__(self, items_input=None, *, manager=None):
         # Hold a reference to the `MarketManager` to use in instantiating `Item`s.
-        self._manager = manager
+        if manager is None:
+            self._manager = market_manager
+        else:
+            self._manager = manager
 
         # This if statement makes it so that Container can accept
         # both an item or list of items as an input
@@ -126,7 +137,7 @@ class Container:
             if not found:
                 # if the target item does not exist in the source, then we must create it there
                 self.items.append(
-                    Item(tar_item.name, amount=tar_item.amount, manager=self._manager)
+                    Item(tar_item.name, tar_item.amount)
                 )
 
         if isinstance(other, Container):

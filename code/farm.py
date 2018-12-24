@@ -7,8 +7,6 @@ import items
 
 
 market_manager = None
-
-
 def init(market_manager_):
     """Provide module with `market_manager`."""
     global market_manager
@@ -87,7 +85,7 @@ class Plot:
                 self._num_harvests += 1
                 self.plant(self.crop)
 
-        return items.Item(item_name, amount=item_count, manager=market_manager)
+        return items.Item(item_name, item_count)
         # return {item:item_count} #if these return none then I will need to make item a copy.
 
     def time(self, data_type, from_present=True):
