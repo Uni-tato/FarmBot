@@ -316,7 +316,7 @@ async def save():
     pickle.dump(play.players, f)
     f.close()
 
-    print('saved')
+    #print('saved')
 
 
 async def reload():
