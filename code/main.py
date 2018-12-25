@@ -3,6 +3,7 @@ import pickle
 import os
 import weakref
 import asyncio
+import time
 
 import discord
 from discord.ext.commands import Bot, check
@@ -59,30 +60,51 @@ async def create(ctx, *args):
 
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
-async def plant(ctx, *seed_name):
-    plant = get_name(seed_name)
+async def plant(ctx, *args):
+    plant = get_name(args)
+    amount = get_amount(args)
     current_player = play.get(ctx)
+    farm = current_player.farm
+
+    plots = []
+    # First find all the plots.
+    for plot in current_player.farm.plots:
+        if plot.crop is None:
+            plots.append(plot)
+            # Ensures the right amount is planted, and max otherwise.
+            if len(plots) >= amount:
+                break
+    if plots == []:
+        await client.say("Sorry, but all your plots are full!")
+        return
 
     for crop in crop_manager.crops:
         if plant in (crop.seed, crop.name):
-            # we've fond the crop that the player was looking for
-            if not current_player.has(crop.seed):
-                await client.say(f"Uhhhh, you don't have any `{crop.seed}`...")
+            # We've found the crop that the player was looking for, now we check if the player has enough items.
+            if not current_player.has(items_mod.Item(crop.seed, len(plots))):
+                await client.say(f"Uhhhh, you don't have {'any' if amount == 1 else 'enough'} `{crop.seed}`{'s' if amount != 1 else ''}...")
                 return
 
-            # now we need to plant it...
-            for index, plot in enumerate(current_player.farm.plots):
-                if plot.crop is None:
-                    plot.plant(crop)
-                    current_player.items -= crop.seed
-                    await client.say(
-                        f"Planted {crop.emoji} **{crop.name}** in **Plot #{index + 1}**! "
-                        f"Time until completion is **{plot.time(str, False)}**."
-                    )
-                    return
+            # Actually plant the crop in each plot.
+            for plot in plots:
+                plant_time = round(time.time())
+                plot.plant(crop, plant_time)
+                current_player.items -= crop.seed
 
-            await client.say("Sorry, but all your plots are full!")
+            # This is purely asthetic and makes the output look nicer when multiple plots have been planted in.
+            plot_indexes = f"**Plot #{farm.plots.index(plots[0])+1}**"
+            if len(plots) != 1:
+                plot_indexes = "**Plots** "
+                for plot in plots[:-1]:
+                    plot_indexes += f"**#{farm.plots.index(plot)+1}**, "
+                plot_indexes += f"& **#{farm.plots.index(plots[-1])+1}**"
+
+            await client.say(
+                    f"Planted {crop.emoji} **{crop.name}** in {plot_indexes}! "
+                    f"Time until completion is **{plots[0].time(str, False)}**."
+                )
             return
+
 
     await client.say(
         f"I wasn't able to find `{plant}`, are you sure you spelt it right?"
@@ -292,6 +314,8 @@ async def dplots_add(ctx, *args):
     current_player.farm.plots += [farm.Plot() for _ in range(amount)]
 
     await client.say(f"added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
+
+
 @client.command(pass_context=True)
 async def items(ctx):
     # Separate items into categories.
