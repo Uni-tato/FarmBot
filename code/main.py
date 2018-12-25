@@ -66,6 +66,10 @@ async def plant(ctx, *args):
     current_player = play.get(ctx)
     farm = current_player.farm
 
+    if amount < 1:
+        await client.say("Sorry but that's not a valid amount! Please type in a number greater than 1.")
+        return
+
     plots = []
     # First find all the plots.
     for plot in current_player.farm.plots:
