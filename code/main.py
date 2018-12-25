@@ -251,6 +251,7 @@ async def sell(ctx, *args):
         ctx.message,
         f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) "
         f"for $**{total_price}**?",
+        answers={"💸": True, "❌": False},
     )
     if answer in (False, None):
         return
