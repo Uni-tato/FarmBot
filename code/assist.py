@@ -9,6 +9,11 @@ COMMANDS = {
         "description": "Will give the player the specified item in the optional amount. Used *only* for debugging.",
         "short_description": "Give items cheatly.",
     },
+        "dplot_add": {
+        "usage": "dplot_add <amount>",
+        "description": "Add <amount> amount of plots to the players farm. Used *only* for debugging.",
+        "short_description": "Give plots cheatly.",
+    },
     "sell": {
         "usage": "sell [item amount = 1] <item name>",
         "description": "Sell the item for its current market price * by the optional quantity. Player must have the item.",
