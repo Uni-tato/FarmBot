@@ -43,9 +43,12 @@ class Plot:
         """Get the time that the crop is ready to harvest."""
         return self._start_time + self.crop.time * 60
 
-    def plant(self, crop):
+    def plant(self, crop, plant_time=None):
         """Plant a crop."""
-        current_time = round(time.time())
+        if plant_time == None:
+            current_time = round(time.time())
+        else:
+            current_time = plant_time
 
         self.crop = crop
         self._start_time = current_time
