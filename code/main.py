@@ -23,7 +23,7 @@ from util import get_amount, get_name
 # TODO: Make `prefix` a constant.
 prefix = "fm "
 # Autosave interval is in minutes. Making this larger does NOT improve performance.
-autosave_interval = 1
+autosave_interval = 0.5
 client = Bot(command_prefix=prefix)
 
 
