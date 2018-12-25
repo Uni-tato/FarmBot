@@ -283,6 +283,16 @@ async def dgive(ctx, *args):
 
 
 @client.command(pass_context=True)
+async def dplots_add(ctx, *args):
+    current_player = play.get(ctx)
+    amount = get_amount(args)
+    if amount < 1:
+        return
+
+    current_player.farm.plots += [farm.Plot() for _ in range(amount)]
+
+    await client.say(f"added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
+@client.command(pass_context=True)
 async def items(ctx):
     # Separate items into categories.
     categories = {}
