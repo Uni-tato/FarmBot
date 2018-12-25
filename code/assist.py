@@ -20,8 +20,8 @@ COMMANDS = {
         "short_description": "Buy items.",
     },
     "plant": {
-        "usage": "plant <item name / crop name>",
-        "description": "Plant the given item in the first avaliable plot creating a new crop/tree. Player must have the item.",
+        "usage": "plant [plot amount = 1] <item name / crop name>",
+        "description": "Plant the given item in the optionally specified amount of plots. Will always plant in plots starting from Plot #1.",
         "short_description": "Plant crops/trees.",
     },
     "harvest": {
