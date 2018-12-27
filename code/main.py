@@ -432,10 +432,10 @@ if __name__ == "__main__":
     errors.init(client, play.players)
     assist.init(client, prefix)
 
-    with open("txt/crops.txt", "r") as crops_file:
+    with open("txt/crops.csv", "r") as crops_file:
         crop_manager = CropManager(crops_file.readlines())
 
-    with open("txt/items.txt", "r") as items_file:
+    with open("txt/items.csv", "r") as items_file:
         market_manager = MarketManager(items_file.readlines())
 
     play.init(market_manager)
