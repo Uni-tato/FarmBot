@@ -14,12 +14,12 @@ carrot seeds, 30, 15, x, crop seed
 carrot, 5, 2.5, fm_carrot, crop
 potato, 5, 2.5, fm_potato, crop
 marshmallow pellets, 1000, 25, x, crop seed
-marshmallow, 1.5, 1, x, crop
+marshmallow, 1.5, 1, fm_marshmallow, crop
 #
 apple seeds, 5, 2.5, x, fruit seed
-apple, 1, 0.5, x, fruit
+apple, 1, 0.5, fm_apple, fruit
 banana seeds, 10, 5, x, fruit seed
-banana, 5, 2.5, x, fruit
+banana, 5, 2.5, fm_banana, fruit
 bananana seeds, 10, 5, x, fruit seed
 bana seeds, 10, 5, x, fruit seed
 pear seeds, 15, 7.5, x, fruit seed
