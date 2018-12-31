@@ -11,7 +11,7 @@ from discord.ext.commands import Bot, check
 import ask
 import players as play
 import farm
-import items as items_mod  # we can change this to something else, I jsut cant be bothered thinking
+import items as stuff
 import errors
 import assist
 from managers import CropManager, MarketManager
@@ -85,7 +85,7 @@ async def plant(ctx, *args):
     for crop in crop_manager.crops:
         if plant in (crop.seed, crop.name):
             # We've found the crop that the player was looking for, now we check if the player has enough items.
-            if not current_player.has(items_mod.Item(crop.seed, len(plots))):
+            if not current_player.has(stuff.Item(crop.seed, len(plots))):
                 await client.say(f"Uhhhh, you don't have {'any' if amount == 1 else 'enough'} `{crop.seed}`{'s' if amount != 1 else ''}...")
                 return
 
@@ -120,7 +120,7 @@ async def plant(ctx, *args):
 async def harvest(ctx):
     current_player = play.get(ctx)
 
-    reap = items_mod.Container([])
+    reap = stuff.Container([])
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
@@ -210,7 +210,7 @@ async def buy(ctx, *args):
     plant = get_name(args)
 
     if market_manager.exists(plant):
-        item = items_mod.Item(plant, amount)
+        item = stuff.Item(plant, amount)
     else:
         await client.say(f"`{plant}` isn't a real item...")
         return
@@ -256,7 +256,7 @@ async def sell(ctx, *args):
 
     # Then check if the item is actually a real item...
     if market_manager.exists(item_name):
-        item = items_mod.Item(item_name, amount)
+        item = stuff.Item(item_name, amount)
     else:
         await client.say(f"`{item_name}` isn't a real item...")
         return
@@ -301,7 +301,7 @@ async def dgive(ctx, *args):
         await client.say(f"`{plant}` isn't a real item...")
         return
 
-    item = items_mod.Item(plant, amount)
+    item = stuff.Item(plant, amount)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
@@ -440,7 +440,7 @@ if __name__ == "__main__":
 
     play.init(market_manager)
     farm.init(market_manager)
-    items_mod.init(market_manager)
+    stuff.init(market_manager)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
