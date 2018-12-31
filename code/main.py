@@ -128,7 +128,7 @@ async def harvest(ctx):
 
     if len(reap) == 0:
         await client.say(
-            f"Sorry {ctx.message.author.mention}, but there was nothing too harvest!"
+            f"Sorry {ctx.message.author.mention}, but there was nothing to harvest!"
         )
         return
 
