@@ -99,7 +99,7 @@ class Plot:
         return items.Item(item_name, item_count)
         # return {item:item_count} #if these return none then I will need to make item a copy.
 
-    def time(self, data_type, from_present=True):
+    def time(self, data_type=int, from_present=True):
         """Get the time remaining until the crop can be harvested."""
         if self.crop is None:
             return False
