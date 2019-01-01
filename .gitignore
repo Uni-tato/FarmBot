@@ -106,3 +106,4 @@ venv.bak/
 # Custom things
 code/txt/token.txt
 players.dat
+debug.log

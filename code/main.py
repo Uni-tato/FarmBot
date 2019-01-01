@@ -46,7 +46,7 @@ async def on_command_error(error, ctx):
 async def create(ctx, *args):
     name = get_name(args, True)
     if name == "":
-        await client.say("You can't create a farm with no name!")
+        await assist.help(ctx, args)
         return
 
     play.get(ctx)
@@ -62,6 +62,9 @@ async def create(ctx, *args):
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *args):
+    if len(args) == 0:
+        await assist.help(ctx, args)
+        return
     plant = get_name(args)
     amount = get_amount(args)
     current_player = play.get(ctx)
@@ -205,6 +208,7 @@ async def status(ctx):
 @client.command(pass_context=True)
 async def buy(ctx, *args):
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     current_player = play.get(ctx)
@@ -249,6 +253,7 @@ async def buy(ctx, *args):
 @client.command(pass_context=True)
 async def sell(ctx, *args):
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     # First parse the info given to us...
@@ -294,20 +299,22 @@ async def sell(ctx, *args):
 async def dgive(ctx, *args):
     current_player = play.get(ctx)
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     amount = get_amount(args)
     name = get_name(args)
 
-    if not market_manager.exists(plant):
-        await client.say(f"`{plant}` isn't a real item...")
+    if not market_manager.exists(name):
+        await client.say(f"`{name}` isn't a real item...")
         return
 
-    item = stuff.Item(plant, amount)
+    item = stuff.Item(name, amount)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
     )
+    await log(f"Gave {item.name} (x{item.amount}) to {current_player.player.name}")
 
 
 @client.command(pass_context=True)
@@ -319,7 +326,8 @@ async def dplots_add(ctx, *args):
 
     current_player.farm.plots += [farm.Plot() for _ in range(amount)]
 
-    await client.say(f"added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
+    await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
+    await log(f"Added {amount} new plot(s) to {current_player.player.name}'s farm")
 
 
 @client.command(pass_context=True)
@@ -388,6 +396,11 @@ async def technologies(ctx):
     pass
 
 
+async def log(txt):
+    with open("../debug.log", "a") as f:
+        f.write(time.strftime(f"[%H:%M:%S, %d/%m/%y]: {txt}\n"))
+
+
 async def save():
     try:
         os.remove("../players.dat")
@@ -396,8 +409,6 @@ async def save():
     f = open("../players.dat", "wb+")
     pickle.dump(play.players, f)
     f.close()
-
-    #print('saved')
 
 
 async def reload():
