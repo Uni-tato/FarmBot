@@ -41,11 +41,13 @@ class Player:
         self.xp = 0 # Currently does not increase. 
         self.lvl = 1
         self.r_tokens = 0 # Research points used to unlock/upgrade stuff.
-
-        # Here, there will probably be some other stuff such as player upgrades and shit
-        # then with the money you can upgrade your farm, for example get more plots,
-        # reduce grow time etc` - Alex
-        # These values might be here if they're player specific
+        self.technologies = []
+        
+        self.buy_multiplier = 1
+        self.sell_multiplier = 1
+        self.avalible_crops = ["wheat"]
+        self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
+        self.auto_harvest_lvl = 0
 
     async def lvl_check(self,ctx):
     	should_be = (self.xp//5)+1 #anyone is welcome to improve this.

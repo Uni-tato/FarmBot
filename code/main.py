@@ -339,6 +339,12 @@ async def dxp(ctx, amount):
     await current_player.lvl_check(ctx)
 
 
+@client.command(pass_context=True, aliases = ["d"])
+async def debug(ctx):
+    current_player = play.get(ctx)
+    await client.say(current_player.technologies)
+
+
 @client.command(pass_context=True)
 async def items(ctx):
     # Separate items into categories.
@@ -370,18 +376,18 @@ async def research(ctx,name):
     # TODO allow spaces in the tech name.
     current_player = play.get(ctx)
     if name not in res.technologies:
-        client.say(f"{current_player.mention}, {name} is not a valid technology.")
+        await client.say(f"{current_player.player.mention}, {name} is not a valid technology.")
         return None
     tech = res.get_tech(name)
-    for tech in tech.requirements:
-        if tech not in player.technologies:
-            await client.say(f"{current_player.mention} you are missing some required technologies needed for this research.")
+    for req_name in tech.requirements:
+        if req_name not in current_player.technologies:
+            await client.say(f"{current_player.player.mention} you are missing some required technologies needed for this research.")
             break
     else:
         if current_player.lvl < tech.lvl:
-            await client.say(f"{current_player.mention} you need to be level {tech.lvl} or greater to research this.")
+            await client.say(f"{current_player.player.mention} you need to be level {tech.lvl} or greater to research this.")
         elif current_player.r_tokens < tech.cost:
-            await client.say(f"{current_player.mention} you do not have enough research tokens to research this technology.")
+            await client.say(f"{current_player.player.mention} you do not have enough research tokens to research this technology.")
         else:
             answer = await ask.ask(
                 ctx.message,

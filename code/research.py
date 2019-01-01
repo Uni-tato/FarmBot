@@ -14,13 +14,14 @@ class Technology:
         self.requirements = requirements
 
     async def research(self, player):
-        for tech in self.requirements:
-            if tech not in player.technologies:
+        for req in self.requirements:
+            if req not in player.technologies:
                 return False
         if player.lvl < self.lvl or player.r_tokens < self.cost:
             return False # not necessary, but good redundancy.
         else:
             player.r_tokens -= self.cost
+            player.technologies.append(self.name)
             await self.effect(player)
             
 
@@ -31,7 +32,13 @@ def get_tech(name):
         raise ValueError(f"Technology: {name} does not exist.")
 
 
+
 async def test_function(player):
     await client.say("this function was assinged to an technology object as a parameter")
 
 technologies["test"] = Technology("test",0,1,test_function)
+
+async def test_function2(player):
+    await client.say("This technology requires the previous one.")
+
+technologies["test2"] = Technology("test2",0,1,test_function2,["test"])
