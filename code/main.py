@@ -166,8 +166,9 @@ async def inventory(ctx, player=None):
         title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
     )
     embed.add_field(name="**Money:**", value=f":moneybag: ${queried_player.money}")
+    embed.add_field(name="**Level:**", value = f"{queried_player.lvl}: {queried_player.xp}xp.")
     for category in categories:
-        embed.add_field(name=f"**{category}**", value=categories[category])
+        embed.add_field(name=f"**{category}:**", value=categories[category])
 
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
@@ -321,6 +322,14 @@ async def dplots_add(ctx, *args):
 
 
 @client.command(pass_context=True)
+async def dxp(ctx, amount):
+    amount = int(amount)
+    current_player = play.get(ctx)
+    current_player.player.xp += amount
+    await client.say(f"gave {current_player.player.mention} {amount}xp.")
+
+
+@client.command(pass_context=True)
 async def items(ctx):
     # Separate items into categories.
     categories = {}
@@ -429,6 +438,7 @@ async def on_ready():
 
 if __name__ == "__main__":
     ask.init(client)
+    play.client = client # <-- the better way to do it.
     errors.init(client, play.players)
     assist.init(client, prefix)
 

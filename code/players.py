@@ -1,8 +1,13 @@
 """Implement player code."""
+import asyncio
+
 import discord
 from discord.ext.commands import Context
 
 import items
+
+
+client = None # set to bots client by main.py 
 
 # This'll be a dictionary where the keys are the player discord objects,
 # and the values are this custom player class
@@ -33,10 +38,21 @@ class Player:
 
         self.money = 10
 
+        self.xp = 0 #increases by a bit per harvest (a temp solution)
+        self.lvl = 1
+
         # Here, there will probably be some other stuff such as player upgrades and shit
         # then with the money you can upgrade your farm, for example get more plots,
         # reduce grow time etc` - Alex
         # These values might be here if they're player specific
+
+    def lvl_check(self,ctx):
+    	lvl = self.lvl
+    	xp = self.xp
+    	should_be = (xp//5)+1 #anyone is welcome to improve this.
+    	if lvl != should_be:
+    		lvl = should_be #not "+=1" because someone might somehow level up twice
+    		level_up(ctx)
 
     def has(self, item_name):
         """Check if player has `item_name` in inventory.
@@ -66,3 +82,8 @@ def get(i):
     if member not in players:
         players[member] = Player(member)
     return players[member]
+
+async def level_up(ctx,lvl):
+	await client.send_message(
+		ctx.message.channel,
+		f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
