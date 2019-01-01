@@ -37,6 +37,8 @@ class CropManager:
                     min_lifetime, max_lifetime, row["type"]
                 ),
                 "type": row["type"],
+                "unlock_at_lvl": int(row["unlock_at_lvl"]),
+                "research_cost": int(row["research_cost"])
             }
             self.crops.append(Crop(row["name"], manager=self))
 
@@ -101,6 +103,14 @@ class CropManager:
     def get_type(self, crop):
         """Return whether `crop` is a normal crop ("crop") or "tree"."""
         return self._get_inner(crop, "type")
+
+    def get_unlock_at_lvl(self, crop):
+        """gets the level at which a crop is unlocked."""
+        return self._get_inner(crop, "unlock_at_lvl")
+
+    def get_research_cost(self, crop):
+        """gets the amount of research tokens needed to research a crop."""
+        return self._get_inner(crop, "research_cost")
 
 
 class MarketManager:

@@ -11,11 +11,12 @@ from discord.ext.commands import Bot, check
 import ask
 import players as play
 import farm
-import items as stuff
+import items as stuff #nice.
 import errors
 import assist
 from managers import CropManager, MarketManager
 from util import get_amount, get_name
+import research as res
 
 #### QUICK TO DO LIST: ####
 # - Make the `fm plant` command better:
@@ -165,7 +166,7 @@ async def inventory(ctx, player=None):
     embed = discord.Embed(
         title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
     )
-    embed.add_field(name="**Money:**", value=f":moneybag: ${queried_player.money}")
+    embed.add_field(name="**Money:**", value=f":moneybag:: ${queried_player.money},\n:x::{queried_player.r_tokens}")
     embed.add_field(name="**Level:**", value = f"{queried_player.lvl}: {queried_player.xp}xp.")
     for category in categories:
         embed.add_field(name=f"**{category}:**", value=categories[category])
@@ -356,6 +357,37 @@ async def items(ctx):
     )
 
 
+@client.command(pass_context=True, aliases = ["r"])
+async def research(ctx,name):
+    # TODO allow spaces in the tech name.
+    current_player = play.get(ctx)
+    if name not in res.technologies:
+        client.say(f"{current_player.mention}, {name} is not a valid technology.")
+        return None
+    tech = res.get_tech(name)
+    for tech in tech.requirements:
+        if tech not in player.technologies:
+            await client.say(f"{current_player.mention} you are missing some required technologies needed for this research.")
+            break
+    else:
+        if current_player.lvl < tech.lvl:
+            await client.say(f"{current_player.mention} you need to be level {tech.lvl} or greater to research this.")
+        elif current_player.r_tokens < tech.cost:
+            await client.say(f"{current_player.mention} you do not have enough research tokens to research this technology.")
+        else:
+            answer = await ask.ask(
+                ctx.message,
+                f"Are you sure you wish to research {name}?\nIt will cost {tech.cost} research tokens."
+            )
+            if answer == True:
+                await tech.research(current_player)
+
+
+@client.command(pass_context=True, aliases = ["t","techs"])
+async def technologies(ctx):
+    pass
+
+
 async def save():
     try:
         os.remove("../players.dat")
@@ -440,6 +472,7 @@ async def on_ready():
 if __name__ == "__main__":
     ask.init(client)
     play.client = client # <-- the better way to do it.
+    res.client = client
     errors.init(client, play.players)
     assist.init(client, prefix)
 

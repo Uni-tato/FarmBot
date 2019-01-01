@@ -38,8 +38,9 @@ class Player:
 
         self.money = 10
 
-        self.xp = 0 #increases by a bit per harvest (a temp solution)
+        self.xp = 0 # Currently does not increase. 
         self.lvl = 1
+        self.r_tokens = 0 # Research points used to unlock/upgrade stuff.
 
         # Here, there will probably be some other stuff such as player upgrades and shit
         # then with the money you can upgrade your farm, for example get more plots,
@@ -50,6 +51,7 @@ class Player:
     	should_be = (self.xp//5)+1 #anyone is welcome to improve this.
     	if self.lvl != should_be:
     		self.lvl = should_be
+    		self.r_tokens += 1
     		await level_up(ctx,self.lvl)
 
     def has(self, item_name):
@@ -81,7 +83,7 @@ def get(i):
         players[member] = Player(member)
     return players[member]
 
-async def level_up(ctx,lvl):
+async def level_up(ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
 	await client.send_message(
 		ctx.message.channel,
 		f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
