@@ -40,10 +40,6 @@ async def on_command_error(error, ctx):
     await errors.on_command_error(error, ctx)
 
 
-# fm plant 3 wheat
-# fm plant wheat
-# fm plant * wheat
-# fm plant *
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *args):
@@ -71,19 +67,24 @@ async def plant(ctx, *args):
                     crop = crop_
 
                     if current_player.has(crop.seed):
-
                         amount = current_player.items[crop.seed].amount
-
                     else:
                         await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
                         return
 
                     amount = min(amount, len(plots))
                     plots = plots[:amount]
+                    break
             else:
                 await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
                 return
         else:
+            # TODO: do this
+
+            # The idea here (`fm plant *`) is that the bot will automatically plant the highest-valued seeds in the players inventory.
+            # Will keep on planting untill 1. no more plots, 2. no more seeds.
+            # Returning a message for the user to see will be a pain :P
+            await assist.help(ctx, args)
             return
 
     else:
@@ -103,7 +104,6 @@ async def plant(ctx, *args):
                 if not current_player.has(stuff.Item(crop.seed, amount)):
                     await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
                     return
-
                 break
         else:
             await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
@@ -115,6 +115,7 @@ async def plant(ctx, *args):
         plot.plant(crop, plant_time)
         current_player.items -= crop.seed
 
+    # Make the output look hella nice.
     plot_indexes = f"**Plot #{plots[0].n}**"
     if len(plots) != 1:
         plot_indexes = "**Plots** "
