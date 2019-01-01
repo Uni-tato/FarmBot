@@ -80,6 +80,9 @@ async def plant(ctx, *args):
 
                     amount = min(amount, len(plots))
                     plots = plots[:amount]
+            else:
+                await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+                return
         else:
             return
 
