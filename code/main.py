@@ -45,7 +45,7 @@ async def on_command_error(error, ctx):
 async def create(ctx, *args):
     name = get_name(args, True)
     if name == "":
-        await client.say("You can't create a farm with no name!")
+        await assist.help(ctx, args)
         return
 
     play.get(ctx)
@@ -61,6 +61,9 @@ async def create(ctx, *args):
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *args):
+    if len(args) == 0:
+        await assist.help(ctx, args)
+        return
     plant = get_name(args)
     amount = get_amount(args)
     current_player = play.get(ctx)
@@ -203,6 +206,7 @@ async def status(ctx):
 @client.command(pass_context=True)
 async def buy(ctx, *args):
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     current_player = play.get(ctx)
@@ -247,6 +251,7 @@ async def buy(ctx, *args):
 @client.command(pass_context=True)
 async def sell(ctx, *args):
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     # First parse the info given to us...
@@ -292,6 +297,7 @@ async def sell(ctx, *args):
 async def dgive(ctx, *args):
     current_player = play.get(ctx)
     if len(args) == 0:
+        await assist.help(ctx, args)
         return
 
     amount = get_amount(args)
