@@ -46,13 +46,11 @@ class Player:
         # reduce grow time etc` - Alex
         # These values might be here if they're player specific
 
-    def lvl_check(self,ctx):
-    	lvl = self.lvl
-    	xp = self.xp
-    	should_be = (xp//5)+1 #anyone is welcome to improve this.
-    	if lvl != should_be:
-    		lvl = should_be #not "+=1" because someone might somehow level up twice
-    		level_up(ctx)
+    async def lvl_check(self,ctx):
+    	should_be = (self.xp//5)+1 #anyone is welcome to improve this.
+    	if self.lvl != should_be:
+    		self.lvl = should_be
+    		await level_up(ctx,self.lvl)
 
     def has(self, item_name):
         """Check if player has `item_name` in inventory.

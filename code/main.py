@@ -325,8 +325,9 @@ async def dplots_add(ctx, *args):
 async def dxp(ctx, amount):
     amount = int(amount)
     current_player = play.get(ctx)
-    current_player.player.xp += amount
+    current_player.xp += amount
     await client.say(f"gave {current_player.player.mention} {amount}xp.")
+    await current_player.lvl_check(ctx)
 
 
 @client.command(pass_context=True)
