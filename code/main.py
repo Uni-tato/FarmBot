@@ -303,11 +303,11 @@ async def dgive(ctx, *args):
     amount = get_amount(args)
     name = get_name(args)
 
-    if not market_manager.exists(plant):
-        await client.say(f"`{plant}` isn't a real item...")
+    if not market_manager.exists(name):
+        await client.say(f"`{name}` isn't a real item...")
         return
 
-    item = stuff.Item(plant, amount)
+    item = stuff.Item(name, amount)
     current_player.items += item
     await client.say(
         f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
