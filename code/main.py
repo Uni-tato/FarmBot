@@ -22,7 +22,7 @@ from util import get_amount, get_name
 #   print to the user time until compleation? Let user select plots manually?
 
 # TODO: Make `prefix` a constant.
-prefix = "fm "
+prefix = "!! "
 # Autosave interval is in minutes. Making this larger does NOT improve performance.
 autosave_interval = 0.5
 client = Bot(command_prefix=prefix)
