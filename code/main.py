@@ -322,7 +322,8 @@ async def dplots_add(ctx, *args):
     if amount < 1:
         return
 
-    current_player.farm.plots += [farm.Plot() for _ in range(amount)]
+    plots_n = len(current_player.farm.plots)
+    current_player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
 
     await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
     await log(f"Added {amount} new plot(s) to {current_player.player.name}'s farm")
