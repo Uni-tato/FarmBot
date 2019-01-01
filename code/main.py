@@ -40,6 +40,10 @@ async def on_command_error(error, ctx):
     await errors.on_command_error(error, ctx)
 
 
+# fm plant 3 wheat
+# fm plant wheat
+# fm plant * wheat
+# fm plant *
 @client.command(pass_context=True)
 @check(errors.has_no_farm)
 async def create(ctx, *args):
