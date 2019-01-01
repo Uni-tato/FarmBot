@@ -44,82 +44,86 @@ async def on_command_error(error, ctx):
 # fm plant wheat
 # fm plant * wheat
 # fm plant *
-@client.command(pass_context=True)
-@check(errors.has_no_farm)
-async def create(ctx, *args):
-    name = get_name(args, True)
-    if name == "":
-        await assist.help(ctx, args)
-        return
-
-    play.get(ctx)
-
-    answer = await ask.ask(
-        ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
-    )
-    if answer:
-        play.players[ctx.message.author].farm = farm.Farm(name)
-        await client.say("Farm created!")
-
-
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *args):
     if len(args) == 0:
         await assist.help(ctx, args)
         return
-    plant = get_name(args)
-    amount = get_amount(args)
+
     current_player = play.get(ctx)
-    farm = current_player.farm
 
-    if amount < 1:
-        await client.say("Sorry but that's not a valid amount! Please type in a number greater than 1.")
+    plots = current_player.farm.get_empty_plots()
+    if len(plots) is 0:
+        plot = current_player.farm.plots[0]
+        for plot_ in current_player.farm.plots:
+            if plot_.time() < plot.time():
+                plot = plot_
+        await client.say(f"Sorry, but all your plots are full! On the bright side, **Plot #{current_player.farm.plots.index(plot)+1}** will finish in **{plot.time(str)}**!")
         return
 
-    plots = []
-    # First find all the plots.
-    for plot in current_player.farm.plots:
-        if plot.crop is None:
-            plots.append(plot)
-            # Ensures the right amount is planted, and max otherwise.
-            if len(plots) >= amount:
-                break
-    if plots == []:
-        await client.say("Sorry, but all your plots are full!")
-        return
+    if args[0] is "*":
+        if len(args) >= 2:
+            plant = get_name(args[1:])
 
-    for crop in crop_manager.crops:
-        if plant in (crop.seed, crop.name):
-            # We've found the crop that the player was looking for, now we check if the player has enough items.
-            if not current_player.has(stuff.Item(crop.seed, len(plots))):
-                await client.say(f"Uhhhh, you don't have {'any' if amount == 1 else 'enough'} `{crop.seed}`{'s' if amount != 1 else ''}...")
-                return
+            for crop_ in crop_manager.crops:
+                if plant in (crop_.name, crop_.seed):
+                    crop = crop_
 
-            # Actually plant the crop in each plot.
-            for plot in plots:
-                plant_time = round(time.time())
-                plot.plant(crop, plant_time)
-                current_player.items -= crop.seed
+                    if current_player.has(crop.seed):
 
-            # This is purely asthetic and makes the output look nicer when multiple plots have been planted in.
-            plot_indexes = f"**Plot #{farm.plots.index(plots[0])+1}**"
-            if len(plots) != 1:
-                plot_indexes = "**Plots** "
-                for plot in plots[:-1]:
-                    plot_indexes += f"**#{farm.plots.index(plot)+1}**, "
-                plot_indexes += f"& **#{farm.plots.index(plots[-1])+1}**"
+                        amount = current_player.items[crop.seed].amount
 
-            await client.say(
-                    f"Planted {crop.emoji} **{crop.name}** in {plot_indexes}! "
-                    f"Time until completion is **{plots[0].time(str, False)}**."
-                )
+                    else:
+                        await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
+                        return
+
+                    amount = min(amount, len(plots))
+                    plots = plots[:amount]
+        else:
             return
 
+    else:
+        plant = get_name(args)
+        amount = get_amount(args)
+        if amount < 1:
+            await client.say("Sorry but that's not a valid amount! Please type in a number greater than 1.")
+            return
+
+        for crop_ in crop_manager.crops:
+            if plant in (crop_.name, crop_.seed):
+                crop = crop_
+
+                plots = plots[:amount]
+                amount = len(plots)
+
+                if not current_player.has(stuff.Item(crop.seed, amount)):
+                    await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
+                    return
+
+                break
+        else:
+            await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+            return
+
+    # Actually plant the crop in each plot.
+    for plot in plots:
+        plant_time = round(time.time())
+        plot.plant(crop, plant_time)
+        current_player.items -= crop.seed
+
+    plot_indexes = f"**Plot #{plots[0].n}**"
+    if len(plots) != 1:
+        plot_indexes = "**Plots** "
+        for plot in plots[:-1]:
+            plot_indexes += f"**#{plot.n}**, "
+        plot_indexes += f"& **#{plots[-1].n}**"
 
     await client.say(
-        f"I wasn't able to find `{plant}`, are you sure you spelt it right?"
+            f"Planted {crop.emoji} **{crop.name}** in {plot_indexes}! "
+            f"Time until completion is **{plots[0].time(str, False)}**."
     )
+    return
 
 
 @client.command(pass_context=True, aliases=["h", "harv", "har"])
