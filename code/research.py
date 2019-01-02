@@ -47,5 +47,11 @@ def get_crop_tech(crop):
     '''Creates functions for crop technology.'''
     async def crop_tech(player):
         player.available_crops.append(crop)
-        await client.say(f"{player.player.mention}, you can now plant and grow {crop}(s)")
+        await client.say(f"{player.player.mention}, you can now plant and grow {crop.name}(s)")
     return crop_tech
+
+async def unlock_free(player,lvl_range):
+    '''Used to automatically unlock any new free technologies.'''
+    for tech in technologies.values():
+        if tech.cost == 0 and tech.lvl in lvl_range:
+            await tech.research(player)

@@ -49,7 +49,7 @@ async def create(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    play.get(ctx)
+    play.get(ctx) # um, what happened here?
 
     answer = await ask.ask(
         ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
@@ -67,7 +67,7 @@ async def plant(ctx, *args):
         return
     plant = get_name(args)
     amount = get_amount(args)
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     farm = current_player.farm
 
     if amount < 1:
@@ -122,7 +122,7 @@ async def plant(ctx, *args):
 @client.command(pass_context=True, aliases=["h", "harv", "har"])
 @check(errors.has_farm)
 async def harvest(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
 
     reap = stuff.Container([])
     for plot in current_player.farm.plots:
@@ -150,12 +150,12 @@ async def harvest(ctx):
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin"])
 async def inventory(ctx, player=None):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
 
     if player is None:
         queried_player = current_player
     else:
-        queried_player = play.get(ctx.message.mentions[0])
+        queried_player = await play.get(ctx.message.mentions[0])
 
     # Separate items into categories.
     categories = {}
@@ -182,7 +182,7 @@ async def inventory(ctx, player=None):
 @client.command(pass_context=True, aliases=["stat", "stats", "s"])
 @check(errors.has_farm)
 async def status(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     embed = discord.Embed(
         title=f"***{current_player.farm.name}*** *status:*", colour=0x00D100
     )
@@ -211,7 +211,7 @@ async def buy(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     plant = get_name(args)
 
@@ -257,7 +257,7 @@ async def sell(ctx, *args):
         return
 
     # First parse the info given to us...
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     item_name = get_name(args)
 
@@ -297,7 +297,7 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -319,7 +319,7 @@ async def dgive(ctx, *args):
 
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     if amount < 1:
         return
@@ -333,7 +333,7 @@ async def dplots_add(ctx, *args):
 @client.command(pass_context=True)
 async def dxp(ctx, amount):
     amount = int(amount)
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     current_player.xp += amount
     await client.say(f"gave {current_player.player.mention} {amount}xp.")
     await current_player.lvl_check(ctx)
@@ -341,7 +341,7 @@ async def dxp(ctx, amount):
 
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     await client.say(f"{current_player.technologies},\n{current_player.available_crops}")
 
 
@@ -365,7 +365,7 @@ async def items(ctx):
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
 
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
@@ -374,7 +374,7 @@ async def items(ctx):
 @client.command(pass_context=True, aliases = ["r"])
 async def research(ctx,name):
     # TODO allow spaces in the tech name.
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     if name not in res.technologies:
         await client.say(f"{current_player.player.mention}, {name} is not a valid technology.")
         return None
@@ -401,7 +401,7 @@ async def research(ctx,name):
 
 @client.command(pass_context=True, aliases = ["t","techs"])
 async def technologies(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     all_techs = res.technologies
     available_techs = {}
     for name, tech in all_techs.items():
