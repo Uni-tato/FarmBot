@@ -32,16 +32,6 @@ def get_tech(name):
         raise ValueError(f"Technology: {name} does not exist.")
 
 
-''' just a reminder of how this stuff works
-async def test_function(player):
-    await client.say("this function was assinged to a technology object as a parameter")
-technologies["test"] = Technology("test",0,1,test_function)
-
-async def test_function2(player):
-    await client.say("This technology requires the previous one.")
-technologies["test2"] = Technology("test2",0,1,test_function2,["test"])
-'''
-
 def init_crops(crops):
     for crop in crops:
         name = crop.name
@@ -53,10 +43,3 @@ def init_crops(crops):
 
 def get_crop_effect(crop):
     return lambda player : player.available_crops.append(crop)
-
-'''
-def myfunc(n):
-  return lambda a : a * n
-
-mytripler = myfunc(3)
-'''
