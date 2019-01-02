@@ -4,6 +4,7 @@ import os
 import weakref
 import asyncio
 import time
+import random
 
 import discord
 from discord.ext.commands import Bot, check
@@ -22,7 +23,7 @@ from util import get_amount, get_name
 #   print to the user time until compleation? Let user select plots manually?
 
 # TODO: Make `prefix` a constant.
-prefix = "!! "
+prefix = "f "
 # Autosave interval is in minutes. Making this larger does NOT improve performance.
 autosave_interval = 0.5
 client = Bot(command_prefix=prefix)
@@ -38,6 +39,32 @@ async def help(ctx, *args):
 @client.event
 async def on_command_error(error, ctx):
     await errors.on_command_error(error, ctx)
+
+
+@client.command(pass_context=True, aliases=["flip", "f", "cf"])
+async def coinflip(ctx, *args):
+    current_player = play.get(ctx)
+    amount = get_amount(args)
+
+    if amount < 1:
+        await client.say("Please flip a amount greater than 1.")
+        return
+
+    if amount > 1000:
+        await client.say("Sorry, you're not aloud to coinflip more than 1k! Why? idk.")
+        return
+
+    if current_player.money < amount:
+        await client.say("You don't have enough money... \\:P")
+        return
+
+    if random.random() > 0.5:
+        current_player.money -= amount
+        await client.say(f"Oof - you lost $**{amount}**! You've now got $**{current_player.money}** remaining.")
+    else:
+        current_player.money += amount
+        await client.say(f"Congratulations - you won $**{amount}**! You've now got $**{current_player.money}**!")
+    return
 
 
 @client.command(pass_context=True, aliases=["p", "plan"])
