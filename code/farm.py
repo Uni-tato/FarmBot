@@ -229,3 +229,14 @@ class Crop:
         This might be expanded to types other than "crop" (normal)
         and "tree"."""
         return self._manager.get_type(self.name)
+
+    @property
+    def unlock_at_lvl(self):
+        '''Gets the level at which a user can research this crop'''
+        return self._manager.get_unlock_at_lvl(self.name)
+
+    @property
+    def research_cost(self):
+        return self._manager.get_research_cost(self.name)
+    
+    

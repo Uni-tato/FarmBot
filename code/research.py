@@ -41,3 +41,22 @@ async def test_function2(player):
     await client.say("This technology requires the previous one.")
 technologies["test2"] = Technology("test2",0,1,test_function2,["test"])
 '''
+
+def init_crops(crops):
+    for crop in crops:
+        name = crop.name
+        lvl = crop.unlock_at_lvl
+        cost = crop.research_cost
+        effect = get_crop_effect(name)
+        technologies[name] = Technology(name,lvl,cost,effect)
+
+
+def get_crop_effect(crop):
+    return lambda player : player.available_crops.append(crop)
+
+'''
+def myfunc(n):
+  return lambda a : a * n
+
+mytripler = myfunc(3)
+'''

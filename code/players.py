@@ -42,10 +42,10 @@ class Player:
         self.lvl = 1
         self.r_tokens = 0 # Research points used to unlock/upgrade stuff.
         self.technologies = []
-        
+
         self.buy_multiplier = 1
         self.sell_multiplier = 1
-        self.avalible_crops = ["wheat"]
+        self.available_crops = ["wheat"]
         self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
         self.auto_harvest_lvl = 0
 
@@ -89,3 +89,4 @@ async def level_up(ctx,lvl): # almost definitely unnecessary fot this to be a se
 	await client.send_message(
 		ctx.message.channel,
 		f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
+		# TODO make something to automatically unlock free technologies.

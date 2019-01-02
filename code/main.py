@@ -521,6 +521,7 @@ if __name__ == "__main__":
     play.init(market_manager)
     farm.init(market_manager)
     stuff.init(market_manager)
+    res.init_crops(crop_manager.crops)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
