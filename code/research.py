@@ -14,6 +14,7 @@ class Technology:
         self.requirements = requirements
 
     async def research(self, player):
+        '''unlocks a new technology, costs research tokens'''
         for req in self.requirements:
             if req not in player.technologies:
                 return False
@@ -26,7 +27,7 @@ class Technology:
             
 
 def get_tech(name):
-    '''gets a Technology from a technology name'''
+    '''Gets a Technology from a technology name'''
     if name in technologies:
         return technologies[name]
     else:
@@ -43,6 +44,8 @@ def init_crops(crops):
         technologies[name] = Technology(name,lvl,cost,effect)
 
 def get_crop_tech(crop):
+    '''Creates functions for crop technology.'''
     async def crop_tech(player):
         player.available_crops.append(crop)
+        await client.say(f"{player.player.mention}, you can now plant and grow {crop}(s)")
     return crop_tech

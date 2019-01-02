@@ -386,6 +386,8 @@ async def research(ctx,name):
     else:
         if current_player.lvl < tech.lvl:
             await client.say(f"{current_player.player.mention} you need to be level {tech.lvl} or greater to research this.")
+        elif name in current_player.technologies:
+            await client.say(f"{current_player.player.mention} you have already researched this technology.")
         elif current_player.r_tokens < tech.cost:
             await client.say(f"{current_player.player.mention} you do not have enough research tokens to research this technology.")
         else:

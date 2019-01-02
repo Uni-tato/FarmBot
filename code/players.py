@@ -50,11 +50,19 @@ class Player:
         self.auto_harvest_lvl = 0
 
     async def lvl_check(self,ctx):
+    	'''Checks if the player should level up, and does so if necessary.'''
     	should_be = (self.xp//5)+1 #anyone is welcome to improve this.
     	if self.lvl != should_be:
-    		self.lvl = should_be
-    		self.r_tokens += 1
     		await level_up(ctx,self.lvl)
+
+    async def level_up(ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
+		'''Stuff that happens when the player levels up.'''
+		self.lvl = should_be
+    	self.r_tokens += 1
+		await client.send_message(
+			ctx.message.channel,
+			f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
+			# TODO make something to automatically unlock free technologies.
 
     def has(self, item_name):
         """Check if player has `item_name` in inventory.
@@ -84,9 +92,3 @@ def get(i):
     if member not in players:
         players[member] = Player(member)
     return players[member]
-
-async def level_up(ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
-	await client.send_message(
-		ctx.message.channel,
-		f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
-		# TODO make something to automatically unlock free technologies.
