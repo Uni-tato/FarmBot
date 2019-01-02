@@ -67,6 +67,24 @@ async def coinflip(ctx, *args):
     return
 
 
+@client.command(pass_context=True)
+@check(errors.has_no_farm)
+async def create(ctx, *args):
+    name = get_name(args, True)
+    if name == "":
+        await assist.help(ctx, args)
+        return
+
+    play.get(ctx)
+
+    answer = await ask.ask(
+        ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
+    )
+    if answer:
+        play.players[ctx.message.author].farm = farm.Farm(name)
+        await client.say("Farm created!")
+
+
 @client.command(pass_context=True, aliases=["p", "plan"])
 @check(errors.has_farm)
 async def plant(ctx, *args):
