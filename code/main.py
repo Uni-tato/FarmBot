@@ -399,7 +399,26 @@ async def research(ctx,name):
 
 @client.command(pass_context=True, aliases = ["t","techs"])
 async def technologies(ctx):
-    pass
+    current_player = play.get(ctx)
+    all_techs = res.technologies
+    available_techs = {}
+    for name, tech in all_techs.items():
+        has_req = True
+        for req_name in tech.requirements:
+            if req_name not in current_player.technologies:
+                has_req = False
+        if not has_req:
+            continue
+        elif current_player.lvl < tech.lvl:
+            continue
+        elif name in current_player.technologies:
+            continue
+        available_techs[name] = tech
+    embed = discord.Embed(title = "**__Technologies:__**", colour = 0x9090ff) # we really gotta sort out the colours
+    embed.add_field(name = "**__Tokens:__**", value = f"{current_player.r_tokens} tokens")
+    for name, tech in available_techs.items():
+        embed.add_field(name = f"__{name}:__", value = f"cost: {tech.cost}, unlocked at: {tech.lvl}")
+    await client.say(f"{current_player.player.mention} ->", embed = embed)
 
 
 async def log(txt):
