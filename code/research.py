@@ -26,6 +26,7 @@ class Technology:
             
 
 def get_tech(name):
+    '''gets a Technology from a technology name'''
     if name in technologies:
         return technologies[name]
     else:
@@ -33,6 +34,7 @@ def get_tech(name):
 
 
 def init_crops(crops):
+    '''Creates the Technology objects for all crops'''
     for crop in crops:
         name = crop.name
         lvl = crop.unlock_at_lvl
@@ -42,4 +44,5 @@ def init_crops(crops):
 
 
 def get_crop_effect(crop):
+    '''Returns the function that runs when a crop technology is researched'''
     return lambda player : player.available_crops.append(crop)
