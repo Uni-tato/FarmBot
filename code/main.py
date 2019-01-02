@@ -342,7 +342,7 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = play.get(ctx)
-    await client.say(current_player.technologies)
+    await client.say(f"{current_player.technologies},\n{current_player.available_crops}")
 
 
 @client.command(pass_context=True)

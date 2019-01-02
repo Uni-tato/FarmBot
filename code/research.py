@@ -1,5 +1,5 @@
 """ok, so basically dont touch this yet, or I will hunt you down and murder you! *winkey face*"""
-import discord # I dont think I actually need this here
+#import discord # I dont think I actually need this here
 
 client = None # Set in main.py
 technologies = {} # dict of names:technology
@@ -39,10 +39,10 @@ def init_crops(crops):
         name = crop.name
         lvl = crop.unlock_at_lvl
         cost = crop.research_cost
-        effect = get_crop_effect(name)
+        effect = get_crop_tech(crop)
         technologies[name] = Technology(name,lvl,cost,effect)
 
-
-def get_crop_effect(crop):
-    '''Returns the function that runs when a crop technology is researched'''
-    return lambda player : player.available_crops.append(crop)
+def get_crop_tech(crop):
+    async def crop_tech(player):
+        player.available_crops.append(crop)
+    return crop_tech
