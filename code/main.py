@@ -373,8 +373,8 @@ async def items(ctx):
 
 
 @client.command(pass_context=True, aliases = ["r"])
-async def research(ctx,name):
-    # TODO allow spaces in the tech name.
+async def research(ctx, *args):
+    name = '_'.join(str(x) for x in args)
     current_player = await play.get(ctx)
     if name not in res.technologies:
         await client.say(f"{current_player.player.mention}, {name} is not a valid technology.")
