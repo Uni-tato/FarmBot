@@ -23,7 +23,14 @@ class Farm:
     def __init__(self, name, plot_count=2):
         self.name = name
         self.plot_count = plot_count
-        self.plots = [Plot() for _ in range(plot_count)]
+        self.plots = [Plot(n+1) for n in range(plot_count)]
+
+    def get_empty_plots(self):
+        plots = []
+        for plot in self.plots:
+            if plot.crop is None:
+                plots.append(plot)
+        return plots
 
 
 class Plot:
@@ -32,7 +39,8 @@ class Plot:
     This handles the harvesting and planting code for crops
     and trees."""
 
-    def __init__(self):
+    def __init__(self, n):
+        self.n = n
         self.crop = None
         self._start_time = None
         self._first_planted_time = None
@@ -91,7 +99,7 @@ class Plot:
         return items.Item(item_name, item_count)
         # return {item:item_count} #if these return none then I will need to make item a copy.
 
-    def time(self, data_type, from_present=True):
+    def time(self, data_type=int, from_present=True):
         """Get the time remaining until the crop can be harvested."""
         if self.crop is None:
             return False
