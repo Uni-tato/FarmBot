@@ -49,6 +49,7 @@ class Player:
         self.available_crops = []
         self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
         self.auto_harvest_lvl = 0
+        self.xp_multiplier = 1
 
 
     async def lvl_check(self,ctx):

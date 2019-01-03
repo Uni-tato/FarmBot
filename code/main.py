@@ -342,7 +342,8 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = await play.get(ctx)
-    await client.say(f"{current_player.technologies},\n{current_player.available_crops}")
+    await client.say(
+        f"{current_player.technologies},\n{current_player.buy_multiplier},{current_player.sell_multiplier}")
 
 
 @client.command(pass_context=True)
@@ -523,7 +524,7 @@ if __name__ == "__main__":
     play.init(market_manager)
     farm.init(market_manager)
     stuff.init(market_manager)
-    res.init_crops(crop_manager.crops)
+    res.init(crop_manager.crops)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
