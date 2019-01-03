@@ -1,8 +1,14 @@
 """Implement player code."""
+import asyncio
+
 import discord
 from discord.ext.commands import Context
 
 import items
+import research as res
+
+
+client = None # set to bots client by main.py 
 
 # This'll be a dictionary where the keys are the player discord objects,
 # and the values are this custom player class
@@ -33,10 +39,33 @@ class Player:
 
         self.money = 10
 
-        # Here, there will probably be some other stuff such as player upgrades and shit
-        # then with the money you can upgrade your farm, for example get more plots,
-        # reduce grow time etc` - Alex
-        # These values might be here if they're player specific
+        self.xp = 0 # Currently does not increase. 
+        self.lvl = 1
+        self.r_tokens = 0 # Research points used to unlock/upgrade stuff.
+        self.technologies = []
+
+        self.buy_multiplier = 1
+        self.sell_multiplier = 1
+        self.available_crops = []
+        self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
+        self.auto_harvest_lvl = 0
+
+
+    async def lvl_check(self,ctx):
+        '''Checks if the player should level up, and does so if necessary.'''
+        should_be = (self.xp//5)+1 #anyone is welcome to improve this.
+        if self.lvl != should_be:
+            await self.level_up(ctx,should_be)
+
+    async def level_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
+        '''Stuff that happens when the player levels up.'''
+        lvl_range = range(self.lvl+1, lvl+1)
+        self.r_tokens += (lvl - self.lvl)
+        self.lvl = lvl
+        await client.send_message(
+            ctx.message.channel,
+            f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
+        await res.unlock_free(self,lvl_range)
 
     def has(self, item_name):
         """Check if player has `item_name` in inventory.
@@ -51,7 +80,7 @@ class Player:
 
 
 # TODO: Rename argument to something meaningful.
-def get(i):
+async def get(i):
     """Get a `Player` representing `ctx.message.author`.
 
     Also automagically creates the player object if there isn't one already."""
@@ -64,5 +93,7 @@ def get(i):
         return None
 
     if member not in players:
-        players[member] = Player(member)
+        player = Player(member)
+        players[member] = player
+        await res.unlock_free(player,(0,1))
     return players[member]

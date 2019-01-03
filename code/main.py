@@ -12,11 +12,12 @@ from discord.ext.commands import Bot, check
 import ask
 import players as play
 import farm
-import items as stuff
+import items as stuff #nice.
 import errors
 import assist
 from managers import CropManager, MarketManager
 from util import get_amount, get_name
+import research as res
 
 #### QUICK TO DO LIST: ####
 # - Make the `fm plant` command better:
@@ -75,7 +76,7 @@ async def create(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    play.get(ctx)
+    play.get(ctx) # um, what happened here?
 
     answer = await ask.ask(
         ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
@@ -92,7 +93,7 @@ async def plant(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     plant = get_name(args)
     plots = current_player.farm.get_empty_plots()
 
@@ -178,7 +179,7 @@ async def plant(ctx, *args):
 @client.command(pass_context=True, aliases=["h", "harv", "har"])
 @check(errors.has_farm)
 async def harvest(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
 
     reap = stuff.Container([])
     for plot in current_player.farm.plots:
@@ -206,12 +207,12 @@ async def harvest(ctx):
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin"])
 async def inventory(ctx, player=None):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
 
     if player is None:
         queried_player = current_player
     else:
-        queried_player = play.get(ctx.message.mentions[0])
+        queried_player = await play.get(ctx.message.mentions[0])
 
     # Separate items into categories.
     categories = {}
@@ -225,9 +226,10 @@ async def inventory(ctx, player=None):
     embed = discord.Embed(
         title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
     )
-    embed.add_field(name="**Money:**", value=f":moneybag: ${queried_player.money}")
+    embed.add_field(name="**Money:**", value=f":moneybag:: ${queried_player.money},\n:x::{queried_player.r_tokens}")
+    embed.add_field(name="**Level:**", value = f"{queried_player.lvl}: {queried_player.xp}xp.")
     for category in categories:
-        embed.add_field(name=f"**{category}**", value=categories[category])
+        embed.add_field(name=f"**{category}:**", value=categories[category])
 
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
@@ -237,7 +239,7 @@ async def inventory(ctx, player=None):
 @client.command(pass_context=True, aliases=["stat", "stats", "s"])
 @check(errors.has_farm)
 async def status(ctx):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     embed = discord.Embed(
         title=f"***{current_player.farm.name}*** *status:*", colour=0x00D100
     )
@@ -266,7 +268,7 @@ async def buy(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     plant = get_name(args)
 
@@ -312,7 +314,7 @@ async def sell(ctx, *args):
         return
 
     # First parse the info given to us...
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     item_name = get_name(args)
 
@@ -352,7 +354,7 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -374,7 +376,7 @@ async def dgive(ctx, *args):
 
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     amount = get_amount(args)
     if amount < 1:
         return
@@ -384,6 +386,21 @@ async def dplots_add(ctx, *args):
 
     await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
     await log(f"Added {amount} new plot(s) to {current_player.player.name}'s farm")
+
+
+@client.command(pass_context=True)
+async def dxp(ctx, amount):
+    amount = int(amount)
+    current_player = await play.get(ctx)
+    current_player.xp += amount
+    await client.say(f"gave {current_player.player.mention} {amount}xp.")
+    await current_player.lvl_check(ctx)
+
+
+@client.command(pass_context=True, aliases = ["d"])
+async def debug(ctx):
+    current_player = await play.get(ctx)
+    await client.say(f"{current_player.technologies},\n{current_player.available_crops}")
 
 
 @client.command(pass_context=True)
@@ -406,10 +423,62 @@ async def items(ctx):
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
 
-    current_player = play.get(ctx)
+    current_player = await play.get(ctx)
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
+
+
+@client.command(pass_context=True, aliases = ["r"])
+async def research(ctx,name):
+    # TODO allow spaces in the tech name.
+    current_player = await play.get(ctx)
+    if name not in res.technologies:
+        await client.say(f"{current_player.player.mention}, {name} is not a valid technology.")
+        return None
+    tech = res.get_tech(name)
+    for req_name in tech.requirements:
+        if req_name not in current_player.technologies:
+            await client.say(f"{current_player.player.mention} you are missing some required technologies needed for this research.")
+            break
+    else:
+        if current_player.lvl < tech.lvl:
+            await client.say(f"{current_player.player.mention} you need to be level {tech.lvl} or greater to research this.")
+        elif name in current_player.technologies:
+            await client.say(f"{current_player.player.mention} you have already researched this technology.")
+        elif current_player.r_tokens < tech.cost:
+            await client.say(f"{current_player.player.mention} you do not have enough research tokens to research this technology.")
+        else:
+            answer = await ask.ask(
+                ctx.message,
+                f"Are you sure you wish to research {name}?\nIt will cost {tech.cost} research tokens."
+            )
+            if answer == True:
+                await tech.research(current_player)
+
+
+@client.command(pass_context=True, aliases = ["t","techs"])
+async def technologies(ctx):
+    current_player = await play.get(ctx)
+    all_techs = res.technologies
+    available_techs = {}
+    for name, tech in all_techs.items():
+        has_req = True
+        for req_name in tech.requirements:
+            if req_name not in current_player.technologies:
+                has_req = False
+        if not has_req:
+            continue
+        elif current_player.lvl < tech.lvl:
+            continue
+        elif name in current_player.technologies:
+            continue
+        available_techs[name] = tech
+    embed = discord.Embed(title = "**__Technologies:__**", colour = 0x9090ff) # we really gotta sort out the colours
+    embed.add_field(name = "**__Tokens:__**", value = f"{current_player.r_tokens} tokens")
+    for name, tech in available_techs.items():
+        embed.add_field(name = f"__{name}:__", value = f"cost: {tech.cost}, unlocked at: {tech.lvl}")
+    await client.say(f"{current_player.player.mention} ->", embed = embed)
 
 
 async def log(txt):
@@ -498,6 +567,8 @@ async def on_ready():
 
 if __name__ == "__main__":
     ask.init(client)
+    play.client = client # <-- the better way to do it.
+    res.client = client
     errors.init(client, play.players)
     assist.init(client, prefix)
 
@@ -510,6 +581,7 @@ if __name__ == "__main__":
     play.init(market_manager)
     farm.init(market_manager)
     stuff.init(market_manager)
+    res.init_crops(crop_manager.crops)
 
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
