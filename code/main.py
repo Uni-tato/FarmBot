@@ -327,7 +327,6 @@ async def dplots_add(ctx, *args):
     current_player.farm.plots += [farm.Plot() for _ in range(amount)]
 
     await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
-    await log(f"Added {amount} new plot(s) to {current_player.player.name}'s farm")
 
 
 @client.command(pass_context=True)
@@ -342,8 +341,8 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = await play.get(ctx)
-    await client.say(
-        f"{current_player.technologies},\n{current_player.buy_multiplier},{current_player.sell_multiplier}")
+    await client.say(f"{current_player.technologies},\n{current_player.buy_multiplier},{current_player.sell_multiplier}")
+    await client.say(":fm_rt:,:fm_rice:")
 
 
 @client.command(pass_context=True)
