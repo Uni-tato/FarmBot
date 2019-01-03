@@ -93,8 +93,9 @@ async def plant(ctx, *args):
         return
 
     current_player = play.get(ctx)
-
+    plant = get_name(args)
     plots = current_player.farm.get_empty_plots()
+
     if len(plots) is 0:
         plot = current_player.farm.plots[0]
         for plot_ in current_player.farm.plots:
@@ -105,54 +106,53 @@ async def plant(ctx, *args):
 
     if args[0] is "*":
         if len(args) >= 2:
-            plant = get_name(args[1:])
-
-            for crop_ in crop_manager.crops:
-                if plant in (crop_.name, crop_.seed):
-                    crop = crop_
-
-                    if current_player.has(crop.seed):
-                        amount = current_player.items[crop.seed].amount
-                    else:
-                        await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
-                        return
-
-                    amount = min(amount, len(plots))
-                    plots = plots[:amount]
-                    break
-            else:
-                await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
-                return
+            # fm plant * wheat
+            command_type = 1
         else:
+            # fm plant *
+            command_type = 2
             # TODO: do this
-
             # The idea here (`fm plant *`) is that the bot will automatically plant the highest-valued seeds in the players inventory.
-            # Will keep on planting untill 1. no more plots, 2. no more seeds.
+            # And will keep on planting untill 1. no more plots, 2. no more seeds.
             # Returning a message for the user to see will be a pain :P
             await assist.help(ctx, args)
             return
-
     else:
-        plant = get_name(args)
+        # fm plant 3 wheat / fm plant wheat
+        command_type = 0
+
+    # find the corresponding crop
+    for crop_ in crop_manager.crops:
+        if plant in (crop_.name, crop_.seed):
+            crop = crop_
+            break
+    else:
+        await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+        return
+
+    if command_type is 0:
+        # fm plant 3 wheat
         amount = get_amount(args)
+        plots = plots[:amount]
+
         if amount < 1:
             await client.say("Sorry but that's not a valid amount! Please type in a number greater than 1.")
             return
-
-        for crop_ in crop_manager.crops:
-            if plant in (crop_.name, crop_.seed):
-                crop = crop_
-
-                plots = plots[:amount]
-                amount = len(plots)
-
-                if not current_player.has(stuff.Item(crop.seed, amount)):
-                    await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
-                    return
-                break
-        else:
-            await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+        if not current_player.has(stuff.Item(crop.seed, amount)):
+            await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
             return
+
+    elif command_type is 1:
+        # fm plant * wheat
+        if current_player.has(crop.seed):
+            amount = current_player.items[crop.seed].amount
+        else:
+            await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
+            return
+
+        amount = min(amount, len(plots))
+        plots = plots[:amount]
+
 
     # Actually plant the crop in each plot.
     for plot in plots:
