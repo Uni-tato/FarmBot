@@ -49,13 +49,13 @@ async def create(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    play.get(ctx) # um, what happened here?
+    current_player = await play.get(ctx)
 
     answer = await ask.ask(
         ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
     )
     if answer:
-        play.players[ctx.message.author].farm = farm.Farm(name)
+        current_player.farm = farm.Farm(name)
         await client.say("Farm created!")
 
 
