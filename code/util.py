@@ -37,7 +37,7 @@ def get_amount(args, type=int):
 def get_name(args, allow_ints=False):
     """Parse a name from `args`.
 
-    It will not include the first element if it is an `int` type.
+    It will not include the first element if it is an `int` type, or if it is a "*" character.
     Hence, names which begin in numbers are not allowed."""
     if allow_ints:
         return " ".join(args).strip()
@@ -45,6 +45,8 @@ def get_name(args, allow_ints=False):
     try:
         int(args[0])
     except ValueError:
+        if args[0] is "*":
+            return " ".join(args[1:]).strip()
         return " ".join(args).strip()
     else:
         return " ".join(args[1:]).strip()
