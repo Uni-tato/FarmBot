@@ -226,27 +226,27 @@ async def buy(ctx, *args):
         await client.say(f"You can't buy less than **1** item!")
         return
 
-    if current_player.money < item.buy_cost * item.amount:
+    cost = round(item.buy_cost * item.amount * current_player.buy_multiplier, 2)
+    if current_player.money < cost:
         await client.say(
             f"Sorry {current_player.player.name} but you don't have enough money! "
-            f"(Only **${current_player.money}** instead of **${item.buy_cost * item.amount}**)"
+            f"(Only **${current_player.money}** instead of **${cost}**)"
         )
         return
 
-    name_and_amount = f"{item.name} x{item.amount}"
-    total_price = item.buy_cost * item.amount
+    name_and_amount = f"**{item.name} x{item.amount}** at **{current_player.buy_multiplier * 100}%** "
 
     answer = await ask.ask(
         ctx.message,
-        f"**Are you sure you want to buy {item.emoji} **{name_and_amount}** for **${total_price}**?**",
+        f"Are you sure you want to buy {item.emoji} {name_and_amount} for **${cost}**?",
         answers={"💸": True, "❌": False},
     )
     if answer:
-        current_player.money -= item.buy_cost * item.amount
+        current_player.money = round(current_player.money-cost,2)
         current_player.items += item
         await client.say(
-            f"Bought {item.emoji} **{item.name} (x{item.amount})**! "
-            f"Money Remaining: $**{current_player.money}**."
+            f"Bought {item.emoji} {name_and_amount} for **${cost}**.\n"
+            f"Money Remaining: ${current_player.money}."
         )
 
 
@@ -341,8 +341,7 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = await play.get(ctx)
-    await client.say(f"{current_player.technologies},\n{current_player.buy_multiplier},{current_player.sell_multiplier}")
-    await client.say(":fm_rt:,:fm_rice:")
+    await client.say()
 
 
 @client.command(pass_context=True)
