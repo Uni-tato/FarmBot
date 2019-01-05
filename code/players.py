@@ -18,10 +18,11 @@ players = {}
 market_manager = None
 
 
-def init(market_manager_):
+def init(market_manager_, crop_manager_):
     """Provide module with `market_manager`."""
-    global market_manager
+    global market_manager, crop_manager
     market_manager = market_manager_
+    crop_manager = crop_manager_
 
 
 class Player:
@@ -78,6 +79,19 @@ class Player:
             a greater than or equal to amount than the
             input item."""
         return self.items.has(item_name)
+
+    def can_plant(self, item):
+        """Checks if a player has researched a crop.
+
+        Works with both strings (crop names) and the crop object itself."""
+        if type(item) == str:
+            for plant in crop_manager.crops:
+                if item == crop.name:
+                    item = crop
+                    break
+            else:
+                return False
+        return item in self.available_crops
 
 
 # TODO: Rename argument to something meaningful.

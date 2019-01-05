@@ -105,6 +105,19 @@ async def plant(ctx, *args):
         await client.say(f"Sorry, but all your plots are full! On the bright side, **Plot #{current_player.farm.plots.index(plot)+1}** will finish in **{plot.time(str)}**!")
         return
 
+    # find the corresponding crop
+    for crop_ in crop_manager.crops:
+        if plant in (crop_.name, crop_.seed):
+            crop = crop_
+            break
+    else:
+        await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+        return
+
+    if not current_player.can_plant(crop):
+        await client.say(f"Sorry {current_player.player.mention}, but you need to research {crop.emoji} **{crop.name}** before you can plant it.")
+        return
+
     if args[0] is "*":
         if len(args) >= 2:
             # fm plant * wheat
@@ -121,15 +134,6 @@ async def plant(ctx, *args):
     else:
         # fm plant 3 wheat / fm plant wheat
         command_type = 0
-
-    # find the corresponding crop
-    for crop_ in crop_manager.crops:
-        if plant in (crop_.name, crop_.seed):
-            crop = crop_
-            break
-    else:
-        await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
-        return
 
     if command_type is 0:
         # fm plant 3 wheat
@@ -577,7 +581,7 @@ if __name__ == "__main__":
     with open("txt/items.csv", "r") as items_file:
         market_manager = MarketManager(items_file.readlines())
 
-    play.init(market_manager)
+    play.init(market_manager, crop_manager)
     farm.init(market_manager)
     stuff.init(market_manager)
     res.init(crop_manager.crops)
