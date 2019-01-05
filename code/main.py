@@ -340,7 +340,7 @@ async def sell(ctx, *args):
         return
 
     # Then we confirm if the user really wants to sell this...
-    total_price = item.sell_cost * item.amount
+    total_price = item.sell_cost * item.amount * player.sell_multiplier
     answer = await ask.ask(
         ctx.message,
         f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) "
