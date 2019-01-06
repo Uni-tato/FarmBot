@@ -1,6 +1,6 @@
 """Implement player code."""
 import asyncio
-from math import sqrt
+from math import floor
 
 import discord
 from discord.ext.commands import Context
@@ -58,8 +58,7 @@ class Player:
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
         lvl_1_xp = 50
-        squ = sqrt(lvl_1_xp)
-        should_be = int((self.xp**0.5) //squ)+1 #anyone is welcome to improve this.
+        should_be = floor((self.xp/lvl_1_xp)**0.8)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
             await self.lvl_up(ctx,should_be)
 
@@ -98,6 +97,7 @@ class Player:
     def give_xp(self, amount):
         """Gives the player xp."""
         self.xp += round(amount*self.xp_multiplier,2)
+        self.xp = round(self.xp,2)
 
 
 # TODO: Rename argument to something meaningful.
