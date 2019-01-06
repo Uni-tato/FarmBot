@@ -242,7 +242,7 @@ async def inventory(ctx, player=None):
     embed = discord.Embed(
         title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
     )
-    embed.add_field(name="**Money:**", value=f":moneybag:: ${queried_player.money},\n:x::{queried_player.r_tokens}")
+    embed.add_field(name="**Money:**", value=f":moneybag:: ${queried_player.money},\n{rt_emoji}:{queried_player.r_tokens}")
     embed.add_field(name="**Level:**", value = f"{queried_player.lvl}: {queried_player.xp}xp.")
     for category in categories:
         embed.add_field(name=f"**{category}:**", value=categories[category])
@@ -494,7 +494,7 @@ async def technologies(ctx):
             continue
         available_techs[name] = tech
     embed = discord.Embed(title = "**__Technologies:__**", colour = 0x9090ff) # we really gotta sort out the colours
-    embed.add_field(name = "**__Tokens:__**", value = f"{current_player.r_tokens} tokens")
+    embed.add_field(name = "**__Tokens:__**", value = f"{rt_emoji} {current_player.r_tokens} tokens")
     for name, tech in available_techs.items():
         embed.add_field(name = f"__{name}:__", value = f"cost: {tech.cost}, unlocked at: {tech.lvl}")
     await client.say(f"{current_player.player.mention} ->", embed = embed)
@@ -540,6 +540,11 @@ async def reload():
                     if plot.crop != None:
                         plot.crop._manager = weakref.proxy(crop_manager)
 
+def get_rt_emoji():
+    for emoji in client.get_all_emojis():
+        if emoji.name == 'fm_rt':
+            return str(emoji)
+
 
 async def loop():
     await client.wait_until_ready()
@@ -582,6 +587,9 @@ async def on_ready():
         item.init_emoji(client)
     for crop in crop_manager.crops:
         crop.init_emoji(client)
+
+    global rt_emoji
+    rt_emoji = get_rt_emoji()
 
 
 if __name__ == "__main__":
