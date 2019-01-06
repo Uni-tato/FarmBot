@@ -93,6 +93,10 @@ class Player:
                 return False
         return item in self.available_crops
 
+    async def give_XP(self, amount):
+        """Gives the player xp."""
+        self.xp += xp*self.xp_multiplier
+
 
 # TODO: Rename argument to something meaningful.
 async def get(i):
