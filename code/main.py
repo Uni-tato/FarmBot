@@ -115,6 +115,7 @@ async def plant(ctx, *args):
         return
 
     if not current_player.can_plant(crop):
+        await client.say(current_player.available_crops)
         await client.say(f"Sorry {current_player.player.mention}, but you need to research {crop.emoji} **{crop.name}** before you can plant it.")
         return
 
@@ -158,12 +159,16 @@ async def plant(ctx, *args):
         amount = min(amount, len(plots))
         plots = plots[:amount]
 
-
     # Actually plant the crop in each plot.
     for plot in plots:
         plant_time = round(time.time())
         plot.plant(crop, plant_time)
         current_player.items -= crop.seed
+
+    xp = 0
+    for item in market_manager.items:
+        if item.name == crop.seed:
+            xp = item.buy_cost*len(plots)
 
     # Make the output look hella nice.
     plot_indexes = f"**Plot #{plots[0].n}**"
@@ -177,6 +182,8 @@ async def plant(ctx, *args):
             f"Planted {crop.emoji} **{crop.name}** in {plot_indexes}! "
             f"Time until completion is **{plots[0].time(str, False)}**."
     )
+    current_player.give_xp(xp)
+    await current_player.lvl_check(ctx)
     return
 
 
@@ -186,10 +193,12 @@ async def harvest(ctx):
     current_player = await play.get(ctx)
 
     reap = stuff.Container([])
+    xp = 0
     for plot in current_player.farm.plots:
         item = plot.harvest()
         if item is not None:
             reap += item
+            xp += item.buy_cost*item.amount
 
     if len(reap) == 0:
         await client.say(
@@ -202,11 +211,14 @@ async def harvest(ctx):
     for item in reap:
         text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
         current_player.items += item
-    embed.add_field(name="**__Items__:**", value=text)
+    embed.add_field(name="**__Items:__**", value=text)
+    embed.add_field(name="**__xp gained:__**", value = xp)
 
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
+    current_player.give_xp(xp)
+    await current_player.lvl_check(ctx)
 
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin"])
@@ -266,7 +278,7 @@ async def status(ctx):
     )
 
 
-@client.command(pass_context=True)
+@client.command(pass_context=True, aliases = ['b'])
 async def buy(ctx, *args):
     if len(args) == 0:
         await assist.help(ctx, args)
@@ -309,6 +321,8 @@ async def buy(ctx, *args):
             f"Bought {item.emoji} {name_and_amount} for **${cost}**.\n"
             f"Money Remaining: ${current_player.money}."
         )
+        current_player.give_xp(item.buy_cost * item.amount /2)
+        await current_player.lvl_check(ctx)
 
 
 @client.command(pass_context=True)
@@ -340,7 +354,7 @@ async def sell(ctx, *args):
         return
 
     # Then we confirm if the user really wants to sell this...
-    total_price = item.sell_cost * item.amount * player.sell_multiplier
+    total_price = item.sell_cost * item.amount * current_player.sell_multiplier
     answer = await ask.ask(
         ctx.message,
         f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) "
@@ -354,6 +368,8 @@ async def sell(ctx, *args):
     current_player.items -= item
     current_player.money += total_price
     await client.say(f"Sold! You now have $**{current_player.money}**.")
+    current_player.give_xp(item.sell_cost * item.amount /2)
+    await current_player.lvl_check(ctx)
 
 
 @client.command(pass_context=True)

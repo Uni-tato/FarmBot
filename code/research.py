@@ -51,7 +51,7 @@ def init_crops(crops):
 def get_crop_effect(crop):
     '''Creates functions for crop technology.'''
     async def crop_effect(player):
-        player.available_crops.append(crop)
+        player.available_crops.append(crop.name)
         await client.say(f"{player.player.mention}, you can now plant and grow {crop.name}(s)")
     return crop_effect
 

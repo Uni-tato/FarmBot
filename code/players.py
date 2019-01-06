@@ -1,11 +1,13 @@
 """Implement player code."""
 import asyncio
+from math import sqrt
 
 import discord
 from discord.ext.commands import Context
 
 import items
 import research as res
+from farm import Crop
 
 
 client = None # set to bots client by main.py 
@@ -55,11 +57,13 @@ class Player:
 
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
-        should_be = (self.xp//100)+1 #anyone is welcome to improve this.
+        lvl_1_xp = 50
+        squ = sqrt(lvl_1_xp)
+        should_be = int((self.xp**0.5) //squ)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
-            await self.level_up(ctx,should_be)
+            await self.lvl_up(ctx,should_be)
 
-    async def level_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
+    async def lvl_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
         '''Stuff that happens when the player levels up.'''
         lvl_range = range(self.lvl+1, lvl+1)
         self.r_tokens += (lvl - self.lvl)
@@ -84,18 +88,16 @@ class Player:
         """Checks if a player has researched a crop.
 
         Works with both strings (crop names) and the crop object itself."""
-        if type(item) == str:
-            for plant in crop_manager.crops:
-                if item == crop.name:
-                    item = crop
-                    break
-            else:
-                return False
-        return item in self.available_crops
+        if isinstance(item, Crop):
+            return item.name in self.available_crops
+        elif isinstance(item, str):
+            return item in self.available_crops
+        else:
+            return False
 
-    async def give_XP(self, amount):
+    def give_xp(self, amount):
         """Gives the player xp."""
-        self.xp += xp*self.xp_multiplier
+        self.xp += round(amount*self.xp_multiplier,2)
 
 
 # TODO: Rename argument to something meaningful.
