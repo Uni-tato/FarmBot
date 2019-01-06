@@ -55,7 +55,7 @@ class Player:
 
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
-        should_be = (self.xp//5)+1 #anyone is welcome to improve this.
+        should_be = (self.xp//100)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
             await self.level_up(ctx,should_be)
 
