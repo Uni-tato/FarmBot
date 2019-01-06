@@ -8,7 +8,7 @@ pumpkin, pumpkin seeds, pumpkin, 7, 13, 120, 120, fm_pumpkin, crop, 5, 0
 carrot, carrot seeds, carrot, 27, 33, 30, 30, fm_carrot, crop, 5, 1
 potato, potato, potato, 20, 30, 15, 15, fm_potato, crop, 10, 3
 #
-marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, x, crop, 100, 20
+marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, marshmallow, crop, 100, 20
 #
 # Stefan's crops
 # none for now P
