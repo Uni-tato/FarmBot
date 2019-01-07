@@ -1,11 +1,13 @@
 """Implement player code."""
 import asyncio
+from math import floor
 
 import discord
 from discord.ext.commands import Context
 
 import items
 import research as res
+from farm import Crop
 
 
 client = None # set to bots client by main.py 
@@ -18,10 +20,11 @@ players = {}
 market_manager = None
 
 
-def init(market_manager_):
+def init(market_manager_, crop_manager_):
     """Provide module with `market_manager`."""
-    global market_manager
+    global market_manager, crop_manager
     market_manager = market_manager_
+    crop_manager = crop_manager_
 
 
 class Player:
@@ -49,15 +52,17 @@ class Player:
         self.available_crops = []
         self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
         self.auto_harvest_lvl = 0
+        self.xp_multiplier = 1
 
 
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
-        should_be = (self.xp//5)+1 #anyone is welcome to improve this.
+        lvl_1_xp = 50
+        should_be = floor((self.xp/lvl_1_xp)**0.8)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
-            await self.level_up(ctx,should_be)
+            await self.lvl_up(ctx,should_be)
 
-    async def level_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
+    async def lvl_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
         '''Stuff that happens when the player levels up.'''
         lvl_range = range(self.lvl+1, lvl+1)
         self.r_tokens += (lvl - self.lvl)
@@ -77,6 +82,22 @@ class Player:
             a greater than or equal to amount than the
             input item."""
         return self.items.has(item_name)
+
+    def can_plant(self, item):
+        """Checks if a player has researched a crop.
+
+        Works with both strings (crop names) and the crop object itself."""
+        if isinstance(item, Crop):
+            return item.name in self.available_crops
+        elif isinstance(item, str):
+            return item in self.available_crops
+        else:
+            return False
+
+    def give_xp(self, amount):
+        """Gives the player xp."""
+        self.xp += round(amount*self.xp_multiplier,2)
+        self.xp = round(self.xp,2)
 
 
 # TODO: Rename argument to something meaningful.
