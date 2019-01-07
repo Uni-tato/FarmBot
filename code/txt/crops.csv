@@ -1,7 +1,7 @@
 name, seed, item, min_item, max_item, min_lifetime, max_lifetime, emoji, type, unlock_at_lvl, research_cost
 #
 wheat, wheat seeds, wheat, 4, 6, 1, 1, fm_wheat, crop, 1, 0
-rice, rice seeds, rice, 2, 4, 1, 1, fm_rice, crop, 1, 1
+rice, rice seeds, rice, 4, 6, 2, 2, fm_rice, crop, 1, 1
 cucumber, cucumber seeds, cucumber, 4, 8, 60, 60, fm_cucumber, crop, 2, 1
 tomato, tomato seeds, tomato, 50, 70, 360, 360, fm_tomato, crop, 3, 2
 pumpkin, pumpkin seeds, pumpkin, 7, 13, 120, 120, fm_pumpkin, crop, 5, 0
