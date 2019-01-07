@@ -419,7 +419,7 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = await play.get(ctx)
-    await client.say()
+    await client.say(current_player.farm.plot_count)
 
 
 @client.command(pass_context=True)
