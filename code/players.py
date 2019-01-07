@@ -101,7 +101,7 @@ class Player:
 
 
 # TODO: Rename argument to something meaningful.
-async def get(i):
+def get(i):
     """Get a `Player` representing `ctx.message.author`.
 
     Also automagically creates the player object if there isn't one already."""
@@ -116,5 +116,4 @@ async def get(i):
     if member not in players:
         player = Player(member)
         players[member] = player
-        await res.unlock_free(player,(0,1))
     return players[member]
