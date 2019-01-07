@@ -546,6 +546,18 @@ def get_rt_emoji():
         if emoji.name == 'fm_rt':
             return str(emoji)
 
+def auto_harvest():
+    for member,player in play.players.items():
+        amount = player.auto_harvest_lvl
+        plots = player.farm.plots[:amount]
+        reap = stuff.Container([])
+        for plot in plots:
+            item = plot.harvest()
+            if item is not None:
+                reap += item
+        if len(reap) > 0:
+            player.items += reap
+
 
 async def loop():
     await client.wait_until_ready()
@@ -557,6 +569,8 @@ async def loop():
         if autosave_counter * 5 >= autosave_interval * 60:
             autosave_counter = 0
             await save()
+
+            auto_harvest() # We may want to tweak when this fires, but for now this works.
 
 
 @client.event
