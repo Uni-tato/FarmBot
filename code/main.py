@@ -76,14 +76,15 @@ async def create(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
 
     answer = await ask.ask(
         ctx.message, f"Are you sure you wish to start a new farm called `{name}`?"
     )
     if answer:
         current_player.farm = farm.Farm(name)
-        await client.say("Farm created!")
+        await client.say(f"Farm: `{name}`, created!")
+        await res.unlock_free(current_player,(0,1))
 
 
 @client.command(pass_context=True, aliases=["p", "plan"])
@@ -93,7 +94,7 @@ async def plant(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     plant = get_name(args)
     plots = current_player.farm.get_empty_plots()
 
@@ -190,7 +191,7 @@ async def plant(ctx, *args):
 @client.command(pass_context=True, aliases=["h", "harv", "har"])
 @check(errors.has_farm)
 async def harvest(ctx):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
 
     reap = stuff.Container([])
     xp = 0
@@ -223,12 +224,12 @@ async def harvest(ctx):
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin"])
 async def inventory(ctx, player=None):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
 
     if player is None:
         queried_player = current_player
     else:
-        queried_player = await play.get(ctx.message.mentions[0])
+        queried_player = play.get(ctx.message.mentions[0])
 
     # Separate items into categories.
     categories = {}
@@ -255,7 +256,7 @@ async def inventory(ctx, player=None):
 @client.command(pass_context=True, aliases=["stat", "stats", "s"])
 @check(errors.has_farm)
 async def status(ctx):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     embed = discord.Embed(
         title=f"***{current_player.farm.name}*** *status:*", colour=0x008c3a
     )
@@ -284,7 +285,7 @@ async def buy(ctx, *args):
         await assist.help(ctx, args)
         return
 
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     amount = get_amount(args)
     plant = get_name(args)
 
@@ -332,7 +333,7 @@ async def sell(ctx, *args):
         return
 
     # First parse the info given to us...
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     amount = get_amount(args)
     item_name = get_name(args)
 
@@ -374,7 +375,7 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -396,7 +397,7 @@ async def dgive(ctx, *args):
 
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     amount = get_amount(args)
     if amount < 1:
         return
@@ -410,7 +411,7 @@ async def dplots_add(ctx, *args):
 @client.command(pass_context=True)
 async def dxp(ctx, amount):
     amount = int(amount)
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     current_player.xp += amount
     await client.say(f"gave {current_player.player.mention} {amount}xp.")
     await current_player.lvl_check(ctx)
@@ -418,8 +419,8 @@ async def dxp(ctx, amount):
 
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
-    current_player = await play.get(ctx)
-    await client.say()
+    current_player = play.get(ctx)
+    await client.say(current_player.farm.plot_count)
 
 
 @client.command(pass_context=True)
@@ -442,7 +443,7 @@ async def items(ctx):
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
 
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     await client.send_message(
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
@@ -451,7 +452,7 @@ async def items(ctx):
 @client.command(pass_context=True, aliases = ["r"])
 async def research(ctx, *args):
     name = '_'.join(str(x) for x in args)
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     if name not in res.technologies:
         await client.say(f"{current_player.player.mention}, {name} is not a valid technology.")
         return None
@@ -478,7 +479,7 @@ async def research(ctx, *args):
 
 @client.command(pass_context=True, aliases = ["t","techs"])
 async def technologies(ctx):
-    current_player = await play.get(ctx)
+    current_player = play.get(ctx)
     all_techs = res.technologies
     available_techs = {}
     for name, tech in all_techs.items():
@@ -545,6 +546,18 @@ def get_rt_emoji():
         if emoji.name == 'fm_rt':
             return str(emoji)
 
+def auto_harvest():
+    for member,player in play.players.items():
+        amount = player.auto_harvest_lvl
+        plots = player.farm.plots[:amount]
+        reap = stuff.Container([])
+        for plot in plots:
+            item = plot.harvest()
+            if item is not None:
+                reap += item
+        if len(reap) > 0:
+            player.items += reap
+
 
 async def loop():
     await client.wait_until_ready()
@@ -556,6 +569,8 @@ async def loop():
         if autosave_counter * 5 >= autosave_interval * 60:
             autosave_counter = 0
             await save()
+
+            auto_harvest() # We may want to tweak when this fires, but for now this works.
 
 
 @client.event

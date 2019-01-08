@@ -1,6 +1,8 @@
 """ok, so basically dont touch this yet, or I will hunt you down and murder you! *winkey face*"""
 from math import floor
 
+from farm import Plot
+
 client = None # Set in main.py
 technologies = {} # dict of 'names:technology'
 
@@ -104,8 +106,10 @@ def init_plot_count():
 
 async def increase_plot_count(player):
     '''Increases the amount of maximum plots a player can have'''
-    player.max_plots += 1
-    await client.say(f"{player.player.mention}, your farm(s) can now have up to {player.max_plots} plots.")
+    player.plot_count += 1
+    player.farm.plot_count = player.plot_count
+    player.farm.plots.append(Plot(player.plot_count))
+    await client.say(f"{player.player.mention}, your farm: {player.farm.name}, now has {player.plot_count} plots.")
 
 def init_auto_count():
     '''Creates technology objects to auto harvest plots'''

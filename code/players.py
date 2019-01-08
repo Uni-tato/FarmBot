@@ -50,7 +50,7 @@ class Player:
         self.buy_multiplier = 1
         self.sell_multiplier = 1
         self.available_crops = []
-        self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
+        self.plot_count = 2
         self.auto_harvest_lvl = 0
         self.xp_multiplier = 1
 
@@ -58,7 +58,7 @@ class Player:
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
         lvl_1_xp = 50
-        should_be = floor((self.xp/lvl_1_xp)**0.8)+1 #anyone is welcome to improve this.
+        should_be = floor((self.xp/lvl_1_xp)**0.65)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
             await self.lvl_up(ctx,should_be)
 
@@ -101,7 +101,7 @@ class Player:
 
 
 # TODO: Rename argument to something meaningful.
-async def get(i):
+def get(i):
     """Get a `Player` representing `ctx.message.author`.
 
     Also automagically creates the player object if there isn't one already."""
@@ -116,5 +116,4 @@ async def get(i):
     if member not in players:
         player = Player(member)
         players[member] = player
-        await res.unlock_free(player,(0,1))
     return players[member]
