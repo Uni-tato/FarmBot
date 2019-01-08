@@ -257,7 +257,7 @@ async def inventory(ctx, player=None):
 async def status(ctx):
     current_player = await play.get(ctx)
     embed = discord.Embed(
-        title=f"***{current_player.farm.name}*** *status:*", colour=0x00D100
+        title=f"***{current_player.farm.name}*** *status:*", colour=0x008c3a
     )
 
     for index, plot in enumerate(current_player.farm.plots):
