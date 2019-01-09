@@ -18,6 +18,7 @@ import assist
 from managers import CropManager, MarketManager
 from util import get_amount, get_name
 import research as res
+import gambling as gamble
 
 #### QUICK TO DO LIST: ####
 # - Make the `fm plant` command better:
@@ -40,32 +41,6 @@ async def help(ctx, *args):
 @client.event
 async def on_command_error(error, ctx):
     await errors.on_command_error(error, ctx)
-
-
-@client.command(pass_context=True, aliases=["flip", "f", "cf"])
-async def coinflip(ctx, *args):
-    current_player = play.get(ctx)
-    amount = get_amount(args)
-
-    if amount < 1:
-        await client.say("Please flip a amount greater than 1.")
-        return
-
-    if amount > 1000:
-        await client.say("Sorry, you're not aloud to coinflip more than 1k! Why? idk.")
-        return
-
-    if current_player.money < amount:
-        await client.say("You don't have enough money... \\:P")
-        return
-
-    if random.random() > 0.5:
-        current_player.money -= amount
-        await client.say(f"Oof - you lost $**{amount}**! You've now got $**{current_player.money}** remaining.")
-    else:
-        current_player.money += amount
-        await client.say(f"Congratulations - you won $**{amount}**! You've now got $**{current_player.money}**!")
-    return
 
 
 @client.command(pass_context=True)
@@ -352,6 +327,26 @@ async def sell(ctx, *args):
     await client.say(f"Sold! You now have $**{current_player.money}**.")
 
 
+@client.command(pass_context=True, aliases=["flip", "f", "cf"])
+async def coinflip(ctx, *args):
+    await gamble.coinflip(await play.get(ctx), get_amount(args))
+
+
+@client.command(pass_context=True, aliases=["bjack"])
+async def blackjack(ctx, *args):
+    await gamble.blackjack(ctx.message.channel, await play.get(ctx), get_amount(args))
+
+
+@client.command(pass_context=True)
+async def hit(ctx, *args):
+    await gamble.hit(ctx.message.channel, await play.get(ctx))
+
+
+@client.command(pass_context=True)
+async def stand(ctx, *args):
+    await gamble.stand(ctx.message.channel, await play.get(ctx))
+
+
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
     current_player = await play.get(ctx)
@@ -569,6 +564,7 @@ if __name__ == "__main__":
     ask.init(client)
     play.client = client # <-- the better way to do it.
     res.client = client
+    gamble.init(client, play.players, prefix)
     errors.init(client, play.players)
     assist.init(client, prefix)
 

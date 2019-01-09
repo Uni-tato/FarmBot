@@ -50,6 +50,12 @@ class Player:
         self.max_plots = 2 # Players will still need to buy more plots for their farm(s)
         self.auto_harvest_lvl = 0
 
+        # All for playing blackjack. :)
+        self.cards = []
+        self.hand = []
+        self.dealer = []
+        self.bet = 0
+
 
     async def lvl_check(self,ctx):
         '''Checks if the player should level up, and does so if necessary.'''
@@ -66,6 +72,42 @@ class Player:
             ctx.message.channel,
             f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
         await res.unlock_free(self,lvl_range)
+
+    def hand_total(self, return_type=list, hand="player"):
+        class supa_list(list):
+            def __init__(self):
+                super().__init__()
+
+            def append(self, other):
+                #if other > 21 or other in self:
+                if other in self:
+                    return
+                super().append(other)
+
+        total = supa_list()
+        total.append(0)
+        hand_ = self.hand
+        if hand == "dealer":
+            hand_ = self.dealer
+        for card in hand_:
+            if card.name == "Ace":
+                new_total = supa_list()
+                for i in range(len(total)):
+                    new_total.append(total[i] + 1)
+                    new_total.append(total[i] + 11)
+                total = new_total
+            else:
+                for i in range(len(total)):
+                    total[i] += card.value
+
+        if return_type == list:
+            return total
+        elif return_type == str:
+            string = ""
+            for string_ in total[:-1]:
+                string += str(string_) + ", "
+            string += str(total[-1])
+            return string
 
     def has(self, item_name):
         """Check if player has `item_name` in inventory.
