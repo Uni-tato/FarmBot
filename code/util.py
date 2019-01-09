@@ -25,7 +25,7 @@ def get_amount(args, type=int):
     try:
         # int(float()) because int("5.1") doesn't work.
         int(float(args[0]))
-    except ValueError:
+    except (ValueError, IndexError) as e:
         return 1
     else:
         if isinstance(type, float):
