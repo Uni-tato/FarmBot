@@ -205,7 +205,7 @@ async def harvest(ctx):
     )
 
 
-@client.command(pass_context=True, aliases=["i", "inv", "invin"])
+@client.command(pass_context=True, aliases=["i", "inv", "invin", "inventor"])
 async def inventory(ctx, player=None):
     current_player = await play.get(ctx)
 
