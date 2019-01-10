@@ -179,6 +179,7 @@ async def stand(channel, current_player):
             embed = get_game(current_player, hide_dealer=False)
         )
         await client.say(f"*Dealer went bust - you win double your bet! ($**{current_player.bet*2}**)")
+        current_player.money += current_player.bet *2
 
     elif outcome == 'done':
         await client.send_message(
@@ -212,5 +213,3 @@ async def stand(channel, current_player):
     current_player.cards = []
     current_player.hand = []
     current_player.dealer = []
-
-
