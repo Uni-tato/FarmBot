@@ -1,6 +1,7 @@
 """Implement player code."""
 import asyncio
 from math import floor
+import datetime
 
 import discord
 from discord.ext.commands import Context
@@ -42,7 +43,7 @@ class Player:
 
         self.money = 10
 
-        self.xp = 0 # Currently does not increase. 
+        self.xp = 0
         self.lvl = 1
         self.r_tokens = 0 # Research points used to unlock/upgrade stuff.
         self.technologies = []
@@ -54,6 +55,7 @@ class Player:
         self.auto_harvest_lvl = 0
         self.xp_multiplier = 1
 
+        self.gambling_cooldown = datetime.datetime.now()
         # All for playing blackjack. :)
         self.cards = []
         self.hand = []

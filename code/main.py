@@ -5,6 +5,7 @@ import weakref
 import asyncio
 import time
 import random
+import datetime
 
 import discord
 from discord.ext.commands import Bot, check
@@ -353,6 +354,7 @@ async def coinflip(ctx, *args):
     current_player = play.get(ctx)
     amount = get_amount(args)
     if await can_gamble(current_player, amount):
+        current_player.gambling_cooldown = datetime.datetime.now() + datetime.timedelta(hours = 1)
         await gamble.coinflip(current_player, amount)
 
 
@@ -361,6 +363,7 @@ async def blackjack(ctx, *args):
     current_player = play.get(ctx)
     amount = get_amount(args)
     if await can_gamble(current_player, amount):
+        current_player.gambling_cooldown = datetime.datetime.now() + datetime.timedelta(hours = 1)
         await gamble.blackjack(ctx.message.channel, play.get(ctx), get_amount(args))
 
 
@@ -562,7 +565,16 @@ def auto_harvest():
             player.items += reap
 
 async def can_gamble(current_player, amount):
-    if current_player.money < 100:
+    if datetime.datetime.now() < current_player.gambling_cooldown:
+        delta = current_player.gambling_cooldown - datetime.datetime.now()
+        total_minutes = round(delta.seconds / 60)
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+        time = f"{minutes} minutes"
+        if hours != 0:
+            time = f"{hours} hours and {time}"
+        await client.say(f"Sorry {current_player.player.mention}, you may not gamble again for another {time}.")
+    elif current_player.money < 100:
         await client.say(f"Sorry {current_player.player.mention}, you may not gamble if you have less than $100.")
         return False
     elif amount > current_player.money * 0.15:
