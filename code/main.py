@@ -544,6 +544,8 @@ def get_rt_emoji():
 def auto_harvest():
     for member,player in play.players.items():
         amount = player.auto_harvest_lvl
+        if player.farm == None:
+            continue
         plots = player.farm.plots[:amount]
         reap = stuff.Container([])
         for plot in plots:
