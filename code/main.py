@@ -350,22 +350,22 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True, aliases=["flip", "f", "cf"])
 async def coinflip(ctx, *args):
-    await gamble.coinflip(await play.get(ctx), get_amount(args))
+    await gamble.coinflip(play.get(ctx), get_amount(args))
 
 
 @client.command(pass_context=True, aliases=["bjack"])
 async def blackjack(ctx, *args):
-    await gamble.blackjack(ctx.message.channel, await play.get(ctx), get_amount(args))
+    await gamble.blackjack(ctx.message.channel, play.get(ctx), get_amount(args))
 
 
 @client.command(pass_context=True)
 async def hit(ctx, *args):
-    await gamble.hit(ctx.message.channel, await play.get(ctx))
+    await gamble.hit(ctx.message.channel, play.get(ctx))
 
 
 @client.command(pass_context=True)
 async def stand(ctx, *args):
-    await gamble.stand(ctx.message.channel, await play.get(ctx))
+    await gamble.stand(ctx.message.channel, play.get(ctx))
 
 
 @client.command(pass_context=True)
