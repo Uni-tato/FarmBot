@@ -350,12 +350,18 @@ async def sell(ctx, *args):
 
 @client.command(pass_context=True, aliases=["flip", "f", "cf"])
 async def coinflip(ctx, *args):
-    await gamble.coinflip(play.get(ctx), get_amount(args))
+    current_player = play.get(ctx)
+    amount = get_amount(args)
+    if await can_gamble(current_player, amount):
+        await gamble.coinflip(current_player, amount)
 
 
 @client.command(pass_context=True, aliases=["bjack"])
 async def blackjack(ctx, *args):
-    await gamble.blackjack(ctx.message.channel, play.get(ctx), get_amount(args))
+    current_player = play.get(ctx)
+    amount = get_amount(args)
+    if await can_gamble(current_player, amount):
+        await gamble.blackjack(ctx.message.channel, play.get(ctx), get_amount(args))
 
 
 @client.command(pass_context=True)
@@ -555,6 +561,15 @@ def auto_harvest():
         if len(reap) > 0:
             player.items += reap
 
+async def can_gamble(current_player, amount):
+    if current_player.money < 100:
+        await client.say(f"Sorry {current_player.player.mention}, you may not gamble if you have less than $100.")
+        return False
+    elif amount > current_player.money * 0.15:
+        await client.say(f"Sorry {current_player.player.mention}, you may not gamble more than 15% of your money.\nTne most you may gamble is: ${round(current_player.money * 0.15, 2)}.")
+        return False
+    else:
+        return True
 
 async def loop():
     await client.wait_until_ready()
