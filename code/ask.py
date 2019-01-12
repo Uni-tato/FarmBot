@@ -4,9 +4,7 @@ import asyncio
 
 import discord
 
-COLOUR_ASKED = 0x00FF00
-COLOUR_ANSWERED = 0xF4D85A
-COLOUR_TIMED_OUT = 0xDDBB8B
+import colours as colour
 
 # this variable and function let ask.py have access to the client
 client = None
@@ -45,7 +43,7 @@ class Question:
 
     def get_embed(self):
         """Get the embed object to be used in this question."""
-        embed = discord.Embed(title=self.content, color=COLOUR_ASKED)
+        embed = discord.Embed(title=self.content, color=colour.ACTIVE)
         return embed
 
     def set_message(self, message):
@@ -54,12 +52,16 @@ class Question:
 
     def get_answered_embed(self):
         """Get an embed object that represents an answered question."""
-        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_ANSWERED)
+        if self.answer != False:
+            colour_ = colour.CONFIRMED
+        else:
+            colour_ = colour.DENIED
+        embed = discord.Embed(title="~~" + self.content + "~~", color=colour_)
         return embed
 
     def get_timed_out_embed(self):
         """Get an embed object that represents a timed out question."""
-        embed = discord.Embed(title="~~" + self.content + "~~", color=COLOUR_TIMED_OUT)
+        embed = discord.Embed(title="~~" + self.content + "~~", color=colour.DENIED)
         return embed
 
     def get_answered_reply(self):

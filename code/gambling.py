@@ -1,7 +1,10 @@
 import sys
 import random
 import asyncio
+
 import discord
+
+import colours as colour
 
 client = None
 players = None
@@ -17,23 +20,23 @@ def init(client_, players_, prefix_):
 
 async def coinflip(current_player, amount):
     if amount < 1:
-        await client.say("Please flip a amount greater than 1.")
+        await client.say(f"{current_player.player.mention}, you cannot coin flip for $`{amount}`\nYou must bet at least $1.")
         return
 
     if amount > 1000:
-        await client.say("Sorry, you're not aloud to coinflip more than 1k! Why? idk.")
+        await client.say("You should not be able to get this message, but we'll keep it anyway.")
         return
 
     if current_player.money < amount:
-        await client.say("You don't have enough money... \\:P")
+        await client.say("Yet another message that should be impossible to get, good work if you broke out bot enough to get this.")
         return
 
     if random.random() > 0.5:
         current_player.money -= amount
-        await client.say(f"Oof - you lost $**{amount}**! You've now got $**{current_player.money}** remaining.")
+        await client.say(f"{current_player.player.mention}, you lost **${amount}**.\nYou now have **${current_player.money}**.")
     else:
         current_player.money += amount
-        await client.say(f"Congratulations - you won $**{amount}**! You've now got $**{current_player.money}**!")
+        await client.say(f"{current_player.player.mention}, you won **${amount}**.\nYou now have **${current_player.money}**.")
     return
 
 
@@ -56,12 +59,13 @@ def get_game(current_player, hide_dealer=True):
     # will return an embed object
 
     embed = discord.Embed(
-        title = f"Blackjack for **{current_player.player.name}**, Bet: $**{current_player.bet}**"
+        title = f"**__Blackjack:__** (Bet: ${current_player.bet})",
+        colour = colour.INFO
     )
     total = current_player.hand_total(str)
     text = ""
     for card in current_player.hand:
-        text += f"{card.emoji} **{card.name}** of {card.suit}\n"
+        text += f"{card.emoji}`{card.name}` of {card.suit}\n"
     text += f"\nTotal: **{total}**"
     embed.add_field(name="**Players hand:**", value=text)
 
@@ -69,14 +73,14 @@ def get_game(current_player, hide_dealer=True):
         card = current_player.dealer[0]
         embed.add_field(
             name = "**Dealers hand:**",
-            value = f"{card.emoji} **{card.name}** of {card.suit}\n:question: **???**\n\nTotal: **{card.value}**"
+            value = f"{card.emoji}`{card.name}` of {card.suit}\n:question: **???**\n\nTotal: **{card.value}**"
         )
     else:
         # same code here as for the player above, just adapted for the dealer
         total = current_player.hand_total(str, "dealer")
         text = ""
         for card in current_player.dealer:
-            text += f"{card.emoji} **{card.name}** of {card.suit}\n"
+            text += f"{card.emoji}`{card.name}` of {card.suit}\n"
         text += f"\nTotal: **{total}**"
         embed.add_field(name="**Dealers hand:**", value=text)
 
@@ -118,7 +122,7 @@ async def blackjack(channel, current_player, amount):
 
 async def hit(channel, current_player):
     if current_player.cards == []:
-        await client.say(f"Sorry {current_player.player.mention}, but you're not in a game! Start one with `{prefix}bjack <bet>`.")
+        await client.say(f"Sorry {current_player.player.mention}, but you have not started a game of blackjack.\nStart one with `{prefix}bjack <bet>`.")
         return
 
     new_card = random.choice(current_player.cards)
@@ -143,7 +147,7 @@ async def hit(channel, current_player):
             f"{current_player.player.mention} ->",
             embed = get_game(current_player, hide_dealer=False)
         )
-        await client.say("You went bust! You don't win any money!")
+        await client.say(f"Sorry {current_player.player.mention}, You went bust.\nYou have lost your bet.")
         current_player.cards = []
         current_player.hand = []
         current_player.dealer = []
@@ -151,7 +155,7 @@ async def hit(channel, current_player):
 
 async def stand(channel, current_player):
     if current_player.cards is []:
-        await client.say(f"Sorry {current_player.player.mention}, but you're not in a game! Start one with `{prefix}bjack <bet>`.")
+        await client.say(f"Sorry {current_player.player.mention}, but you have not started a game of blackjack.\nStart one with `{prefix}bjack <bet>`.")
         return
     # Dealers turn!
     outcome = ""
@@ -178,7 +182,7 @@ async def stand(channel, current_player):
             f"{current_player.player.mention} ->",
             embed = get_game(current_player, hide_dealer=False)
         )
-        await client.say(f"*Dealer went bust - you win double your bet! ($**{current_player.bet*2}**)")
+        await client.say(f"{current_player.player.mention}, the dealer went bust.\nYou doubled you bet.")
         current_player.money += current_player.bet *2
 
     elif outcome == 'done':
@@ -200,14 +204,14 @@ async def stand(channel, current_player):
 
         if max(player) > max(dealer):
             # player's won
-            await client.say(f"Congratulations, you won! You win double your bet! ($**{current_player.bet*2}**)")
+            await client.say(f"Congratulations {current_player.player.mention}, you won.\nYou doubled you bet.")
             current_player.money += current_player.bet * 2
         elif max(player) < max(dealer):
             # dealer won
-            await client.say(f"The dealer won this time, you don't get any money.")
+            await client.say(f"Sorry {current_player.player.mention}, you lost the game, and your bet.")
         else:
             # tie
-            await client.say(f"Oh wow, it's a tie! You get your money back!")
+            await client.say(f"{current_player.player.mention}, you have tied with the dealer.\nYou get your bet back.")
             current_player.money += current_player.bet
 
     current_player.cards = []

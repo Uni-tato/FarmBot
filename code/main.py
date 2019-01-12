@@ -20,6 +20,7 @@ from managers import CropManager, MarketManager
 from util import get_amount, get_name
 import research as res
 import gambling as gamble
+import colours as colour
 
 #### QUICK TO DO LIST: ####
 # - Make the `fm plant` command better:
@@ -59,7 +60,7 @@ async def create(ctx, *args):
     )
     if answer:
         current_player.farm = farm.Farm(name)
-        await client.say(f"Farm: `{name}`, created!")
+        await client.say(f"Farm: `{name}`, created.")
         await res.unlock_free(current_player,(0,1))
 
 
@@ -79,7 +80,7 @@ async def plant(ctx, *args):
         for plot_ in current_player.farm.plots:
             if plot_.time() < plot.time():
                 plot = plot_
-        await client.say(f"Sorry, but all your plots are full! On the bright side, **Plot #{current_player.farm.plots.index(plot)+1}** will finish in **{plot.time(str)}**!")
+        await client.say(f"Sorry {current_player.player.mention}, all your plots are full.\nPlot **#{current_player.farm.plots.index(plot)+1}** will finish in **{plot.time(str)}**.")
         return
 
     # find the corresponding crop
@@ -88,12 +89,11 @@ async def plant(ctx, *args):
             crop = crop_
             break
     else:
-        await client.say(f"I wasn't able to find `{plant}`, are you sure you spelt it right?")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{prefix}items`.")
         return
 
     if not current_player.can_plant(crop):
-        await client.say(current_player.available_crops)
-        await client.say(f"Sorry {current_player.player.mention}, but you need to research {crop.emoji} **{crop.name}** before you can plant it.")
+        await client.say(f"Sorry {current_player.player.mention}, but you need to research {crop.emoji} `{crop.name}` before you can plant it.")
         return
 
     if args[0] is "*":
@@ -119,10 +119,10 @@ async def plant(ctx, *args):
         plots = plots[:amount]
 
         if amount < 1:
-            await client.say("Sorry but that's not a valid amount! Please type in a number greater than 1.")
+            await client.say(f"Sorry {current_player.player.mention}, you cannot plant `{amount}` {crop.emoji} `{plant} {crop.type}`s.")
             return
         if not current_player.has(stuff.Item(crop.seed, amount)):
-            await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
             return
 
     elif command_type is 1:
@@ -130,7 +130,7 @@ async def plant(ctx, *args):
         if current_player.has(crop.seed):
             amount = current_player.items[crop.seed].amount
         else:
-            await client.say(f"Sorry, but you don't have enough `{crop.seed}`. Buy more with `{prefix}buy {crop.seed}`!")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
             return
 
         amount = min(amount, len(plots))
@@ -156,8 +156,8 @@ async def plant(ctx, *args):
         plot_indexes += f"& **#{plots[-1].n}**"
 
     await client.say(
-            f"Planted {crop.emoji} **{crop.name}** in {plot_indexes}! "
-            f"Time until completion is **{plots[0].time(str, False)}**."
+            f"Planted {crop.emoji} `{crop.name}` in {plot_indexes}."
+            f"\nTime until completion is **{plots[0].time(str, False)}**."
     )
     current_player.give_xp(xp)
     await current_player.lvl_check(ctx)
@@ -179,11 +179,11 @@ async def harvest(ctx):
 
     if len(reap) == 0:
         await client.say(
-            f"Sorry {ctx.message.author.mention}, but there was nothing to harvest!"
+            f"Sorry {ctx.message.author.mention}, but there was nothing to harvest."
         )
         return
 
-    embed = discord.Embed(title="*Harvest Results:*", colour=0xFFE48E)
+    embed = discord.Embed(title="*Harvest Results:*", colour=colour.INFO)
     text = ""
     for item in reap:
         text += f"{item.emoji} **{item.name}** (x{item.amount})\n"
@@ -217,7 +217,7 @@ async def inventory(ctx, player=None):
 
     # Create and prepare embed.
     embed = discord.Embed(
-        title=f"*{queried_player.player.name}'s Inventory:*", colour=0x0080D6
+        title=f"*{queried_player.player.name}'s Inventory:*", colour=colour.INFO
     )
     embed.add_field(name="**Money:**", value=f":moneybag:: ${queried_player.money},\n{rt_emoji}:{queried_player.r_tokens}")
     embed.add_field(name="**Level:**", value = f"{queried_player.lvl}: {queried_player.xp}xp.")
@@ -234,7 +234,7 @@ async def inventory(ctx, player=None):
 async def status(ctx):
     current_player = play.get(ctx)
     embed = discord.Embed(
-        title=f"***{current_player.farm.name}*** *status:*", colour=0x008c3a
+        title=f"***{current_player.farm.name}*** *status:*", colour=colour.INFO
     )
 
     for index, plot in enumerate(current_player.farm.plots):
@@ -242,7 +242,7 @@ async def status(ctx):
         if plot.crop is None:
             text = "Empty"
         else:
-            text = f"**Crop:** {plot.crop.emoji} {plot.crop.name}\n"
+            text = f"**Crop:** {plot.crop.emoji}{plot.crop.name}\n"
             if plot.time(int) == 0:
                 text += f"**Status:** Ready!"
             else:
@@ -268,34 +268,34 @@ async def buy(ctx, *args):
     if market_manager.exists(plant):
         item = stuff.Item(plant, amount)
     else:
-        await client.say(f"`{plant}` isn't a real item...")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a known item.\nFor a list of all items, type: `{prefix}items`.")
         return
 
     # Ensure that the user cannot buy an invalid number of items.
     if item.amount < 1:
-        await client.say(f"You can't buy less than **1** item!")
+        await client.say(f"Sorry {current_player.player.mention}, but you cannot buy `{amount}` {item.emoji}`{item.name}`s")
         return
 
     cost = round(item.buy_cost * item.amount * current_player.buy_multiplier, 2)
     if current_player.money < cost:
         await client.say(
-            f"Sorry {current_player.player.name} but you don't have enough money! "
-            f"(Only **${current_player.money}** instead of **${cost}**)"
+            f"Sorry {current_player.player.name}, but you don't have enough money."
+            f"\nYou have: **${current_player.money}**, but you need: **${cost}**."
         )
         return
 
-    name_and_amount = f"**{item.name} x{item.amount}** at **{current_player.buy_multiplier * 100}%** "
+    name_and_amount = f"{item.emoji}`{item.name}` x**{item.amount}** at **{current_player.buy_multiplier * 100}%** price"
 
     answer = await ask.ask(
         ctx.message,
-        f"Are you sure you want to buy {item.emoji} {name_and_amount} for **${cost}**?",
+        f"{current_player.player.mention}, Are you sure you want to buy {name_and_amount} for **${cost}**?",
         answers={"💸": True, "❌": False},
     )
     if answer:
         current_player.money = round(current_player.money-cost,2)
         current_player.items += item
         await client.say(
-            f"Bought {item.emoji} {name_and_amount} for **${cost}**.\n"
+            f"Bought {name_and_amount} for **${cost}**.\n"
             f"Money Remaining: ${current_player.money}."
         )
         current_player.give_xp(item.buy_cost * item.amount /2)
@@ -317,25 +317,25 @@ async def sell(ctx, *args):
     if market_manager.exists(item_name):
         item = stuff.Item(item_name, amount)
     else:
-        await client.say(f"`{item_name}` isn't a real item...")
+        await client.say(f"Sorry {current_player.player.mention}, `{item_name}` is not a known item.")
         return
 
     # Ensure that the user cannot sell an invalid number of items.
     if item.amount < 1:
-        await client.say(f"You can't sell less than **1** item!")
+        await client.say(f"Sorry {current_player.player.mention}, but you cannot sell `{amount}` {item.emoji}`{item.name}`s")
         return
 
     # Then check if the user actually *has* this item...
     if not current_player.has(item):
-        await client.say(f"Sorry, but you don't have enough of this item to sell!")
+        await client.say(f"Sorry {current_player.player.mention}, but you don't have `{amount}` {item.emoji}`{item.name}`(s)")
         return
 
     # Then we confirm if the user really wants to sell this...
     total_price = item.sell_cost * item.amount * current_player.sell_multiplier
     answer = await ask.ask(
         ctx.message,
-        f"Are you *sure* you wish to sell {item.emoji} **{item.name}** (x{item.amount}) "
-        f"for $**{total_price}**?",
+        f"Are you sure you wish to sell {item.emoji}`{item.name}` x{item.amount}"
+        f"for ${total_price}?",
         answers={"💸": True, "❌": False},
     )
     if answer in (False, None):
@@ -344,7 +344,7 @@ async def sell(ctx, *args):
     # And only **then** we know we can sell it:
     current_player.items -= item
     current_player.money += total_price
-    await client.say(f"Sold! You now have $**{current_player.money}**.")
+    await client.say(f"{current_player.player.mention}, you now have **${current_player.money}**.")
     current_player.give_xp(item.sell_cost * item.amount /2)
     await current_player.lvl_check(ctx)
 
@@ -443,7 +443,7 @@ async def items(ctx):
         categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
 
     # Create and prepare embed.
-    embed = discord.Embed(title="**__FarmBot Items.__**", colour=0x0080D6)
+    embed = discord.Embed(title="**__FarmBot Items.__**", colour=colour.INFO)
     for category in categories:
         embed.add_field(name=f"**{category}**", value=categories[category])
 
@@ -498,7 +498,7 @@ async def technologies(ctx):
         elif name in current_player.technologies:
             continue
         available_techs[name] = tech
-    embed = discord.Embed(title = "**__Technologies:__**", colour = 0x9090ff) # we really gotta sort out the colours
+    embed = discord.Embed(title = "**__Technologies:__**", colour = colour.INFO)
     embed.add_field(name = "**__Tokens:__**", value = f"{rt_emoji} {current_player.r_tokens} tokens")
     for name, tech in available_techs.items():
         embed.add_field(name = f"__{name}:__", value = f"cost: {tech.cost}, unlocked at: {tech.lvl}")
