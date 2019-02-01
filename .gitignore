@@ -104,6 +104,6 @@ venv.bak/
 .mypy_cache/
 
 # Custom things
-code/txt/token.txt
-players.dat
-debug.log
+data/token.txt
+data/players.dat
+data/debug.log

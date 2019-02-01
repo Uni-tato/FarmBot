@@ -1,0 +1,40 @@
+{
+    "events":
+    [
+        {
+            "name": "Apple Tree Virus",
+            "description": "The deadly Apple Tree virus causes apples to take longer to harvest, and rots them to their core!",
+            "probability": 0.8,
+            "duration": 1,
+            "effects": [
+                {"type": "buy_increase", "affected_crops": ["apple"], "increase": 2},
+                {"type": "time_increase", "affected_crops": ["apple"], "increase": 2}
+            ]
+        },
+        {
+            "name": "Halloween",
+            "description": "This spooooky rare event makes pumpkins 5 times as valuable! Everybody wants them by the buckets!",
+            "probability": 0.01,
+            "duration": 24,
+            "effects": [
+                {"type": "sell_increase", "affected_items": ["pumpkin"], "increase": 5}
+            ]
+        }
+    ],
+
+
+
+    "__": "These are all the possible effects that are avaliable to be used in events.",
+    "market_manger_effects":
+    [
+        "sell_increase", "sell_decrease",
+        "buy_increase", "buy_decrease,"
+
+
+    ],
+    "crop_manager_effects":
+    [
+        "time_increase", "time_decrease"
+    ]
+}
+
