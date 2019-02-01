@@ -506,23 +506,23 @@ async def technologies(ctx):
 
 
 async def log(txt):
-    with open("../debug.log", "a") as f:
+    with open("../data/debug.log", "a") as f:
         f.write(time.strftime(f"[%H:%M:%S, %d/%m/%y]: {txt}\n"))
 
 
 async def save():
     try:
-        os.remove("../players.dat")
+        os.remove("../data/players.dat")
     except FileNotFoundError:
         pass
-    f = open("../players.dat", "wb+")
+    f = open("../data/players.dat", "wb+")
     pickle.dump(play.players, f)
     f.close()
 
 
 async def reload():
     try:
-        f = open("../players.dat", "rb")
+        f = open("../data/players.dat", "rb")
     except Exception:
         print("reloading error - no save detected, ignore this error")
 
@@ -640,10 +640,10 @@ if __name__ == "__main__":
     assist.init(client, prefix)
 
     with open("txt/crops.csv", "r") as crops_file:
-        crop_manager = CropManager(crops_file.readlines())
+        crop_manager = managers.CropManager(crops_file.readlines())
 
     with open("txt/items.csv", "r") as items_file:
-        market_manager = MarketManager(items_file.readlines())
+        market_manager = managers.MarketManager(items_file.readlines())
 
     play.init(market_manager, crop_manager)
     farm.init(market_manager)
@@ -653,10 +653,10 @@ if __name__ == "__main__":
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
     try:
-        f = open("txt/token.txt")
+        f = open("../data/token.txt")
     except FileNotFoundError:
         token = input("Please input the Discord Token: ")
-        f = open("txt/token.txt", "w+")
+        f = open("../data/token.txt", "w+")
         f.write(token)
     else:
         token = f.read()
