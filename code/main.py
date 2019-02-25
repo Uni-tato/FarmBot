@@ -22,9 +22,6 @@ import research as res
 import gambling as gamble
 import colours as colour
 
-#### QUICK TO DO LIST: ####
-# - Make the `fm plant` command better:
-#   print to the user time until compleation? Let user select plots manually?
 
 # TODO: Make `prefix` a constant.
 prefix = "fm "
