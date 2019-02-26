@@ -1,0 +1,213 @@
+{
+    "events":
+    [
+		{
+			"name": "Apple Tree Virus",
+			"description": "The deadly Apple Tree virus causes apples to take longer to harvest, and rots them to their core!",
+			"probability": 0.3,
+			"effects": [
+				{"type": "buy_change", "multiplier": 2, "affected": ["apple"]},
+				{"type": "time_change", "multiplier": 2, "affected": ["apple"]}
+			]
+		},
+        
+        [
+			"__": "some holiday events",
+			{
+				"name": "Halloween",
+				"description": "It's time to get spooky, for a limited time pumpkins sell for five times the normal cost.",
+				"probability": 0.01,
+				"effects": [
+					{"type": "sell_change", "multiplier": 5, "affected": ["pumpkin"]},
+					{"type": "buy_change", "multiplier": 5, "affected": ["pumpkin"]},
+					{"type": "time_change", "multiplier": 0.8, "affected": ["marshmallow", "pumpkin"]}
+				]
+			},
+			
+			{
+				"name": "Christmas",
+				"description": "\"It's the most wonderful time of the year\"",
+				"probability": 0.01,
+				"effects": [
+					{"type": "sell_change", "multiplier": 1.1, "affected": ["marshmallow"]},
+					{"type": "time_change", "multiplier": 0.5, "affected": ["orange"]}
+					{"type": "buy_change", "multiplier": 0.9, "affected": "*"}
+				]
+			},
+			
+			{
+				"name": "Easter",
+				"description": "Stop what you're doing right now, it's time to eat chocolate.",
+				"probability": 0.01,
+				"effects": [
+					{"type": "time_change", "multiplier": 0.25, "affected": ["cocoa"]}
+				]
+			}
+		],
+		
+		[
+			"__": "these are some weather events.",
+			{
+				"name": "drought",
+				"description": "The forecast shows no sign of rain for a while to come. This will affect the growth of crops for farmers in our region which will likely lead to an increase in food prices.",
+				"probability": 0.05,
+				"effects": [
+					{"type": "time_change", "multiplier": 1.5, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]},
+					{"type": "sell_change", "multiplier": 1.5, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]},
+					{"type": "buy_change", "multiplier": 1.5, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]}
+				],
+				"triggers":[
+					{"name": "drought", "probability": 0.025},
+					{"name": "small_drought", "probability": 0.5}
+				]
+			},
+			{
+				"name": "small_drought",
+				"description": "The forecast says there's only a slim chance of rain. This will likely affect crop growth for farmers in our region.",
+				"probability": 0.01,
+				"effects": [
+					{"type": "time_change", "multiplier": 1.25, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]},
+					{"type": "sell_change", "multiplier": 1.25, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]},
+					{"type": "buy_change", "multiplier": 1.25, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]}
+				],
+				"triggers":[
+					{"name": "drought", "probability": 0.1},
+				]
+			},
+			
+			{
+				"name": "flood",
+				"description": "The intense rain fall recently has caused flooding in many regions. This is bad news for farmers in our area, many of whom have lost crops already.",
+				"probability": 0.05,
+				"effects": [
+					{"type": "crop_death", "probability": 0.2, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]},
+					{"type": "plot_disable", "probability": 0.15},
+					{"type": "sell_change", "multiplier": 1.15, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]},
+					{"type": "buy_change", "multiplier": 1.3, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]}
+				],
+				"triggers":[
+					{"name": "drought", "probability": 0.025},
+					{"name": "small_drought", "probability": 0.5}
+				]
+			},
+			{
+				"name": "small_flood",
+				"description": "The recent unexpected rain fall has caused a small amount of flooding in and around our area.",
+				"probability": 0.01,
+				"effects": [
+					{"type": "crop_death", "probability": 0.05, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","bananana","bana","pear","orange"]},
+					{"type": "sell_change", "multiplier": 1.1, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]},
+					{"type": "buy_change", "multiplier": 1.2, "affected": ["wheat","rice","cucumber","tomato","pumpkin","carrot","potato","apple","banana","pear","orange"]}
+				],
+				"triggers":[
+					{"name": "drought", "probability": 0.1},
+				]
+			},
+			
+			{
+				"name": "good_weather",
+				"description": "The weather has been unusually good for farmers recently. Scientists at FarmCorp suggest that this is due to global warming, and that we should continue to pollute our planet for the betterment of humanity.",
+				"probability": 0.1,
+				"effects": [
+					{"type": "time_change", "multiplier": 0.75, "affected": "*"}
+				]
+			},
+			{
+				"name": "very_good_weather",
+				"description": "The weather recently has been perfect for farmers in our area who have been able to grow crops significantly faster.",
+				"probability": 0.02,
+				"effects": [
+					{"type": "time_change", "multiplier": 0.33, "affected": "*"},
+					{"type": "buy_change", "multiplier": 0.9, "affected": "*"},
+					{"type": "sell_change", "multiplier": 0.9, "affected": "*"}
+				]
+			}
+		],
+		
+		[
+			"__": "Some war related stuff",
+			{
+				"name": "enemy_invasion",
+				"description": "Warning, Nightshade soldiers have been spotted not far from here. Please report any suspicious behaviour or possible sightings to the nearest authorities as soon as possible.",
+				"probability": 0.01,
+				"effects": [
+					{"type": "crop_death", "probability": 0.2}
+				],
+				"triggers":[
+					{"name": "enemy_invasion", "probability": 0.1},
+					{"name": "increased_security", "probability": 0.3},
+					{"name": "increased_taxes", "probability": 0.2},
+					{"name": "enemy_caught" "probability": 0.3}
+				]
+			},
+			{
+				"name": "increased_security",
+				"description": "Due to the recent Nightshade threat security in this area has been increased. This may cause a hassle for some, however we can all be thankful for the brave soldiers here to protect us.",
+				"probability": 0,
+				"effects": [
+					{"type": "plot_disable", "probability": 0.1}
+				]
+			},
+			{
+				"name": "increased_taxes",
+				"description": "The government has decided to raise taxes for a short period of time. Although this may seem like an annoyance we can now rest easy knowing that we are safer from the Nightshade threat.",
+				"probability": 0.02,
+				"effects": [
+					{"type": "buy_change", "multiplier": 1.05, "affected": "*"},
+					{"type": "sell_change", "multiplier": 0.95, "affected": "*"}
+				]
+			},
+			{
+				"name": "enemy_caught",
+				"description": "A Nightshade soldier has been caught, the soldier is in custody where officials will interogate them in the hope of gaining any information that could lead to the end of this dreadful war. Once again our great nation has proven to us that it is fare above capable of protecting us.",
+				"probability": 0,
+				"triggers":[
+					{"name": " increased_taxes", "probability": 0.1}
+				]
+			}
+		],
+		
+		[
+			{
+				"name": "price_decrease",
+				"description": "Once again the great FarmCorp has opened their hearts and decided to lower their prices for all our hard working farmers out there.",
+				"probability": 0.05,
+				"effects": [
+					{"type": "buy_change", "multiplier":0.9, "affected": "*"}
+				],
+				"triggers": [
+					{"name": "increased_taxes", "probability": 0.3}
+				]
+			},
+			{
+				"name": "free_fertilizer",
+				"description": "For a limited time only the amazing FarmCorp is distributing fertilizer to all our farmers, free of charge. This is juat another reminder of how blessed we are to live the way we do.",
+				"probability": 0.05
+				"effects": [
+					{"type": "time_change", "multiplier": 0.5, "affected": "*"}
+				]
+			}
+		]
+		
+    ],
+
+
+
+    "__": "These are all the possible effects that are avaliable to be used in events.",
+    "market_manger_effects":
+    [
+        "sell_change",
+        "buy_change"
+    ],
+    "crop_manager_effects":
+    [
+        "time_change",
+        "item_return_change"
+    ],
+    "other_effects":
+    [
+        "crop_death",
+		"plot_disable"
+    ]
+}
+

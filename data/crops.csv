@@ -13,8 +13,8 @@ marshmallow, marshmallow pellets, marshmallow, 268, 308, 1440, 1440, marshmallow
 # Stefan's crops
 # none for now P
 
-apple, apple seeds, apple, 6, 8, 23, 25, x, tree, 4, 0
-banana, banana seeds, banana, 44, 52, 23, 25, x, tree, 6, 0
+apple, apple seeds, apple, 6, 8, 23, 25, fm_apple, tree, 4, 0
+banana, banana seeds, banana, 44, 52, 23, 25, fm_banana, tree, 6, 0
 #bananana, bananana seeds, banana, ...
 #bana, bana seeds, banana, ...
 pear, pear seeds, pear, 1, 1, 60, 60, x, tree, 8, 0
@@ -26,3 +26,4 @@ orange, orange seeds, orange, 10, 16, 23, 25, x, tree, 10, 1
 #
 #pizza,
 cocoa, cocoa seeds, 3, 7, 25, 35, x, tree, 10, 1
+# CARBON NANOTUBES!!!

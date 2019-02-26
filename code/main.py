@@ -16,15 +16,12 @@ import farm
 import items as stuff #nice.
 import errors
 import assist
-from managers import CropManager, MarketManager
+import managers
 from util import get_amount, get_name
 import research as res
 import gambling as gamble
 import colours as colour
 
-#### QUICK TO DO LIST: ####
-# - Make the `fm plant` command better:
-#   print to the user time until compleation? Let user select plots manually?
 
 # TODO: Make `prefix` a constant.
 prefix = "fm "
@@ -157,7 +154,7 @@ async def plant(ctx, *args):
 
     await client.say(
             f"Planted {crop.emoji} `{crop.name}` in {plot_indexes}."
-            f"\nTime until completion is **{plots[0].time(str, False)}**."
+            f"\nTime until completion is **{plots[0].time(str, False)}**{event_manager.str(crop.name, 'time')}."
     )
     current_player.give_xp(xp)
     await current_player.lvl_check(ctx)
@@ -280,7 +277,7 @@ async def buy(ctx, *args):
     if current_player.money < cost:
         await client.say(
             f"Sorry {current_player.player.name}, but you don't have enough money."
-            f"\nYou have: **${current_player.money}**, but you need: **${cost}**."
+            f"\nYou have: **${current_player.money}**, but you need: **${cost}**{event_manager.str(item.name, 'buy')}"
         )
         return
 
@@ -288,7 +285,7 @@ async def buy(ctx, *args):
 
     answer = await ask.ask(
         ctx.message,
-        f"{current_player.player.mention}, Are you sure you want to buy {name_and_amount} for **${cost}**?",
+        f"{current_player.player.mention}, Are you sure you want to buy {name_and_amount} for **${cost}**{event_manager.str(item.name, 'buy')}?",
         answers={"💸": True, "❌": False},
     )
     if answer:
@@ -335,7 +332,7 @@ async def sell(ctx, *args):
     answer = await ask.ask(
         ctx.message,
         f"Are you sure you wish to sell {item.emoji}`{item.name}` x{item.amount}"
-        f"for ${total_price}?",
+        f" for ${total_price}?",
         answers={"💸": True, "❌": False},
     )
     if answer in (False, None):
@@ -410,7 +407,7 @@ async def dplots_add(ctx, *args):
     current_player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
 
     await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
-
+    await log(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm")
 
 @client.command(pass_context=True)
 async def dxp(ctx, amount):
@@ -419,6 +416,7 @@ async def dxp(ctx, amount):
     current_player.xp += amount
     await client.say(f"gave {current_player.player.mention} {amount}xp.")
     await current_player.lvl_check(ctx)
+    await log(f"gave {current_player.player.mention} {amount}xp.")
 
 
 @client.command(pass_context=True, aliases = ["d"])
@@ -506,23 +504,23 @@ async def technologies(ctx):
 
 
 async def log(txt):
-    with open("../debug.log", "a") as f:
+    with open("../data/debug.log", "a") as f:
         f.write(time.strftime(f"[%H:%M:%S, %d/%m/%y]: {txt}\n"))
 
 
 async def save():
     try:
-        os.remove("../players.dat")
+        os.remove("../data/players.dat")
     except FileNotFoundError:
         pass
-    f = open("../players.dat", "wb+")
+    f = open("../data/players.dat", "wb+")
     pickle.dump(play.players, f)
     f.close()
 
 
 async def reload():
     try:
-        f = open("../players.dat", "rb")
+        f = open("../data/players.dat", "rb")
     except Exception:
         print("reloading error - no save detected, ignore this error")
 
@@ -586,6 +584,7 @@ async def can_gamble(current_player, amount):
 async def loop():
     await client.wait_until_ready()
     autosave_counter = 0
+    event_counter = 0
     while not client.is_closed:
         await asyncio.sleep(5.0)
 
@@ -596,6 +595,26 @@ async def loop():
 
             auto_harvest() # We may want to tweak when this fires, but for now this works.
 
+        event_counter += 1
+        if event_counter * 5 >= event_manager.interval * 60:
+            event_counter = 0
+            event_manager.tick()
+
+
+@client.command()
+async def dtick():
+    event_manager.tick()
+    await log("Forced a debug tick of the event manager")
+
+
+@client.command(aliases=["news", "n"])
+async def newspaper():
+    if len(event_manager.active_events) == 0:
+        await client.say("No current active events! You're safe... for now \\;)")
+        return
+
+    for event in event_manager.active_events:
+        await client.say(event.name)
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -639,12 +658,16 @@ if __name__ == "__main__":
     errors.init(client, play.players)
     assist.init(client, prefix)
 
-    with open("txt/crops.csv", "r") as crops_file:
-        crop_manager = CropManager(crops_file.readlines())
+    with open("../data/events.json", "r") as events_file:
+        event_manager = managers.EventManager(events_file.read())
 
-    with open("txt/items.csv", "r") as items_file:
-        market_manager = MarketManager(items_file.readlines())
+    with open("../data/crops.csv", "r") as crops_file:
+        crop_manager = managers.CropManager(crops_file.readlines(), event_manager)
 
+    with open("../data/items.csv", "r") as items_file:
+        market_manager = managers.MarketManager(items_file.readlines(), event_manager)
+
+    #managers.init(market_manager, crop_manager, event_manager)
     play.init(market_manager, crop_manager)
     farm.init(market_manager)
     stuff.init(market_manager)
@@ -653,10 +676,10 @@ if __name__ == "__main__":
     # Will try and get a token from code/token.txt
     # If this fails (file does not exist) then it asks for the token and creates the file
     try:
-        f = open("txt/token.txt")
+        f = open("../data/token.txt")
     except FileNotFoundError:
         token = input("Please input the Discord Token: ")
-        f = open("txt/token.txt", "w+")
+        f = open("../data/token.txt", "w+")
         f.write(token)
     else:
         token = f.read()
