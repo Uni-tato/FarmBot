@@ -27,5 +27,8 @@ pear, 1.5, 0.75, x, fruit
 orange seeds, 15, 1, x, fruit seed
 orange, 1, 0.5, x, fruit
 #
+cocoa seeds, 10, 5, x, crop seed
+cocoa, 6.8, 3.4, x, crop
+#
 tseeds, 1, 1, x, test
 test, 1, 1, x, test
