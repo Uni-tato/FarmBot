@@ -30,6 +30,7 @@ Names being presented should be marked down (within \`\`).
 * Whenever an item name is used it should be proceeded by it's emoji (except in titles).
 Ditto for crops/trees.
 * Variables (excluding names) (and units) in messages (not within embeds) should be bold.
+* Arguments being relayed back treated the same as names.
 
 ### Embeds:
 * Embed messages should be '\`mention\` ->'.
