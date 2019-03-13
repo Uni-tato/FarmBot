@@ -432,7 +432,9 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = play.get(ctx)
-    await client.say(current_player.farm.plot_count)
+    await client.say(current_player.player.mention)
+    embed = discord.Embed(title = "this is just a test, no need to freak out.")
+    add_field(name=f"{current_player.player.mention}", value=f"{current_player.player.mention}")
 
 
 @client.command(pass_context=True)
