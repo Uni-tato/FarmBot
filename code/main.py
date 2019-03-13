@@ -398,6 +398,14 @@ async def dgive(ctx, *args):
     await log(f"Gave {item.name} (x{item.amount}) to {current_player.player.name}")
 
 
+@client.command()
+async def dplayers():
+    players = []
+    for player in play.players:
+        players.append(play.players[player].player.name)
+    await client.say(players)
+
+
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
     current_player = play.get(ctx)
