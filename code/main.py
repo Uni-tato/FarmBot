@@ -657,6 +657,8 @@ async def on_ready():
 
     await reload()
 
+    await client.change_presence(game=discord.Game(name='fm help'))
+
     for item in market_manager.items:
         item.init_emoji(client)
     for crop in crop_manager.crops:
