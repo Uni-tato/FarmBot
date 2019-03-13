@@ -287,7 +287,7 @@ async def buy(ctx, *args):
 
     answer = await ask.ask(
         ctx.message,
-        f"{current_player.player.mention}, Are you sure you want to buy {name_and_amount} for **${cost}**{event_manager.str(item.name, 'buy')}?",
+        f"Are you sure you want to buy {name_and_amount} for **${cost}**{event_manager.str(item.name, 'buy')}?",
         answers={"💸": True, "❌": False},
     )
     if answer:
@@ -432,9 +432,9 @@ async def dxp(ctx, amount):
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
     current_player = play.get(ctx)
-    await client.say(current_player.player.mention)
     embed = discord.Embed(title = "this is just a test, no need to freak out.")
-    add_field(name=f"{current_player.player.mention}", value=f"{current_player.player.mention}")
+    embed.add_field(name=f"{current_player.player.mention}", value=f"{current_player.player.mention}")
+    await client.say(current_player.player.mention, embed = embed)
 
 
 @client.command(pass_context=True)

@@ -25,7 +25,7 @@ And the cycle continues.
 
 ### General:
 * All messages should be formal.
-* Players should be addresed by a mention.
+* Players should be addresed by a mention (one per message, otherwise use their name).
 Names being presented should be marked down (within \`\`).
 * Whenever an item name is used it should be proceeded by it's emoji (except in titles).
 Ditto for crops/trees.
