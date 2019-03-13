@@ -5,11 +5,15 @@
 {
 	"name": "Apple Tree Virus",
 	"description": "The deadly Apple Tree virus causes apples to take longer to harvest, and rots them to their core!",
-	"probability": 0.3,
+	"probability": 0.5,
 	"effects": [
+        {"type": "plot_disable", "probability":0.8},
 		{"type": "buy_change", "multiplier": 2, "affected": ["apple"]},
 		{"type": "time_change", "multiplier": 2, "affected": ["apple"]}
-	]
+	],
+    "triggers": [
+        {"name":"Halloween", "probability":0.5}
+    ]
 },
 
 [
@@ -139,14 +143,14 @@
 			{"name": "Increased Security", "probability": 0.3},
 			{"name": "Increased Taxes", "probability": 0.2},
 			{"name": "Enemy caught", "probability": 0.3}
-		]
+		] 
 	},
 	{
 		"name": "Increased Security",
 		"description": "Due to the recent Nightshade threat security in this area has been increased. This may cause a hassle for some, however we can all be thankful for the brave soldiers here to protect us.",
 		"probability": 0,
 		"effects": [
-			{"type": "plot_disable", "probability": 0.1}
+			{"type": "plot_disable", "multiplier": 0.1}
 		]
 	},
 	{

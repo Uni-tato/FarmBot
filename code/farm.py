@@ -28,7 +28,7 @@ class Farm:
     def get_empty_plots(self):
         plots = []
         for plot in self.plots:
-            if plot.crop is None:
+            if plot.crop is None and plot.enabled:
                 plots.append(plot)
         return plots
 
@@ -45,6 +45,17 @@ class Plot:
         self._start_time = None
         self._first_planted_time = None
         self._num_harvests = 0
+
+        self.enabled = True
+        self.disabled = False
+
+    def enable(self):
+        self.enabled = True
+        self.disabled = False
+
+    def disable(self):
+        self.enabled = False
+        self.disabled = True
 
     @property
     def complete_time(self):
@@ -70,7 +81,7 @@ class Plot:
     def harvest(self):
         """Attempt to harvest the currently planted crop."""
         current_time = time.time()
-        if self.crop is None or current_time < self.complete_time:
+        if self.crop is None or current_time < self.complete_time or self.disabled:
             return None
 
         # The crop can now be harvested.

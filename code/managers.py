@@ -29,30 +29,75 @@ class EventManager:
 		self.events = []
 		# self.active_events[event] returns the events start time
 		self.active_events = {}
-		for event in json.loads(events_file)["events"]:
-			self.events.append(eventDict(event))
+		#for event in json.loads(events_file)["events"]:
+			#self.events.append(eventDict(event))
+		self.disabled_plots = {}
 
-	def tick(self):
+		def gen_events_from_list(list_of_events):
+			return_list = []
+			for thing in list_of_events:
+				if isinstance(thing, list):
+					return_list.append(gen_events_from_list(thing))
+				elif isinstance(thing, dict):
+					return_list.append(eventDict(thing))
+			return return_list
+
+		self.events = gen_events_from_list(json.loads(events_file)["events"])
+
+	def tick(self, players):
 		"""This is where the Event Manager does a tick, and checks to see if any new event has occoured"""
 
 		# Check if any events have finished
 		new_active_events = {}
 		for event in self.active_events:
-			#if self.active_events[event] + 86_400 < time.time() - 100:
-			if self.active_events[event] < time.time() + 100:
-				print(f"ending {event.name}")
+			if self.active_events[event] + 86_400 < time.time() - 1000:
+			#if self.active_events[event] < time.time() + 100:
+				#print(f"ending {event.name}")
+
+				v = random.random()
+				try:
+					event.triggers
+				except Exception:
+					continue
+
+				for trigger in event.triggers:
+					v -= trigger["probability"]
+					if v < 0:
+						triggered_event = self.get_event(trigger["name"])
+						new_active_events[triggered_event] = time.time()
+						break
+
 			else:
 				new_active_events[event] = self.active_events[event]
 		self.active_events = new_active_events
 
-		for event in self.events:
-			if event.name in (_event.name for _event in self.active_events):
-				# If the event is currently active, don't reactivate it
-				continue
+		def start_event(event):
+			#print(f"started {event.name}")
+			self.active_events[event] = time.time()
+			if "plot_disable" in [effect['type'] for effect in event.effects]:
+				probability = [x for x in event.effects if x['type'] == 'plot_disable'][0]['probability']
+				for player in players:
+					for plot in players[player].farm.plots:
+						if random.random() < probability and plot.n != 1:
+							plot.disable()
 
-			if random.random() <= event.probability:
-				self.active_events[event] = time.time()
-				print(f"started {event.name}")
+		def parse_list_of_events(list_of_events):
+			v = random.random()
+			for thing in list_of_events:
+				if isinstance(thing, list):
+					parse_list_of_events(thing)
+				elif isinstance(thing, dict):
+					v -= thing.probability
+					if v < 0:
+						start_event(thing)
+						break
+
+		for event in self.events:
+			if isinstance(event, list):
+				parse_list_of_events(event)
+			elif isinstance(event, dict):
+				if random.random() < event.probability:
+					start_event(event)
 
 	def str(self, i, effect):
 		multiplier = self.get(i, effect)
@@ -62,27 +107,41 @@ class EventManager:
 		else:
 			return f" (**x{multiplier}** from events)"
 
+	def get_event(self, name):
+		def parse_list(thing):
+			if isinstance(thing, list):
+				for other_thing in thing:
+					result = parse_list(other_thing)
+					if result is not None:
+						return result
+			elif isinstance(thing, dict):
+				if thing.name == name:
+					return thing
+			return None
+		return parse_list(self.events)
+
+
 	def get(self, i, effect):
 		for event in self.active_events:
 			for event_effect in event.effects:
 				if effect == "buy":
 					if event_effect["type"] == "buy_change":
-						if i in event_effect["affected"]:
+						if i in event_effect["affected"] or "*" in event_effect["affected"]:
 							return event_effect["multiplier"]
 
 				elif effect == "sell":
 					if event_effect["type"] == "sell_change":
-						if i in event_effect["affected"]:
+						if i in event_effect["affected"] or "*" in event_effect["affected"]:
 							return event_effect["multiplier"]
 
 				elif effect == "time":
 					if event_effect["type"] == "time_change":
-						if i in event_effect["affected"]:
+						if i in event_effect["affected"] or "*" in event_effect["affected"]:
 							return event_effect["multiplier"]
 
 				elif effect in ("min_item", "max_item"):
 					if event_effect["type"] == "item_return_change":
-						if i in event_effect["affected"]:
+						if i in event_effect["affected"] or "*" in event_effect["affected"]:
 							return event_effect["multiplier"]
 		return 1
 

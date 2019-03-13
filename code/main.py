@@ -236,7 +236,9 @@ async def status(ctx):
 
     for index, plot in enumerate(current_player.farm.plots):
         text = ""
-        if plot.crop is None:
+        if plot.disabled:
+            text = "Disabled"
+        elif plot.crop is None:
             text = "Empty"
         else:
             text = f"**Crop:** {plot.crop.emoji}{plot.crop.name}\n"
@@ -603,8 +605,12 @@ async def loop():
 
 @client.command()
 async def dtick():
-    event_manager.tick()
+    event_manager.tick(play.players)
     await log("Forced a debug tick of the event manager")
+
+@client.command()
+async def ddisabled():
+    print(event_manager.disabled_plots)
 
 
 @client.command(aliases=["news", "n"])
