@@ -24,10 +24,12 @@ import colours as colour
 
 
 # TODO: Make `prefix` a constant.
-prefix = "fm "
+PREFIX = "fm "
 # Autosave interval is in minutes. Making this larger does NOT improve performance.
-autosave_interval = 0.5
-client = Bot(command_prefix=prefix)
+AUTOSAVE_INTERVAL = 0.5
+ADMIN_NAMES = ('Uni-tato','Histefanhere','Hoboneer') 
+
+client = Bot(command_prefix=PREFIX)
 
 
 client.remove_command("help")
@@ -86,7 +88,7 @@ async def plant(ctx, *args):
             crop = crop_
             break
     else:
-        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{prefix}items`.")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{PREFIX}items`.")
         return
 
     if not current_player.can_plant(crop):
@@ -119,7 +121,7 @@ async def plant(ctx, *args):
             await client.say(f"Sorry {current_player.player.mention}, you cannot plant `{amount}` {crop.emoji} `{plant} {crop.type}`s.")
             return
         if not current_player.has(stuff.Item(crop.seed, amount)):
-            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{PREFIX}buy {crop.seed}`.")
             return
 
     elif command_type is 1:
@@ -127,7 +129,7 @@ async def plant(ctx, *args):
         if current_player.has(crop.seed):
             amount = current_player.items[crop.seed].amount
         else:
-            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{PREFIX}buy {crop.seed}`.")
             return
 
         amount = min(amount, len(plots))
@@ -267,7 +269,7 @@ async def buy(ctx, *args):
     if market_manager.exists(plant):
         item = stuff.Item(plant, amount)
     else:
-        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a known item.\nFor a list of all items, type: `{prefix}items`.")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a known item.\nFor a list of all items, type: `{PREFIX}items`.")
         return
 
     # Ensure that the user cannot buy an invalid number of items.
@@ -376,9 +378,15 @@ async def stand(ctx, *args):
     await gamble.stand(ctx.message.channel, play.get(ctx))
 
 
+def is_admin(player):
+    return player.player.name in ADMIN_NAMES
+
+
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
     current_player = play.get(ctx)
+    if not is_admin(current_player):
+        return
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -409,6 +417,8 @@ async def dplayers():
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
     current_player = play.get(ctx)
+    if not is_admin(current_player):
+        return
     amount = get_amount(args)
     if amount < 1:
         return
@@ -431,10 +441,10 @@ async def dxp(ctx, amount):
 
 @client.command(pass_context=True, aliases = ["d"])
 async def debug(ctx):
+    if not is_admin(current_player):
+        return
     current_player = play.get(ctx)
-    embed = discord.Embed(title = "this is just a test, no need to freak out.")
-    embed.add_field(name=f"{current_player.player.mention}", value=f"{current_player.player.mention}")
-    await client.say(current_player.player.mention, embed = embed)
+    await client.say(str(is_admin(current_player)))
 
 
 @client.command(pass_context=True)
@@ -601,7 +611,7 @@ async def loop():
         await asyncio.sleep(5.0)
 
         autosave_counter += 1
-        if autosave_counter * 5 >= autosave_interval * 60:
+        if autosave_counter * 5 >= AUTOSAVE_INTERVAL * 60:
             autosave_counter = 0
             await save()
 
@@ -670,9 +680,9 @@ if __name__ == "__main__":
     ask.init(client)
     play.client = client # <-- the better way to do it.
     res.client = client
-    gamble.init(client, play.players, prefix)
+    gamble.init(client, play.players, PREFIX)
     errors.init(client, play.players)
-    assist.init(client, prefix)
+    assist.init(client, PREFIX)
 
     with open("../data/events.json", "r") as events_file:
         event_manager = managers.EventManager(events_file.read())
