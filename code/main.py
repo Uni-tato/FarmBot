@@ -455,6 +455,9 @@ async def dplots_add(ctx, *args):
 
 @client.command(pass_context=True)
 async def dxp(ctx, *args):
+    if not is_admin(play.get(ctx)):
+        break
+
     amount = int(args[-1])
     players = args[:-1]
 
