@@ -159,7 +159,7 @@ async def plant(ctx, *args):
             f"\nTime until completion is **{plots[0].time(str, False)}**{event_manager.str(crop.name, 'time')}."
     )
     current_player.give_xp(xp)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
     return
 
 
@@ -194,7 +194,7 @@ async def harvest(ctx):
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
     current_player.give_xp(xp)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
 
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin", "inventor"])
@@ -300,7 +300,7 @@ async def buy(ctx, *args):
             f"Money Remaining: ${current_player.money}."
         )
         current_player.give_xp(item.buy_cost * item.amount /2)
-        await current_player.lvl_check(ctx)
+        await current_player.lvl_check()
 
 
 @client.command(pass_context=True)
@@ -347,7 +347,7 @@ async def sell(ctx, *args):
     current_player.money += total_price
     await client.say(f"{current_player.player.mention}, you now have **${current_player.money}**.")
     current_player.give_xp(item.sell_cost * item.amount /2)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
 
 
 @client.command(pass_context=True, aliases=["flip", "f", "cf"])
@@ -381,12 +381,22 @@ async def stand(ctx, *args):
 def is_admin(player):
     return player.player.name in ADMIN_NAMES
 
+def get_player_names(player):
+    return player.player.name
+
 
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
     current_player = play.get(ctx)
     if not is_admin(current_player):
         return
+
+    players = list(map(play.get, ctx.message.mentions))
+    if len(players) == 0:
+        players = [current_player]
+    else:
+        args = args[len(players):]
+
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -399,11 +409,14 @@ async def dgive(ctx, *args):
         return
 
     item = stuff.Item(name, amount)
-    current_player.items += item
-    await client.say(
-        f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
-    )
-    await log(f"Gave {item.name} (x{item.amount}) to {current_player.player.name}")
+    for player in players:
+        player.items += item
+
+    reply = f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} other(s)"
+    await client.say(reply)
+    await log(f"Gave {item.name} (x{item.amount}) to {list(map(get_player_names, players))}")
 
 
 @client.command()
@@ -419,24 +432,46 @@ async def dplots_add(ctx, *args):
     current_player = play.get(ctx)
     if not is_admin(current_player):
         return
+
+    players = list(map(play.get, ctx.message.mentions))
+    if len(players) == 0:
+        players = [current_player]
+    else:
+        args = args[len(players):]
+
     amount = get_amount(args)
     if amount < 1:
         return
 
-    plots_n = len(current_player.farm.plots)
-    current_player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
+    for player in players:
+        plots_n = len(player.farm.plots)
+        player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
 
-    await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
-    await log(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm")
+    reply = f"Added {amount} new plot{'s' if amount > 1 else ''} to {players[0].player.mention}'s farm"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} other(s)"
+    await client.say(reply)
+    await log(f"Added {amount} new plot{'s' if amount > 1 else ''} to {list(map(get_player_names, players))}'s farm(s)")
 
 @client.command(pass_context=True)
-async def dxp(ctx, amount):
-    amount = int(amount)
-    current_player = play.get(ctx)
-    current_player.xp += amount
-    await client.say(f"gave {current_player.player.mention} {amount}xp.")
-    await current_player.lvl_check(ctx)
-    await log(f"gave {current_player.player.mention} {amount}xp.")
+async def dxp(ctx, *args):
+    amount = int(args[-1])
+    players = args[:-1]
+
+    if len(players) == 0:
+        players = [play.get(ctx)]
+    else:
+        players = list(map(play.get, ctx.message.mentions))
+    
+    for player in players:
+        player.xp += amount
+        await player.lvl_check()
+    
+    reply = f"gave {amount}xp to {players[0].player.name}"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} others(s)"
+    await client.say(reply)
+    await log(f"gave {players} {amount}xp.")
 
 
 @client.command(pass_context=True, aliases = ["d"])

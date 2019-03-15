@@ -13,7 +13,7 @@ from farm import Crop
 
 client = None # set to bots client by main.py 
 
-# This'll be a dictionary where the keys are the player discord objects,
+# This'll be a dictionary where the keys are the user discord objects,
 # and the values are this custom player class
 players = {}
 
@@ -63,23 +63,22 @@ class Player:
         self.bet = 0
 
 
-    async def lvl_check(self,ctx):
+    async def lvl_check(self):
         '''Checks if the player should level up, and does so if necessary.'''
         lvl_1_xp = 50
         if self.xp < 0:
             self.xp = 0
         should_be = floor((self.xp/lvl_1_xp)**0.65)+1 #anyone is welcome to improve this.
         if self.lvl != should_be:
-            await self.lvl_up(ctx,should_be)
+            await self.lvl_up(should_be)
 
-    async def lvl_up(self,ctx,lvl): # almost definitely unnecessary fot this to be a separate function.
+    async def lvl_up(self,lvl): # almost definitely unnecessary fot this to be a separate function.
         '''Stuff that happens when the player levels up.'''
         lvl_range = range(self.lvl+1, lvl+1)
         self.r_tokens += (lvl - self.lvl)
         self.lvl = lvl
-        await client.send_message(
-            ctx.message.channel,
-            f"Congratulations {ctx.message.author.mention}, you are now level:{lvl}.")
+        await client.say(
+            f"Congratulations {self.player.mention}, you are now level:{lvl}.")
         await res.unlock_free(self,lvl_range)
 
     def hand_total(self, return_type=list, hand="player"):
