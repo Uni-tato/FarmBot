@@ -65,7 +65,7 @@ class Player:
 
     async def lvl_check(self):
         '''Checks if the player should level up, and does so if necessary.'''
-        lvl_1_xp = 50
+        lvl_1_xp = 25
         if self.xp < 0:
             self.xp = 0
         should_be = floor((self.xp/lvl_1_xp)**0.65)+1 #anyone is welcome to improve this.
