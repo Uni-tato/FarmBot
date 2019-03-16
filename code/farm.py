@@ -257,5 +257,29 @@ class Crop:
     @property
     def research_cost(self):
         return self._manager.get_research_cost(self.name)
-    
-    
+
+    def get_crop_data(self, attributes):
+        data = {}
+        if 'time' in attributes:
+            data['time'] = self.time
+        if 'seed' in attributes:
+            data['seed'] = self.seed
+        if 'item' in attributes:
+            data['item'] = self.item
+        if 'min_item' in attributes:
+            data['min_item'] = self.min_item
+        if 'max_item' in attributes:
+            data['max_item'] = self.max_item
+        if 'min_lifetime' in attributes:
+            data['min_lifetime'] = self.min_lifetime
+        if 'max_lifetime' in attributes:
+            data['max_lifetime'] = self.max_lifetime
+        if 'emoji' in attributes:
+            data['emoji'] = self.emoji
+        if 'type' in attributes:
+            data['type'] = self.type
+        if 'unlock_at_lvl' in attributes:
+            data['unlock_at_lvl'] = self.unlock_at_lvl
+        if 'research_cost' in attributes:
+            data['research_cost'] = self.research_cost
+        return data

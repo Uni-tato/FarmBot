@@ -456,7 +456,7 @@ async def dplots_add(ctx, *args):
 @client.command(pass_context=True)
 async def dxp(ctx, *args):
     if not is_admin(play.get(ctx)):
-        break
+        return
 
     amount = int(args[-1])
     players = args[:-1]
@@ -478,37 +478,66 @@ async def dxp(ctx, *args):
 
 
 @client.command(pass_context=True, aliases = ["d"])
-async def debug(ctx):
+async def debug(ctx, *args):
+    current_player = play.get(ctx)
     if not is_admin(current_player):
         return
-    current_player = play.get(ctx)
-    await client.say(str(is_admin(current_player)))
+    for plant in get_plants(' '.join(args)):
+        print(plant.name)
 
 
-@client.command(pass_context=True)
-async def items(ctx):
-    # Separate items into categories.
-    categories = {}
-    for item in market_manager.items:
-        category = item.category
-        if category not in categories:
-            categories[category] = ""
-
-        item_header = f"{item.emoji} **{item.name}**"
-        buy_text = f"buy: **${item.buy_cost}**"
-        sell_text = f"sell: **${item.sell_cost}**"
-
-        categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
-
-    # Create and prepare embed.
-    embed = discord.Embed(title="**__FarmBot Items.__**", colour=colour.INFO)
-    for category in categories:
-        embed.add_field(name=f"**{category}**", value=categories[category])
+@client.command(pass_context=True, aliases = ("item", "it"))
+async def items(ctx, *args):
 
     current_player = play.get(ctx)
-    await client.send_message(
-        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
-    )
+    item_name = " ".join(args)
+    if market_manager.exists(item_name):
+        item = stuff.Item(item_name)
+        embed = discord.Embed(title = f"**__{item.emoji} {item_name}:__**", colour = colour.INFO)
+        embed.add_field(name = "__Cost:__", value = 
+            f"Standard cost to buy: ${item.buy_cost}.\n"
+            f"Standard cost to sell: ${item.sell_cost}."
+            )
+        embed.add_field(name = "__Category:__", value = 
+            f"This item is a {item.category}"
+            )
+
+        plants = get_plants(item_name)
+        for plant in plants:
+            name = f"__{plant.name} {plant.type}:__"
+            research_cost_str = f"\nResearch cost: {plant.research_cost} {rt_emoji}(s)." if plant.research_cost != 0 else ''
+            embed.add_field(name = name, value = 
+                f"Growth time: {plant.min_lifetime} - {plant.max_lifetime} minutes.\n" #this is gonna need to be fancified a nicer form, eg: min/hour/days.
+                f"Seed: {plant.seed}.\n"
+                f"Produces: {plant.min_item} - {plant.max_item} {plant.item}(s).\n"
+                f"Unlocked at level: {plant.unlock_at_lvl}."
+                f'{research_cost_str}'
+                )
+
+        await client.say(f"{current_player.player.mention} ->", embed = embed)
+    else:
+        # Separate items into categories.
+        categories = {}
+        for item in market_manager.items:
+            category = item.category
+            if category not in categories:
+                categories[category] = ""
+
+            item_header = f"{item.emoji} **{item.name}**"
+            buy_text = f"buy: **${item.buy_cost}**"
+            sell_text = f"sell: **${item.sell_cost}**"
+
+            categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
+
+        # Create and prepare embed.
+        embed = discord.Embed(title="**__FarmBot Items.__**", colour=colour.INFO)
+        for category in categories:
+            embed.add_field(name=f"**{category}**", value=categories[category])
+
+        current_player = play.get(ctx)
+        await client.send_message(
+            ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+        )
 
 
 @client.command(pass_context=True, aliases = ["r"])
@@ -603,10 +632,12 @@ async def reload():
                     if plot.crop != None:
                         plot.crop._manager = weakref.proxy(crop_manager)
 
+
 def get_rt_emoji():
     for emoji in client.get_all_emojis():
         if emoji.name == 'fm_rt':
             return str(emoji)
+
 
 def auto_harvest():
     for member,player in play.players.items():
@@ -621,6 +652,15 @@ def auto_harvest():
                 reap += item
         if len(reap) > 0:
             player.items += reap
+
+
+def get_plants(input_, possible_attributes = ('name', 'seed', 'item')):
+    plants = []
+    for plant in crop_manager.crops:
+        if input_ in plant.get_crop_data(possible_attributes).values():
+            plants.append(plant)
+    return(plants)
+
 
 async def can_gamble(current_player, amount):
     if datetime.datetime.now() < current_player.gambling_cooldown:
@@ -640,6 +680,7 @@ async def can_gamble(current_player, amount):
         return False
     else:
         return True
+
 
 async def loop():
     await client.wait_until_ready()
@@ -679,6 +720,7 @@ async def newspaper():
 
     for event in event_manager.active_events:
         await client.say(event.name)
+
 
 @client.event
 async def on_reaction_add(reaction, user):
