@@ -24,10 +24,12 @@ import colours as colour
 
 
 # TODO: Make `prefix` a constant.
-prefix = "fm "
+PREFIX = "fm "
 # Autosave interval is in minutes. Making this larger does NOT improve performance.
-autosave_interval = 0.5
-client = Bot(command_prefix=prefix)
+AUTOSAVE_INTERVAL = 0.5
+ADMIN_NAMES = ('Uni-tato','Histefanhere','Hoboneer') 
+
+client = Bot(command_prefix=PREFIX)
 
 
 client.remove_command("help")
@@ -81,12 +83,9 @@ async def plant(ctx, *args):
         return
 
     # find the corresponding crop
-    for crop_ in crop_manager.crops:
-        if plant in (crop_.name, crop_.seed):
-            crop = crop_
-            break
+    crop = get_plants(plant)[0]
     else:
-        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{prefix}items`.")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{PREFIX}items`.")
         return
 
     if not current_player.can_plant(crop):
@@ -119,7 +118,7 @@ async def plant(ctx, *args):
             await client.say(f"Sorry {current_player.player.mention}, you cannot plant `{amount}` {crop.emoji} `{plant} {crop.type}`s.")
             return
         if not current_player.has(stuff.Item(crop.seed, amount)):
-            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{PREFIX}buy {crop.seed}`.")
             return
 
     elif command_type is 1:
@@ -127,7 +126,7 @@ async def plant(ctx, *args):
         if current_player.has(crop.seed):
             amount = current_player.items[crop.seed].amount
         else:
-            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{prefix}buy {crop.seed}`.")
+            await client.say(f"Sorry {current_player.player.mention}, you do not have enough `{crop.seed}`.\nBuy more with `{PREFIX}buy {crop.seed}`.")
             return
 
         amount = min(amount, len(plots))
@@ -157,7 +156,7 @@ async def plant(ctx, *args):
             f"\nTime until completion is **{plots[0].time(str, False)}**{event_manager.str(crop.name, 'time')}."
     )
     current_player.give_xp(xp)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
     return
 
 
@@ -192,7 +191,7 @@ async def harvest(ctx):
         ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
     )
     current_player.give_xp(xp)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
 
 
 @client.command(pass_context=True, aliases=["i", "inv", "invin", "inventor"])
@@ -267,7 +266,7 @@ async def buy(ctx, *args):
     if market_manager.exists(plant):
         item = stuff.Item(plant, amount)
     else:
-        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a known item.\nFor a list of all items, type: `{prefix}items`.")
+        await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a known item.\nFor a list of all items, type: `{PREFIX}items`.")
         return
 
     # Ensure that the user cannot buy an invalid number of items.
@@ -298,7 +297,7 @@ async def buy(ctx, *args):
             f"Money Remaining: ${current_player.money}."
         )
         current_player.give_xp(item.buy_cost * item.amount /2)
-        await current_player.lvl_check(ctx)
+        await current_player.lvl_check()
 
 
 @client.command(pass_context=True)
@@ -345,7 +344,7 @@ async def sell(ctx, *args):
     current_player.money += total_price
     await client.say(f"{current_player.player.mention}, you now have **${current_player.money}**.")
     current_player.give_xp(item.sell_cost * item.amount /2)
-    await current_player.lvl_check(ctx)
+    await current_player.lvl_check()
 
 
 @client.command(pass_context=True, aliases=["flip", "f", "cf"])
@@ -376,9 +375,25 @@ async def stand(ctx, *args):
     await gamble.stand(ctx.message.channel, play.get(ctx))
 
 
+def is_admin(player):
+    return player.player.name in ADMIN_NAMES
+
+def get_player_names(player):
+    return player.player.name
+
+
 @client.command(pass_context=True)
 async def dgive(ctx, *args):
     current_player = play.get(ctx)
+    if not is_admin(current_player):
+        return
+
+    players = list(map(play.get, ctx.message.mentions))
+    if len(players) == 0:
+        players = [current_player]
+    else:
+        args = args[len(players):]
+
     if len(args) == 0:
         await assist.help(ctx, args)
         return
@@ -391,11 +406,14 @@ async def dgive(ctx, *args):
         return
 
     item = stuff.Item(name, amount)
-    current_player.items += item
-    await client.say(
-        f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
-    )
-    await log(f"Gave {item.name} (x{item.amount}) to {current_player.player.name}")
+    for player in players:
+        player.items += item
+
+    reply = f"Gave {item.emoji} **{item.name}** (x{item.amount}) to {current_player.player.name}"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} other(s)"
+    await client.say(reply)
+    await log(f"Gave {item.name} (x{item.amount}) to {list(map(get_player_names, players))}")
 
 
 @client.command()
@@ -409,58 +427,114 @@ async def dplayers():
 @client.command(pass_context=True)
 async def dplots_add(ctx, *args):
     current_player = play.get(ctx)
+    if not is_admin(current_player):
+        return
+
+    players = list(map(play.get, ctx.message.mentions))
+    if len(players) == 0:
+        players = [current_player]
+    else:
+        args = args[len(players):]
+
     amount = get_amount(args)
     if amount < 1:
         return
 
-    plots_n = len(current_player.farm.plots)
-    current_player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
+    for player in players:
+        plots_n = len(player.farm.plots)
+        player.farm.plots += [farm.Plot(plots_n + n + 1) for n in range(amount)]
 
-    await client.say(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm.\nTotal plots = {len(current_player.farm.plots)}")
-    await log(f"Added {amount} new plot{'s' if amount > 1 else ''} to {current_player.player.mention}'s farm")
+    reply = f"Added {amount} new plot{'s' if amount > 1 else ''} to {players[0].player.mention}'s farm"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} other(s)"
+    await client.say(reply)
+    await log(f"Added {amount} new plot{'s' if amount > 1 else ''} to {list(map(get_player_names, players))}'s farm(s)")
 
 @client.command(pass_context=True)
-async def dxp(ctx, amount):
-    amount = int(amount)
-    current_player = play.get(ctx)
-    current_player.xp += amount
-    await client.say(f"gave {current_player.player.mention} {amount}xp.")
-    await current_player.lvl_check(ctx)
-    await log(f"gave {current_player.player.mention} {amount}xp.")
+async def dxp(ctx, *args):
+    if not is_admin(play.get(ctx)):
+        return
+
+    amount = int(args[-1])
+    players = args[:-1]
+
+    if len(players) == 0:
+        players = [play.get(ctx)]
+    else:
+        players = list(map(play.get, ctx.message.mentions))
+    
+    for player in players:
+        player.xp += amount
+        await player.lvl_check()
+    
+    reply = f"gave {amount}xp to {players[0].player.name}"
+    if len(players) != 1:
+        reply += f" and {len(players)-1} others(s)"
+    await client.say(reply)
+    await log(f"gave {players} {amount}xp.")
 
 
 @client.command(pass_context=True, aliases = ["d"])
-async def debug(ctx):
+async def debug(ctx, *args):
     current_player = play.get(ctx)
-    embed = discord.Embed(title = "this is just a test, no need to freak out.")
-    embed.add_field(name=f"{current_player.player.mention}", value=f"{current_player.player.mention}")
-    await client.say(current_player.player.mention, embed = embed)
+    if not is_admin(current_player):
+        return
+    for plant in get_plants(' '.join(args)):
+        print(plant.name)
 
 
-@client.command(pass_context=True)
-async def items(ctx):
-    # Separate items into categories.
-    categories = {}
-    for item in market_manager.items:
-        category = item.category
-        if category not in categories:
-            categories[category] = ""
-
-        item_header = f"{item.emoji} **{item.name}**"
-        buy_text = f"buy: **${item.buy_cost}**"
-        sell_text = f"sell: **${item.sell_cost}**"
-
-        categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
-
-    # Create and prepare embed.
-    embed = discord.Embed(title="**__FarmBot Items.__**", colour=colour.INFO)
-    for category in categories:
-        embed.add_field(name=f"**{category}**", value=categories[category])
+@client.command(pass_context=True, aliases = ("item", "it"))
+async def items(ctx, *args):
 
     current_player = play.get(ctx)
-    await client.send_message(
-        ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
-    )
+    item_name = " ".join(args)
+    if market_manager.exists(item_name):
+        item = stuff.Item(item_name)
+        embed = discord.Embed(title = f"**__{item.emoji} {item_name}:__**", colour = colour.INFO)
+        embed.add_field(name = "__Cost:__", value = 
+            f"Standard cost to buy: ${item.buy_cost}.\n"
+            f"Standard cost to sell: ${item.sell_cost}."
+            )
+        embed.add_field(name = "__Category:__", value = 
+            f"This item is a {item.category}"
+            )
+
+        plants = get_plants(item_name)
+        for plant in plants:
+            name = f"__{plant.name} {plant.type}:__"
+            research_cost_str = f"\nResearch cost: {plant.research_cost} {rt_emoji}(s)." if plant.research_cost != 0 else ''
+            embed.add_field(name = name, value = 
+                f"Growth time: {plant.min_lifetime} - {plant.max_lifetime} minutes.\n" #this is gonna need to be fancified a nicer form, eg: min/hour/days.
+                f"Seed: {plant.seed}.\n"
+                f"Produces: {plant.min_item} - {plant.max_item} {plant.item}(s).\n"
+                f"Unlocked at level: {plant.unlock_at_lvl}."
+                f'{research_cost_str}'
+                )
+
+        await client.say(f"{current_player.player.mention} ->", embed = embed)
+    else:
+        # Separate items into categories.
+        categories = {}
+        for item in market_manager.items:
+            category = item.category
+            if category not in categories:
+                categories[category] = ""
+
+            item_header = f"{item.emoji} **{item.name}**"
+            buy_text = f"buy: **${item.buy_cost}**"
+            sell_text = f"sell: **${item.sell_cost}**"
+
+            categories[category] += f"{item_header}:\n\t {buy_text}, {sell_text}.\n"
+
+        # Create and prepare embed.
+        embed = discord.Embed(title="**__FarmBot Items.__**", colour=colour.INFO)
+        for category in categories:
+            embed.add_field(name=f"**{category}**", value=categories[category])
+
+        current_player = play.get(ctx)
+        await client.send_message(
+            ctx.message.channel, f"{current_player.player.mention} ->", embed=embed
+        )
 
 
 @client.command(pass_context=True, aliases = ["r"])
@@ -555,10 +629,12 @@ async def reload():
                     if plot.crop != None:
                         plot.crop._manager = weakref.proxy(crop_manager)
 
+
 def get_rt_emoji():
     for emoji in client.get_all_emojis():
         if emoji.name == 'fm_rt':
             return str(emoji)
+
 
 def auto_harvest():
     for member,player in play.players.items():
@@ -573,6 +649,15 @@ def auto_harvest():
                 reap += item
         if len(reap) > 0:
             player.items += reap
+
+
+def get_plants(input_, possible_attributes = ('name', 'seed', 'item')):
+    plants = []
+    for plant in crop_manager.crops:
+        if input_ in plant.get_crop_data(possible_attributes).values():
+            plants.append(plant)
+    return(plants)
+
 
 async def can_gamble(current_player, amount):
     if datetime.datetime.now() < current_player.gambling_cooldown:
@@ -593,6 +678,7 @@ async def can_gamble(current_player, amount):
     else:
         return True
 
+
 async def loop():
     await client.wait_until_ready()
     autosave_counter = 0
@@ -601,7 +687,7 @@ async def loop():
         await asyncio.sleep(5.0)
 
         autosave_counter += 1
-        if autosave_counter * 5 >= autosave_interval * 60:
+        if autosave_counter * 5 >= AUTOSAVE_INTERVAL * 60:
             autosave_counter = 0
             await save()
 
@@ -631,6 +717,7 @@ async def newspaper():
 
     for event in event_manager.active_events:
         await client.say(event.name)
+
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -672,9 +759,9 @@ if __name__ == "__main__":
     ask.init(client)
     play.client = client # <-- the better way to do it.
     res.client = client
-    gamble.init(client, play.players, prefix)
+    gamble.init(client, play.players, PREFIX)
     errors.init(client, play.players)
-    assist.init(client, prefix)
+    assist.init(client, PREFIX)
 
     with open("../data/events.json", "r") as events_file:
         event_manager = managers.EventManager(events_file.read())
