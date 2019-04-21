@@ -14,25 +14,10 @@ COMMANDS = {
     #    "description": "Add <amount> amount of plots to the players farm. Used *only* for debugging.",
     #    "short_description": "Give plots cheatly.",
     #},
-    "sell": {
-        "usage": "sell [item amount = 1] <item name>",
-        "description": "Sell the item for its current market price * by the optional quantity. Player must have the item.",
-        "short_description": "Sell items.",
-    },
-    "buy": {
-        "usage": "buy [item amount = 1] <item name>",
-        "description": "Buy the item for its current market price * by the optional quantity. Player must have enough money.",
-        "short_description": "Buy items.",
-    },
-    "plant": {
-        "usage": "plant [plot amount = 1] <item name / crop name>",
-        "description": "Plant the given item in the optionally specified amount of plots. Will always plant in plots starting from Plot #1.",
-        "short_description": "Plant crops/trees.",
-    },
-    "harvest": {
-        "usage": "harvest",
-        "description": "Harvest any harvestable plots automatically. Will also give the player all the items from the harvest.",
-        "short_description": "Harvest plots.",
+    "create": {
+        "usage": "create <farm name>",
+        "description": "Create a new farm if one hasn't been already made. Farm must have a name.",
+        "short_description": "Create new farm.",
     },
     "inv": {
         "usage": "inv",
@@ -44,10 +29,25 @@ COMMANDS = {
         "description": "Show the status of the players farm.",
         "short_description": "Show status of plots.",
     },
-    "create": {
-        "usage": "create <farm name>",
-        "description": "Create a new farm if one hasn't been already made. Farm must have a name.",
-        "short_description": "Create new farm.",
+    "plant": {
+        "usage": "plant [plot amount = 1] <item name / crop name>",
+        "description": "Plant the given item in the optionally specified amount of plots. Will always plant in plots starting from Plot #1.",
+        "short_description": "Plant crops/trees.",
+    },
+    "harvest": {
+        "usage": "harvest",
+        "description": "Harvest any harvestable plots automatically. Will also give the player all the items from the harvest.",
+        "short_description": "Harvest plots.",
+    },
+    "sell": {
+        "usage": "sell [item amount = 1] <item name>",
+        "description": "Sell the item for its current market price * by the optional quantity. Player must have the item.",
+        "short_description": "Sell items.",
+    },
+    "buy": {
+        "usage": "buy [item amount = 1] <item name>",
+        "description": "Buy the item for its current market price * by the optional quantity. Player must have enough money.",
+        "short_description": "Buy items.",
     },
     "help": {
         "usage": "help [command]",
