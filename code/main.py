@@ -83,7 +83,10 @@ async def plant(ctx, *args):
         return
 
     # find the corresponding crop
-    crop = get_plants(plant)[0]
+    for crop_ in crop_manager.crops:
+        if plant in (crop_.name, crop_.seed):
+            crop = crop_
+            break
     else:
         await client.say(f"Sorry {current_player.player.mention}, `{plant}` is not a valid plant or seed.\nFor a list of all items, including seeds, type: `{PREFIX}items`.")
         return
